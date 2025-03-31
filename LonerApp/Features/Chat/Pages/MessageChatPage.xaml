@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage
+    x:Class="LonerApp.Features.Pages.MessageChatPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:f="clr-namespace:Fonts"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:sho="http://sharpnado.com"
+    xmlns:swipe="clr-namespace:Plugin.Maui.SwipeCardView;assembly=Plugin.Maui.SwipeCardView"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    Title="MessageChatPage"
+    x:DataType="vm:ChatMessagePageModel"
+    BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+    NavigationPage.HasNavigationBar="True"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
+    <base:BasePage.Resources>
+        <DataTemplate x:Key="MineMessageItemTemplate" x:DataType="{x:Type models:MessageModel}">
+            <Grid Padding="20,5" ColumnDefinitions="*,Auto">
+                <Border
+                    Grid.Column="1"
+                    Padding="10"
+                    Background="#5AC0F9"
+                    HorizontalOptions="End"
+                    StrokeShape="RoundRectangle 20,50,20,3">
+                    <Label
+                        HorizontalTextAlignment="Start"
+                        LineBreakMode="WordWrap"
+                        MaximumWidthRequest="250"
+                        Text="{Binding Message}"
+                        TextColor="White"
+                        VerticalTextAlignment="Center" />
+                </Border>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="OtherMessageItemTemplate" x:DataType="{x:Type models:MessageModel}">
+            <Grid Padding="20,10" ColumnDefinitions="Auto,*">
+                <Border
+                    Padding="10"
+                    Background="#EEEFF1"
+                    HorizontalOptions="Start"
+                    StrokeShape="RoundRectangle 20,50,3,20">
+                    <Label
+                        HorizontalTextAlignment="Start"
+                        LineBreakMode="WordWrap"
+                        MaximumWidthRequest="250"
+                        Text="{Binding Message}"
+                        TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                        VerticalTextAlignment="Center" />
+                </Border>
+            </Grid>
+        </DataTemplate>
+        <vm:MessageChatItemDataTemplateSelector
+            x:Key="messageChatItemDataTemplateSelector"
+            MineMessageItemTemplate="{StaticResource MineMessageItemTemplate}"
+            OtherMessageItemTemplate="{StaticResource OtherMessageItemTemplate}" />
+    </base:BasePage.Resources>
+    <Grid
+        Margin="0"
+        Padding="0"
+        RowDefinitions="Auto,*,Auto">
+        <controls:CustomNavigationBar
+            BackButtonCommand="{Binding BackCommand}"
+            HasBackButton="{Binding HasBackButton}"
+            IsVisible="{Binding IsVisibleNavigation}"
+            TitlePage="Lina" />
+        <CollectionView
+            x:Name="ChatMessageList"
+            Grid.Row="1"
+            ItemTemplate="{StaticResource messageChatItemDataTemplateSelector}"
+            ItemsSource="{Binding Messages}"
+            ItemsUpdatingScrollMode="KeepLastItemInView"
+            Loaded="ChatList_Loaded"
+            Scrolled="OnScrolled"
+            VerticalScrollBarVisibility="Always" />
+        <Grid
+            Grid.Row="2"
+            Padding="10,0,0,0"
+            ColumnDefinitions="Auto, *"
+            ColumnSpacing="0">
+            <Label
+                x:Name="lbUploadImage"
+                Grid.Row="2"
+                FontFamily="MaterialFontFamily"
+                FontSize="{StaticResource FontSizeLPlus}"
+                HorizontalOptions="Start"
+                Text="&#xf21f;"
+                TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                VerticalOptions="Center"
+                VerticalTextAlignment="Center"
+                ZIndex="1">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatMessagePageModel}}, Path=SendImageCommand, x:DataType={x:Type vm:ChatMessagePageModel}}" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Border
+                Grid.Row="2"
+                Grid.Column="1"
+                Margin="10"
+                Padding="10,0,0,0"
+                Stroke="#D9D9D9"
+                StrokeThickness="2">
+                <ContentView>
+                    <Grid Padding="0">
+                        <controls:BorderlessEditor
+                            x:Name="MessageEditor"
+                            AutoSize="TextChanges"
+                            Background="Transparent"
+                            Focused="MessageEditor_Focused"
+                            FontFamily="Gotham"
+                            FontSize="{StaticResource FontSizeM}"
+                            HorizontalOptions="Start"
+                            MaximumHeightRequest="120"
+                            MaximumWidthRequest="250"
+                            Placeholder="Nhập tin nhắn                               "
+                            Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ChatMessagePageModel}}, x:DataType={x:Type vm:ChatMessagePageModel}, Path=MessageEntryValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                            TextChanged="MessageEditor_TextChanged"
+                            TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            Unfocused="MessageEditor_Unfocused" />
+                        <Label
+                            Margin="10,0,10,0"
+                            FontFamily="GothamBold"
+                            FontSize="{StaticResource FontSizeM}"
+                            HorizontalOptions="End"
+                            Text="{i18n:Translate Chat_Label_Send_Message}"
+                            TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatMessagePageModel}}, Path=SendMessageCommand, x:DataType={x:Type vm:ChatMessagePageModel}}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+                </ContentView>
+            </Border>
+        </Grid>
+    </Grid>
+</base:BasePage>

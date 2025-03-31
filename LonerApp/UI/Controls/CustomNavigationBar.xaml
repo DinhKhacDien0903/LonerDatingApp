@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="LonerApp.UI.Controls.CustomNavigationBar"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Name="customNavigationBar"
+    x:DataType="controls:CustomNavigationBar">
+    <ContentView.Resources>
+        <x:String x:Key="iconBackButton">&#xF04D;</x:String>
+    </ContentView.Resources>
+    <ContentView.Content>
+        <Grid
+            Margin="0"
+            Padding="10,0"
+            ColumnSpacing="0"
+            HeightRequest="{StaticResource NavBarHeight}"
+            VerticalOptions="Fill">
+            <Label
+                Margin="0"
+                Padding="0"
+                FontFamily="MaterialFontFamily"
+                FontSize="25"
+                HorizontalOptions="Start"
+                IsVisible="{Binding Source={x:Reference customNavigationBar}, Path=HasBackButton}"
+                Text="{StaticResource iconBackButton}"
+                TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                VerticalOptions="Center"
+                VerticalTextAlignment="Center"
+                WidthRequest="30">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding Source={x:Reference customNavigationBar}, Path=BackButtonCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label
+                x:Name="CustomTitleLabel"
+                Margin="0"
+                FontFamily="GothamBold"
+                FontSize="{StaticResource FontSizeLPlus}"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                LineBreakMode="TailTruncation"
+                MaxLines="1"
+                TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                VerticalOptions="Center"
+                VerticalTextAlignment="Center" />
+            <Label
+                x:Name="CustomOptionLabel"
+                Margin="0,0,10,0"
+                FontFamily="MaterialFontFamily"
+                FontSize="{StaticResource FontSizeLPlus}"
+                HorizontalOptions="End"
+                TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                VerticalOptions="Center"
+                VerticalTextAlignment="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding Source={x:Reference customNavigationBar}, Path=OptionButtonCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+        </Grid>
+    </ContentView.Content>
+</ContentView>

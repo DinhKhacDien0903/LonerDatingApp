@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppName" xml:space="preserve">
+    <value>Loner</value>
+  </data>
+  <data name="Button_Text_Skip" xml:space="preserve">
+    <value>BỎ QUA</value>
+  </data>
+  <data name="Create_Account_Button" xml:space="preserve">
+    <value>Tạo tài khoản mới</value>
+  </data>
+  <data name="Phone_Number_Sign_Button" xml:space="preserve">
+    <value>Đăng nhập bằng số điện thoại</value>
+  </data>
+  <data name="Google_Sign_Button" xml:space="preserve">
+    <value>Đăng nhập bằng Google</value>
+  </data>
+  <data name="Signup_Button" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
+  <data name="Trouble_SignIn_Label" xml:space="preserve">
+    <value>Bạn gặp sự cố khi đăng nhập</value>
+  </data>
+  <data name="Terms_Tutorial" xml:space="preserve">
+    <value>Bằng việc nhấn vào "Tạo tài khoản" hoặc "Đăng nhập", bạn đã đồng ý với những </value>
+  </data>
+  <data name="Terms" xml:space="preserve">
+    <value>Điều khoản.</value>
+  </data>
+  <data name="PrivacyPolicy_CookiesPolicy_Tutorial" xml:space="preserve">
+    <value>Tìm hiểu cách chúng tôi xử lý dữ liệu của bạn trong</value>
+  </data>
+  <data name="And_Text" xml:space="preserve">
+    <value>và</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Chính sách bảo mật</value>
+  </data>
+  <data name="CookiesPolicy" xml:space="preserve">
+    <value>Chính sách Cookies</value>
+  </data>
+  <data name="Label_PhoneNumber" xml:space="preserve">
+    <value>Số điện thoại của bạn</value>
+  </data>
+  <data name="Description_PhoneNumber" xml:space="preserve">
+    <value>Chúng tôi sẽ gửi tin nhắn có mã xác minh. Có thể áp dụng cước tin nhắn và dữ liệu. Tìm hiểu điều gì xảy ra khi số của bạn thay đổi.</value>
+  </data>
+  <data name="Button_Continue_Text" xml:space="preserve">
+    <value>TIếp theo</value>
+  </data>
+  <data name="Placeholder_PhoneNumber" xml:space="preserve">
+    <value>Số điện thoại</value>
+  </data>
+  <data name="Common_Error_NotEmpty" xml:space="preserve">
+    <value>Ô nhập không được để trống</value>
+  </data>
+  <data name="Common_Error_Phone" xml:space="preserve">
+    <value>Vui lòng nhập số điện thoại hợp lệ</value>
+  </data>
+  <data name="Label_PhoneNumber_Identity" xml:space="preserve">
+    <value>Mã xác nhận của bạn</value>
+  </data>
+  <data name="HyperLink_Resend" xml:space="preserve">
+    <value>Gửi lại</value>
+  </data>
+  <data name="Common_Error_Phone_Identity" xml:space="preserve">
+    <value>Mã xác thực không chính xác</value>
+  </data>
+  <data name="Resend_Verify_Phone_Number" xml:space="preserve">
+    <value>Gửi lại</value>
+  </data>
+  <data name="Label_Email_Author" xml:space="preserve">
+    <value>Email của bạn</value>
+  </data>
+  <data name="Placeholder_Email_Author" xml:space="preserve">
+    <value>Nhập email</value>
+  </data>
+  <data name="Description_Email_Author" xml:space="preserve">
+    <value>Đừng để mất quyền truy cập vào tài khoản của bạn, hãy xác minh email của bạn.</value>
+  </data>
+  <data name="Common_Error_PhoneLength" xml:space="preserve">
+    <value>Số điện thoại phải có 10 chữ số.</value>
+  </data>
+  <data name="Common_Error_EmailLength" xml:space="preserve">
+    <value>Email có tối đa 50 ký tự.</value>
+  </data>
+  <data name="Common_Error_Email" xml:space="preserve">
+    <value>Vui lòng nhập email hợp lệ</value>
+  </data>
+  <data name="Common_Error_VerifyLength" xml:space="preserve">
+    <value>Mã xác thực phải có 6 chữ số.</value>
+  </data>
+  <data name="Placeholder_YourName" xml:space="preserve">
+    <value>Tên của bạn</value>
+  </data>
+  <data name="Description_YourName" xml:space="preserve">
+    <value>Đây là cách nó sẽ hiển thị trên Loner và bạn sẽ không thể thay đổi nó.</value>
+  </data>
+  <data name="Title_YourName" xml:space="preserve">
+    <value>Tên của bạn là</value>
+  </data>
+  <data name="Title_DateOfBirth" xml:space="preserve">
+    <value>Ngày sinh của bạn</value>
+  </data>
+  <data name="Description_YourDateOfBirth" xml:space="preserve">
+    <value>Tuổi của bạn sẽ được công khai.</value>
+  </data>
+  <data name="Common_Error_Date_Is_Number" xml:space="preserve">
+    <value>Ngày sinh phải là số hợp lệ.</value>
+  </data>
+  <data name="Common_Error_Date" xml:space="preserve">
+    <value>Ngày sinh không hợp lệ.</value>
+  </data>
+  <data name="Common_Error_Month" xml:space="preserve">
+    <value>Tháng sinh không hợp lệ.</value>
+  </data>
+  <data name="Common_Error_Year" xml:space="preserve">
+    <value>Năm sinh không hợp lệ.</value>
+  </data>
+  <data name="Common_Error_Month_Is_Number" xml:space="preserve">
+    <value>Tháng sinh phải là số hợp lệ.</value>
+  </data>
+  <data name="Common_Error_Year_Is_Number" xml:space="preserve">
+    <value>Year must be a valid number.</value>
+  </data>
+  <data name="Common_Error_DateOfBirth" xml:space="preserve">
+    <value>Ngày tháng năm sinh không hợp lệ. Vui lòng nhập lại!</value>
+  </data>
+  <data name="Title_Gender" xml:space="preserve">
+    <value>Giới tính</value>
+  </data>
+  <data name="Title_CheckBox_Gender" xml:space="preserve">
+    <value>Hiển thị giới tính của bạn trên trang cá nhân.</value>
+  </data>
+  <data name="Title_Show_Gender_For_Me" xml:space="preserve">
+    <value>Giới tính hiển thị</value>
+  </data>
+  <data name="Interest_ProfileHint" xml:space="preserve">
+    <value>Hãy cho mọi người biết bạn quan tâm đến điều gì bằng cách thêm nó vào hồ sơ của bạn.</value>
+  </data>
+  <data name="Photos_ProfileHint" xml:space="preserve">
+    <value>Thêm ít nhất 2 ảnh để tiếp tục.</value>
+  </data>
+  <data name="Title_Interests" xml:space="preserve">
+    <value>Sở thích</value>
+  </data>
+  <data name="Title_AddPhotos" xml:space="preserve">
+    <value>Thêm ảnh</value>
+  </data>
+  <data name="SetupPhotoPage_ImageDialog_RemovePhoto" xml:space="preserve">
+    <value>Xoá ảnh</value>
+  </data>
+  <data name="SetupPhotoPage_ImageDialog_UpdatePhoto" xml:space="preserve">
+    <value>Cập nhật ảnh</value>
+  </data>
+  <data name="SetupPhotoPage_ImageDialog_TakePhoto" xml:space="preserve">
+    <value>Chụp ảnh</value>
+  </data>
+  <data name="SetupPhotoPage_ImageDialog_ChoosePhoto" xml:space="preserve">
+    <value>Chọn ảnh</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Hủy bỏ</value>
+  </data>
+  <data name="SetupPhotoPage_ImageDialog_Title" xml:space="preserve">
+    <value>Tải ảnh lên</value>
+  </data>
+  <data name="Common_OK" xml:space="preserve">
+    <value>Đồng ý</value>
+  </data>
+  <data name="Common_Text_Confirmation" xml:space="preserve">
+    <value>Xác nhận</value>
+  </data>
+  <data name="Common_Alert_GotoSetting" xml:space="preserve">
+    <value>Thông báo</value>
+  </data>
+  <data name="Common_Text_Error" xml:space="preserve">
+    <value>Lỗi</value>
+  </data>
+  <data name="ImageCroppingPage_Rotate" xml:space="preserve">
+    <value>Xoay</value>
+  </data>
+  <data name="ImageCroppingPage_Done" xml:space="preserve">
+    <value>Xong</value>
+  </data>
+  <data name="ImageCroppingPage_ErrorMessage_CropPhoto" xml:space="preserve">
+    <value>Vui lòng di chuyển ảnh vào bên trong vùng chọn.</value>
+  </data>
+  <data name="ImageCroppingPage_ErrorTitle_CropPhoto" xml:space="preserve">
+    <value>Lỗi cắt ảnh.</value>
+  </data>
+  <data name="SetupPhotoPage_SubmitPicture_Title" xml:space="preserve">
+    <value>Xác nhận</value>
+  </data>
+  <data name="SetupPhotoPage_SubmitPicture_Message" xml:space="preserve">
+    <value>Bạn có chắc chắn muốn tải ảnh lên?</value>
+  </data>
+  <data name="Chat_New_Match_Title" xml:space="preserve">
+    <value>Kết đôi mới</value>
+  </data>
+  <data name="Chat_Empty_Message_Description" xml:space="preserve">
+    <value>Khi bạn khớp với những người dùng khác, họ sẽ xuất hiện ở đây, nơi bạn có thể gửi tin nhắn cho họ</value>
+  </data>
+  <data name="Chat_Empty_Message_Title" xml:space="preserve">
+    <value>Bắt đầu quẹt</value>
+  </data>
+  <data name="Chat_Message_Title" xml:space="preserve">
+    <value>Tin nhắn</value>
+  </data>
+  <data name="Chat_GetLike_Title" xml:space="preserve">
+    <value>Lượt thích</value>
+  </data>
+  <data name="Chat_Placeholder_Type_Messaege" xml:space="preserve">
+    <value>Nhập tin nhắn                               </value>
+  </data>
+  <data name="Chat_Label_Send_Message" xml:space="preserve">
+    <value>Gửi</value>
+  </data>
+</root>

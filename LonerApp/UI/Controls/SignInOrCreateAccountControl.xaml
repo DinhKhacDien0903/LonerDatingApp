@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="LonerApp.UI.Controls.SignInOrCreateAccountControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    x:DataType="controls:SignInOrCreateAccountControl">
+    <ContentView.Content>
+        <Grid RowDefinitions="Auto, *" RowSpacing="0">
+            <controls:CustomNavigationBar
+                BackButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type vm:LoginPageModel}}, Path=BackButtonCommand, x:DataType={x:Type vm:LoginPageModel}}"
+                HasBackButton="{Binding Source={RelativeSource AncestorType={x:Type vm:LoginPageModel}}, Path=HasBackButton, x:DataType={x:Type vm:LoginPageModel}}"
+                IsVisible="{Binding Source={RelativeSource AncestorType={x:Type vm:LoginPageModel}}, Path=IsVisibleNavigation, x:DataType={x:Type vm:LoginPageModel}}" />
+            <Grid
+                Grid.Row="1"
+                Padding="0,0,0,10"
+                ColumnDefinitions="20,*,20"
+                HorizontalOptions="Center"
+                IsClippedToBounds="True"
+                RowDefinitions="*"
+                VerticalOptions="Start">
+                <StackLayout
+                    Grid.Column="1"
+                    Margin="0"
+                    Orientation="Vertical"
+                    Spacing="20">
+                    <Label
+                        FontFamily="GothamBold"
+                        FontSize="{StaticResource FontSizeXL}"
+                        LineBreakMode="WordWrap"
+                        Text="{Binding Source={RelativeSource AncestorType={x:Type controls:SignInOrCreateAccountControl}}, Path=Title}"
+                        TextColor="{StaticResource Black}" />
+                    <Label IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SignInOrCreateAccountControl}}, Path=IsVerifyPhoneNumber}" LineBreakMode="WordWrap">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span
+                                    FontFamily="Gotham"
+                                    FontSize="{StaticResource FontSizeL}"
+                                    Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:LoginPageModel}}, x:DataType={x:Type vm:LoginPageModel}, Path=PhoneNumberValue}"
+                                    TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}" />
+                                <Span
+                                    FontFamily="GothamBold"
+                                    FontSize="{StaticResource FontSizeM}"
+                                    Text="{i18n:Translate Resend_Verify_Phone_Number}"
+                                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                                    TextDecorations="Underline" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label
+                        Margin="0,-10,0,0"
+                        FontFamily="GothamLight"
+                        FontSize="{StaticResource FontSizeS}"
+                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SignInOrCreateAccountControl}}, Path=IsEmail}"
+                        LineBreakMode="WordWrap"
+                        Text="{i18n:Translate Description_Email_Author}"
+                        TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}" />
+                    <!--  Phone number author  -->
+                    <StackLayout
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SignInOrCreateAccountControl}}, Path=IsPhoneNumber}"
+                        Orientation="Horizontal"
+                        Spacing="14"
+                        VerticalOptions="Center">
+                        <toolkit:Expander IsExpanded="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:LoginPageModel}}, x:DataType={x:Type vm:LoginPageModel}, Path=IsOpened, Mode=TwoWay}">
+                            <toolkit:Expander.Header>
+                                <Grid RowDefinitions="Auto, Auto">
+                                    <StackLayout
+                                        x:Name="countrySelector"
+                                        Orientation="Horizontal"
+                                        VerticalOptions="Center"
+                                        WidthRequest="100">
+                                        <Label
+                                            FontFamily="GothamLight"
+                                            FontSize="{StaticResource FontSizeM}"
+                                            Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:LoginPageModel}}, x:DataType={x:Type vm:LoginPageModel}, Path=SelectCountry}"
+                                            TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                            VerticalOptions="Center" />
+                                        <Label
+                                            FontFamily="MaterialFontFamily"
+                                            FontSize="{StaticResource FontSizeXL}"
+                                            HorizontalOptions="EndAndExpand"
+                                            Text="&#xf35d;"
+                                            TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                            VerticalOptions="Center" />
+                                    </StackLayout>
+                                    <BoxView
+                                        Grid.Row="1"
+                                        Margin="0,-10,0,0"
+                                        BackgroundColor="{toolkit:AppThemeResource PrimaryColor}"
+                                        HeightRequest="2"
+                                        WidthRequest="{Binding Source={x:Reference countrySelector}, Path=WidthRequest, x:DataType={x:Type StackLayout}}" />
+                                </Grid>
+                            </toolkit:Expander.Header>
+                            <toolkit:Expander.Content>
+                                <CollectionView BackgroundColor="{toolkit:AppThemeResource ComboboxBackgroundColor}" ItemsSource="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:LoginPageModel}}, x:DataType={x:Type vm:LoginPageModel}, Path=Countries}">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate x:DataType="models:Country">
+                                            <Label
+                                                Padding="10,5,0,5"
+                                                FontFamily="GothamLight"
+                                                Text="{Binding Name, x:DataType={x:Type models:Country}}"
+                                                TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:LoginPageModel}}, Path=SelectCountryCommand}" CommandParameter="{Binding .}" />
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </toolkit:Expander.Content>
+                        </toolkit:Expander>
+                        <controls:CustomEntry
+                            x:Name="PhoneNumberAuthorEntry"
+                            Margin="0,-10,0,0"
+                            EntryValue="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:LoginPageModel}}, x:DataType={x:Type vm:LoginPageModel}, Path=PhoneNumberValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                            KeyboardType="Numeric"
+                            MaxValueLength="10"
+                            Placeholder="{i18n:Translate Placeholder_PhoneNumber}"
+                            TextChanged="Entry_TextChanged"
+                            VerticalOptions="Start" />
+                    </StackLayout>
+                    <!--  Verify  Phone number  -->
+                    <controls:CustomEntry
+                        x:Name="VerifyPhoneNumberEntry"
+                        Margin="0,-10,0,0"
+                        CharacterSpacing="18"
+                        CustomEntryHeightRequest="60"
+                        EntryValue="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:LoginPageModel}}, x:DataType={x:Type vm:LoginPageModel}, Path=VerifyPhoneNumberValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                        FontSize="{StaticResource FontSizeLPlus}"
+                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SignInOrCreateAccountControl}}, Path=IsVerifyPhoneNumber}"
+                        KeyboardType="Numeric"
+                        MaxValueLength="6"
+                        MinimumWidthRequest="320"
+                        Placeholder=" "
+                        TextChanged="Entry_TextChanged"
+                        VerticalOptions="Center" />
+                    <!--  Email author  -->
+                    <controls:CustomEntry
+                        x:Name="EmailAuthorEntry"
+                        Margin="0,-10,0,0"
+                        EntryValue="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:LoginPageModel}}, x:DataType={x:Type vm:LoginPageModel}, Path=EmailValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                        FontSize="{StaticResource FontSizeM}"
+                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SignInOrCreateAccountControl}}, Path=IsEmail}"
+                        KeyboardType="Email"
+                        MaxValueLength="50"
+                        Placeholder="{i18n:Translate Placeholder_Email_Author}"
+                        TextChanged="Entry_TextChanged"
+                        VerticalOptions="Center" />
+                    <Label
+                        Margin="0,-10,0,0"
+                        FontFamily="GothamLight"
+                        FontSize="{StaticResource FontSizeS}"
+                        HorizontalOptions="Start"
+                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SignInOrCreateAccountControl}}, Path=IsShowError}"
+                        Text="{Binding Source={RelativeSource AncestorType={x:Type controls:SignInOrCreateAccountControl}}, Path=ErrorValue}"
+                        TextColor="{toolkit:AppThemeResource ErrorLabelColor}" />
+                    <Label
+                        FontFamily="GothamLight"
+                        FontSize="{StaticResource FontSizeS}"
+                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SignInOrCreateAccountControl}}, Path=IsPhoneNumber}"
+                        LineBreakMode="WordWrap"
+                        Text="{i18n:Translate Description_PhoneNumber}"
+                        TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}" />
+                    <Button
+                        Margin="0,35,0,0"
+                        Command="{Binding Source={RelativeSource AncestorType={x:Type controls:SignInOrCreateAccountControl}}, Path=ContinueCommand}"
+                        CommandParameter="{Binding .}"
+                        HorizontalOptions="Center"
+                        IsEnabled="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:LoginPageModel}}, x:DataType={x:Type vm:LoginPageModel}, Path=IsContinue}"
+                        Text="{i18n:Translate Button_Continue_Text}" />
+                </StackLayout>
+            </Grid>
+        </Grid>
+    </ContentView.Content>
+</ContentView>

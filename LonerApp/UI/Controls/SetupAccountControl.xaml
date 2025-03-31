@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="LonerApp.UI.Controls.SetupAccountControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
+    xmlns:sho="http://sharpnado.com"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    x:DataType="controls:SetupAccountControl">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="BoolRevertConverter" />
+        </ResourceDictionary>
+        <Style x:Key="SlashLabelStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="{StaticResource FontSizeL}" />
+            <Setter Property="Text" Value="/" />
+            <Setter Property="TextColor" Value="{toolkit:AppThemeResource PrimaryColor}" />
+            <Setter Property="VerticalOptions" Value="Center" />
+            <Setter Property="VerticalTextAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="SelectableButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="BorderColor" Value="{toolkit:AppThemeResource TextDisableButtonColor}" />
+            <Setter Property="BorderWidth" Value="2" />
+            <Setter Property="IsEnabled" Value="True" />
+            <Setter Property="TextColor" Value="{toolkit:AppThemeResource TextDisableButtonColor}" />
+            <Setter Property="TextTransform" Value="Uppercase" />
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <Shadow Opacity="0" />
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger
+                    Binding="{Binding IsSelected, x:DataType={x:Type models:Gender}}"
+                    TargetType="Button"
+                    Value="True">
+                    <Setter Property="BorderColor" Value="{toolkit:AppThemeResource PrimaryColor}" />
+                    <Setter Property="TextColor" Value="{toolkit:AppThemeResource PrimaryColor}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <DataTemplate x:Key="GenderProfileTemplate" x:DataType="models:Gender">
+            <sho:DraggableViewCell IsDraggable="False">
+                <Button
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SetupPageModel}}, Path=GenderItemClickedCommand, x:DataType={x:Type vm:SetupPageModel}}"
+                    CommandParameter="{Binding .}"
+                    Style="{StaticResource SelectableButtonStyle}"
+                    Text="{Binding Value}" />
+            </sho:DraggableViewCell>
+        </DataTemplate>
+        <DataTemplate x:Key="InterestItemTemplate" x:DataType="models:Interest">
+            <sho:DraggableViewCell IsDraggable="False">
+                <Button
+                    Margin="10,0"
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SetupPageModel}}, Path=InterestItemClickedCommand, x:DataType={x:Type vm:SetupPageModel}}"
+                    CommandParameter="{Binding .}"
+                    Style="{StaticResource SelectableButtonStyle}"
+                    Text="{Binding Value}" />
+            </sho:DraggableViewCell>
+        </DataTemplate>
+        <DataTemplate x:Key="AddPhotoItemTemplate" x:DataType="models:AddPhotoModel">
+            <sho:DraggableViewCell IsDraggable="False">
+                <ContentView>
+                    <AbsoluteLayout>
+                        <Border
+                            x:Name="shoItemAddPhoto"
+                            HeightRequest="128"
+                            Stroke="{toolkit:AppThemeResource PrimaryColor}"
+                            StrokeDashArray="2,2"
+                            StrokeDashOffset="6"
+                            StrokeThickness="2"
+                            VerticalOptions="Fill"
+                            WidthRequest="90">
+                            <ffimageloading:CachedImage
+                                x:Name="imageTake"
+                                Aspect="AspectFit"
+                                DownsampleToViewSize="True"
+                                HorizontalOptions="Center"
+                                Source="{Binding ImagePath}"
+                                WidthRequest="90" />
+                        </Border>
+                        <ImageButton
+                            AbsoluteLayout.LayoutBounds="0.8,1,35,35"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            BackgroundColor="Transparent"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SetupPageModel}}, Path=AddPhotoItemClickedCommand, x:DataType={x:Type vm:SetupPageModel}}"
+                            CommandParameter="{Binding .}"
+                            HorizontalOptions="Center"
+                            TranslationX="2"
+                            TranslationY="2"
+                            VerticalOptions="Center">
+                            <ImageButton.Source>
+                                <FontImageSource
+                                    FontFamily="MaterialFontFamily"
+                                    Glyph="{Binding IconPath}"
+                                    Size="50"
+                                    Color="{toolkit:AppThemeResource PrimaryColor}" />
+                            </ImageButton.Source>
+                        </ImageButton>
+                    </AbsoluteLayout>
+                </ContentView>
+            </sho:DraggableViewCell>
+        </DataTemplate>
+    </ContentView.Resources>
+    <ContentView.Content>
+        <Grid
+            Margin="0"
+            Padding="0"
+            ColumnSpacing="0"
+            RowDefinitions="Auto, *"
+            RowSpacing="0">
+            <controls:CustomNavigationBar
+                BackButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type vm:SetupPageModel}}, Path=BackCommand, x:DataType={x:Type vm:SetupPageModel}}"
+                HasBackButton="{Binding Source={RelativeSource AncestorType={x:Type vm:SetupPageModel}}, Path=HasBackButton, x:DataType={x:Type vm:SetupPageModel}}"
+                IsVisible="{Binding Source={RelativeSource AncestorType={x:Type vm:SetupPageModel}}, Path=IsVisibleNavigation, x:DataType={x:Type vm:SetupPageModel}}" />
+            <Label
+                Margin="0,0,20,0"
+                BackgroundColor="Transparent"
+                FontFamily="GothamBold"
+                FontSize="{StaticResource FontSizeM}"
+                HorizontalOptions="End"
+                IsVisible="False"
+                Text="{i18n:Translate Button_Text_Skip}"
+                TextColor="#D2D2D2"
+                VerticalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SetupPageModel}}, Path=SkipCommand, x:DataType={x:Type vm:SetupPageModel}}" />
+                </Label.GestureRecognizers>
+                <Label.Triggers>
+                    <DataTrigger
+                        Binding="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsInterest}"
+                        TargetType="Label"
+                        Value="True">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                    <DataTrigger
+                        Binding="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsUniversity}"
+                        TargetType="Label"
+                        Value="True">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </Label.Triggers>
+            </Label>
+            <Grid
+                Grid.Row="1"
+                Padding="0,0,0,10"
+                ColumnDefinitions="20,*,20"
+                RowDefinitions="*"
+                VerticalOptions="Start">
+                <StackLayout
+                    Grid.Column="1"
+                    Margin="0"
+                    HorizontalOptions="Fill"
+                    Orientation="Vertical"
+                    Spacing="20">
+                    <Label
+                        FontFamily="GothamBold"
+                        FontSize="{StaticResource FontSizeXL}"
+                        LineBreakMode="WordWrap"
+                        Text="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=Title}"
+                        TextColor="{StaticResource Black}" />
+                    <Label
+                        FontFamily="GothamLight"
+                        FontSize="{StaticResource FontSizeS}"
+                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsInterest}"
+                        LineBreakMode="WordWrap"
+                        Text="{i18n:Translate Interest_ProfileHint}"
+                        TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}" />
+                    <Label
+                        FontFamily="GothamLight"
+                        FontSize="{StaticResource FontSizeS}"
+                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsAddPhoto}"
+                        LineBreakMode="WordWrap"
+                        Text="{i18n:Translate Photos_ProfileHint}"
+                        TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}" />
+                    <StackLayout
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsAddPhoto, Converter={StaticResource BoolRevertConverter}}"
+                        Orientation="Vertical"
+                        Spacing="14"
+                        VerticalOptions="Center">
+                        <controls:CustomEntry
+                            x:Name="NameEntry"
+                            EntryValue="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SetupPageModel}}, x:DataType={x:Type vm:SetupPageModel}, Path=NameValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                            FontSize="{StaticResource FontSizeM}"
+                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsName}"
+                            KeyboardType="Text"
+                            MaxValueLength="30"
+                            MinimumWidthRequest="320"
+                            Placeholder="{i18n:Translate Placeholder_YourName}"
+                            TextChanged="Entry_TextChanged"
+                            VerticalOptions="Center" />
+                        <StackLayout
+                            x:Name="setUpDateOfBirth"
+                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsDateOfBirth}"
+                            Orientation="Horizontal"
+                            Spacing="2"
+                            VerticalOptions="Center">
+                            <controls:CustomEntry
+                                x:Name="datehEntry"
+                                CustomWidthRequest="50"
+                                EntryValue="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SetupPageModel}}, x:DataType={x:Type vm:SetupPageModel}, Path=DateValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                                FontSize="{StaticResource FontSizeM}"
+                                KeyboardType="Numeric"
+                                MaxValueLength="2"
+                                Placeholder="DD"
+                                TextChanged="Entry_TextChanged"
+                                VerticalOptions="Center" />
+                            <Label Style="{StaticResource SlashLabelStyle}" />
+                            <controls:CustomEntry
+                                x:Name="monthEntry"
+                                CustomWidthRequest="50"
+                                EntryValue="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SetupPageModel}}, x:DataType={x:Type vm:SetupPageModel}, Path=MonthValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                                FontSize="{StaticResource FontSizeM}"
+                                KeyboardType="Numeric"
+                                MaxValueLength="2"
+                                Placeholder="MM"
+                                TextChanged="Entry_TextChanged"
+                                VerticalOptions="Center" />
+                            <Label Style="{StaticResource SlashLabelStyle}" />
+                            <controls:CustomEntry
+                                x:Name="yearEntry"
+                                CustomWidthRequest="50"
+                                EntryValue="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SetupPageModel}}, x:DataType={x:Type vm:SetupPageModel}, Path=YearValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                                FontSize="{StaticResource FontSizeM}"
+                                KeyboardType="Numeric"
+                                MaxValueLength="4"
+                                Placeholder="YYYY"
+                                TextChanged="Entry_TextChanged"
+                                VerticalOptions="Center" />
+                        </StackLayout>
+                        <sho:CollectionView
+                            x:Name="genderProfileCollection"
+                            AutoDisconnectHandler="False"
+                            BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+                            CollectionLayout="Vertical"
+                            HorizontalOptions="Center"
+                            IsEnabled="True"
+                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsGender}"
+                            ItemHeight="44"
+                            ItemSpacing="14"
+                            ItemTemplate="{StaticResource GenderProfileTemplate}"
+                            ItemWidth="120"
+                            ItemsSource="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SetupPageModel}}, x:DataType={x:Type vm:SetupPageModel}, Path=Gender}" />
+                        <sho:CollectionView
+                            x:Name="genderShowMeCollection"
+                            AutoDisconnectHandler="False"
+                            BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+                            CollectionLayout="Vertical"
+                            HorizontalOptions="Center"
+                            IsEnabled="True"
+                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsShowGenderForMe}"
+                            ItemHeight="44"
+                            ItemSpacing="14"
+                            ItemTemplate="{StaticResource GenderProfileTemplate}"
+                            ItemWidth="120"
+                            ItemsSource="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SetupPageModel}}, x:DataType={x:Type vm:SetupPageModel}, Path=Gender}" />
+                        <controls:CustomEntry
+                            x:Name="UniversityEntry"
+                            EntryValue="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SetupPageModel}}, x:DataType={x:Type vm:SetupPageModel}, Path=UniversityValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                            FontSize="{StaticResource FontSizeM}"
+                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsUniversity}"
+                            KeyboardType="Text"
+                            MaxValueLength="50"
+                            MinimumWidthRequest="320"
+                            Placeholder="HAUI"
+                            TextChanged="Entry_TextChanged"
+                            VerticalOptions="Center" />
+                        <sho:CollectionView
+                            x:Name="InterestsCollection"
+                            AutoDisconnectHandler="False"
+                            BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+                            CollectionLayout="Grid"
+                            EnableDragAndDrop="True"
+                            HorizontalOptions="Center"
+                            IsEnabled="True"
+                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsInterest}"
+                            ItemHeight="35"
+                            ItemSpacing="10"
+                            ItemTemplate="{StaticResource InterestItemTemplate}"
+                            ItemWidth="120"
+                            ItemsSource="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SetupPageModel}}, x:DataType={x:Type vm:SetupPageModel}, Path=Interests}" />
+                    </StackLayout>
+                    <sho:CollectionView
+                        x:Name="AddPhotoCollection"
+                        AutoDisconnectHandler="False"
+                        BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+                        CollectionLayout="Grid"
+                        EnableDragAndDrop="True"
+                        HorizontalOptions="Center"
+                        IsEnabled="True"
+                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsAddPhoto}"
+                        ItemHeight="128"
+                        ItemSpacing="20"
+                        ItemTemplate="{StaticResource AddPhotoItemTemplate}"
+                        ItemWidth="120"
+                        ItemsSource="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SetupPageModel}}, x:DataType={x:Type vm:SetupPageModel}, Path=AddPhotos}" />
+                    <Label
+                        FontFamily="GothamLight"
+                        FontSize="{StaticResource FontSizeS}"
+                        LineBreakMode="WordWrap"
+                        Text="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=Description}"
+                        TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}">
+                        <Label.Triggers>
+                            <DataTrigger
+                                Binding="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsInterest}"
+                                TargetType="Label"
+                                Value="True">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                    <Label
+                        Margin="0,-10,0,0"
+                        FontFamily="GothamLight"
+                        FontSize="{StaticResource FontSizeS}"
+                        HorizontalOptions="Start"
+                        IsVisible="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SetupPageModel}}, x:DataType={x:Type vm:SetupPageModel}, Path=IsShowError}"
+                        Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SetupPageModel}}, x:DataType={x:Type vm:SetupPageModel}, Path=ErrorTextValue}"
+                        TextColor="{toolkit:AppThemeResource ErrorLabelColor}" />
+                    <StackLayout
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=IsGender}"
+                        Orientation="Horizontal"
+                        Spacing="0">
+                        <CheckBox
+                            HorizontalOptions="Start"
+                            IsChecked="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SetupPageModel}}, x:DataType={x:Type vm:SetupPageModel}, Path=IsShowGenderInProfile}"
+                            VerticalOptions="Center"
+                            Color="{toolkit:AppThemeResource PrimaryColor}" />
+                        <Label
+                            FontFamily="GothamLight"
+                            FontSize="{StaticResource FontSizeS}"
+                            Text="{i18n:Translate Title_CheckBox_Gender}"
+                            TextColor="{toolkit:AppThemeResource ErrorLabelColor}"
+                            VerticalOptions="Center" />
+                    </StackLayout>
+                    <Button
+                        Margin="0,35,0,0"
+                        Command="{Binding Source={RelativeSource AncestorType={x:Type controls:SetupAccountControl}}, Path=ContinueCommand}"
+                        CommandParameter="{Binding .}"
+                        HorizontalOptions="Center"
+                        IsEnabled="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SetupPageModel}}, x:DataType={x:Type vm:SetupPageModel}, Path=IsContinue}"
+                        Text="{i18n:Translate Button_Continue_Text}" />
+                </StackLayout>
+            </Grid>
+        </Grid>
+    </ContentView.Content>
+</ContentView>

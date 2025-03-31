@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="LonerApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:LonerApp.Features.Pages"
+    xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
+    Title="LonerApp"
+    Shell.FlyoutBehavior="Disabled">
+    <TabBar>
+        <ShellContent
+            Title=""
+            ContentTemplate="{DataTemplate pages:MainSwipePage}"
+            Icon="{StaticResource IconHomePage}"
+            Route="mainSwipePage" />
+        <ShellContent
+            Title=""
+            ContentTemplate="{DataTemplate pages:ChatPage}"
+            Icon="{StaticResource IconChatPage}"
+            Route="chatPage" />
+        <ShellContent
+            Title=""
+            ContentTemplate="{DataTemplate pages:DetailProfilePage}"
+            Icon="{StaticResource IconAccountControlPage}"
+            Route="accountPage" />
+    </TabBar>
+    <!--<Shell.FlyoutFooter>
+        <Grid Padding="15">
+            <sf:SfSegmentedControl
+                x:Name="ThemeSegmentedControl"
+                HorizontalOptions="Center"
+                SegmentHeight="40"
+                SegmentWidth="40"
+                SelectionChanged="SfSegmentedControl_SelectionChanged"
+                VerticalOptions="Center">
+                <sf:SfSegmentedControl.ItemsSource>
+                    <x:Array Type="{x:Type sf:SfSegmentItem}">
+                        <sf:SfSegmentItem ImageSource="{StaticResource IconLight}" />
+                        <sf:SfSegmentItem ImageSource="{StaticResource IconDark}" />
+                    </x:Array>
+                </sf:SfSegmentedControl.ItemsSource>
+            </sf:SfSegmentedControl>
+        </Grid>
+    </Shell.FlyoutFooter>-->
+</Shell>

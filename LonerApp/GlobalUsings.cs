@@ -1,0 +1,15 @@
+global using Fonts;
+global using LonerApp.Services;
+global using LonerApp.Utilities;
+global using LonerApp.Utilities.MVVM;
+global using LonerApp.Helpers;
+global using LonerApp.PageModels;
+global using LonerApp.Features.Pages;
+global using LonerApp.Navigation;
+global using CommunityToolkit.Mvvm.ComponentModel;
+global using LonerApp.Models;
+global using LonerApp.Helpers.Extensions;
+global using LonerApp.Validators;
+global using System.Windows.Input;
+global using LonerApp.UI.Controls;
+global using LonerApp.Models;

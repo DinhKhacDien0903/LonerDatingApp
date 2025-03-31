@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="LonerApp.UI.Controls.CustomEntry"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:local="clr-namespace:LonerApp.UI.Controls"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:DataType="controls:CustomEntry">
+    <ContentView.Content>
+        <StackLayout Orientation="Vertical">
+            <controls:BoderlessEntry
+                WidthRequest="{Binding CustomWidthRequest}"
+                CharacterSpacing="{Binding Source={RelativeSource AncestorType={x:Type controls:CustomEntry}}, Path=CharacterSpacing}"
+                FontFamily="Gotham"
+                FontSize="{Binding Source={RelativeSource AncestorType={x:Type controls:CustomEntry}}, Path=FontSize}"
+                HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type controls:CustomEntry}}, Path=CustomEntryHeightRequest}"
+                HorizontalOptions="Start"
+                Keyboard="{Binding Source={RelativeSource AncestorType={x:Type controls:CustomEntry}}, Path=KeyboardType}"
+                MaxLength="{Binding Source={RelativeSource AncestorType={x:Type controls:CustomEntry}}, Path=MaxValueLength}"
+                Placeholder="{Binding Source={RelativeSource AncestorType={x:Type controls:CustomEntry}}, Path=Placeholder}"
+                ReturnType="Next"
+                MinimumWidthRequest="{Binding CustomMiniumWidthRequest}"
+                Text="{Binding Source={RelativeSource AncestorType={x:Type controls:CustomEntry}}, Path=EntryValue}"
+                TextChanged="EntryName_TextChanged"
+                TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                VerticalOptions="Center"
+                VerticalTextAlignment="Center" />
+            <BoxView
+                Margin="0,-10,0,0"
+                BackgroundColor="{toolkit:AppThemeResource PrimaryColor}"
+                HeightRequest="2"
+                WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type controls:BoderlessEntry}}, Path=Width}" />
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage
+    x:Class="LonerApp.Features.Pages.SignInPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    x:DataType="vm:MainPageModel"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="True"
+    Shell.TabBarIsVisible="False"
+    mc:Ignorable="d">
+    <Page.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="{toolkit:AppThemeResource PrimaryColor}" />
+    </Page.Behaviors>
+    <base:BasePage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="Label_Policy" TargetType="Span">
+                <Setter Property="TextColor" Value="{toolkit:AppThemeResource LabelMainScreenColor}" />
+                <Setter Property="FontFamily" Value="GothamLight" />
+            </Style>
+        </ResourceDictionary>
+    </base:BasePage.Resources>
+    <Grid Style="{StaticResource GridGradient}">
+        <Border Style="{StaticResource BackgroundGradient}">
+            <Grid RowDefinitions="42*, Auto,13*,Auto, 10*">
+                <StackLayout
+                    Grid.Row="1"
+                    Orientation="Horizontal"
+                    Spacing="6"
+                    Style="{StaticResource CenterPositionStyle}">
+                    <Image
+                        HeightRequest="38"
+                        Source="homeicon.png"
+                        VerticalOptions="Center"
+                        WidthRequest="33" />
+                    <Label
+                        FontFamily="GothamBold"
+                        FontSize="{StaticResource FontSizeXXL}"
+                        Style="{StaticResource LabelMainScreenStyle}"
+                        Text="{i18n:Translate AppName}" />
+                </StackLayout>
+                <Grid Grid.Row="3" RowDefinitions="Auto,20,Auto,27, Auto">
+                    <Label
+                        x:Name="lblWellcome"
+                        Grid.Row="0"
+                        FontFamily="GothamLight"
+                        SizeChanged="Wellcome_SizeChanged"
+                        Style="{StaticResource LabelMainScreenStyle}"
+                        WidthRequest="350">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Style="{StaticResource Label_Policy}" Text="{i18n:Translate Terms_Tutorial}" />
+                                <Span Text=" " />
+                                <Span Style="{StaticResource URL_LabelStyle}" Text="{i18n:Translate Terms}" />
+                                <Span Text=" " />
+                                <Span Style="{StaticResource Label_Policy}" Text="{i18n:Translate PrivacyPolicy_CookiesPolicy_Tutorial}" />
+                                <Span Text=" " />
+                                <Span Style="{StaticResource URL_LabelStyle}" Text="{i18n:Translate PrivacyPolicy}" />
+                                <Span Text=" " />
+                                <Span Style="{StaticResource Label_Policy}" Text="{i18n:Translate And_Text}" />
+                                <Span Text=" " />
+                                <Span Style="{StaticResource URL_LabelStyle}" Text="{i18n:Translate CookiesPolicy}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <StackLayout
+                        Grid.Row="2"
+                        Orientation="Vertical"
+                        Spacing="10"
+                        Style="{StaticResource CenterPositionStyle}">
+                        <controls:CustomButton
+                            BackgroundColor="Transparent"
+                            CustomCommand="{Binding GoogleSignInCommand}"
+                            Icon="&#xf2b8;"
+                            Text="{i18n:Translate Google_Sign_Button}" />
+                        <controls:CustomButton
+                            BackgroundColor="Transparent"
+                            CustomCommand="{Binding PhoneSignInCommand}"
+                            Icon="&#xF3F2;"
+                            Text="{i18n:Translate Phone_Number_Sign_Button}" />
+                    </StackLayout>
+                    <Label
+                        Grid.Row="4"
+                        FontFamily="GothamBold"
+                        Style="{StaticResource LabelMainScreenStyle}"
+                        Text="{i18n:Translate Trouble_SignIn_Label}"
+                        TextDecorations="Underline" />
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</base:BasePage>

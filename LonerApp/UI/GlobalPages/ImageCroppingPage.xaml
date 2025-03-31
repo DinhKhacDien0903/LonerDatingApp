@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:PopupPage
+    x:Class="LonerApp.UI.GlobalPages.ImageCroppingPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:pages="clr-namespace:Mopups.Pages;assembly=Mopups"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Name="root"
+    BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+    CloseWhenBackgroundIsClicked="False"
+    NavigationPage.HasNavigationBar="True"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
+    <pages:PopupPage.Resources>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="TextColor" Value="{toolkit:AppThemeResource TextButtonColor}" />
+            <Setter Property="BackgroundColor" Value="{toolkit:AppThemeResource PrimaryColor}" />
+            <Setter Property="Background" Value="{toolkit:AppThemeResource PrimaryColor}" />
+        </Style>
+    </pages:PopupPage.Resources>
+    <pages:PopupPage.Content>
+        <Grid
+            Margin="0"
+            Padding="0"
+            RowDefinitions="*, 200"
+            VerticalOptions="Fill">
+            <Grid
+                x:Name="canvasViewHost"
+                Grid.Row="0"
+                Padding="5"
+                BackgroundColor="Gray" />
+            <StackLayout
+                Grid.Row="1"
+                HorizontalOptions="Fill"
+                Spacing="4"
+                VerticalOptions="Center">
+                <controls:CustomCommandView x:Name="buttonImageRotate">
+                    <Button
+                        Clicked="OnRotateButtonClicked"
+                        Style="{StaticResource ButtonStyle}"
+                        Text="{i18n:Translate ImageCroppingPage_Rotate}" />
+                </controls:CustomCommandView>
+                <controls:CustomCommandView x:Name="buttonImageDone">
+                    <Button
+                        Clicked="OnDoneButtonClickedAsync"
+                        Style="{StaticResource ButtonStyle}"
+                        Text="{i18n:Translate ImageCroppingPage_Done}" />
+                </controls:CustomCommandView>
+                <controls:CustomCommandView>
+                    <Button
+                        BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+                        Clicked="OnCancelButtonClicked"
+                        Text="{i18n:Translate Common_Cancel}"
+                        TextColor="Black" />
+                </controls:CustomCommandView>
+            </StackLayout>
+            <ActivityIndicator
+                x:Name="indicator"
+                Grid.RowSpan="2"
+                HeightRequest="50"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                WidthRequest="50"
+                Color="{toolkit:AppThemeResource PrimaryColor}" />
+        </Grid>
+    </pages:PopupPage.Content>
+</pages:PopupPage>

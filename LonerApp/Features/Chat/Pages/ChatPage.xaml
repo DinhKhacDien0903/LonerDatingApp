@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage
+    x:Class="LonerApp.Features.Pages.ChatPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+    xmlns:cardViewControls="clr-namespace:PanCardView.Controls;assembly=PanCardView"
+    xmlns:cards="clr-namespace:PanCardView;assembly=PanCardView"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:sho="http://sharpnado.com"
+    xmlns:swipe="clr-namespace:Plugin.Maui.SwipeCardView;assembly=Plugin.Maui.SwipeCardView"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    Title="ChatPage"
+    x:DataType="vm:ChatPageModel"
+    BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+    NavigationPage.HasNavigationBar="True"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="True">
+    <Page.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="White" StatusBarStyle="DarkContent" />
+    </Page.Behaviors>
+    <base:BasePage.Resources>
+        <ResourceDictionary />
+        <DataTemplate x:Key="GetSwipeTemplate">
+            <StackLayout Orientation="Vertical" Spacing="2">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ChatPageModel}}, x:DataType={x:Type vm:ChatPageModel}, Path=GetSwipePressedCommand}" />
+                </StackLayout.GestureRecognizers>
+                <ffimageloading:CachedImage
+                    Aspect="AspectFit"
+                    DownsampleToViewSize="True"
+                    HeightRequest="120"
+                    IsOpaque="True"
+                    LoadingPriority="Lowest"
+                    Source="icon_chat_get_like.png"
+                    WidthRequest="100">
+                    <ffimageloading:CachedImage.Clip>
+                        <RoundRectangleGeometry CornerRadius="10" Rect="0,0,100,120" />
+                    </ffimageloading:CachedImage.Clip>
+                </ffimageloading:CachedImage>
+                <Label
+                    FontFamily="GothamBold"
+                    FontSize="{StaticResource FontSizeM}"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Text="{i18n:Translate Chat_GetLike_Title}"
+                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+            </StackLayout>
+        </DataTemplate>
+        <DataTemplate x:Key="ChatMessageItemTemplate" x:DataType="models:UserChatModel">
+            <sho:DraggableViewCell IsDraggable="False">
+                <ContentView>
+                    <Grid
+                        Margin="0"
+                        Padding="0"
+                        ColumnDefinitions="Auto, *"
+                        ColumnSpacing="20"
+                        RowDefinitions="*,Auto">
+                        <ffimageloading:CachedImage
+                            Aspect="AspectFill"
+                            DownsampleToViewSize="True"
+                            HeightRequest="70"
+                            IsOpaque="True"
+                            LoadingDelay="0"
+                            LoadingPriority="Lowest"
+                            Source="{Binding ProfilePicture}"
+                            WidthRequest="70">
+                            <ffimageloading:CachedImage.Clip>
+                                <RoundRectangleGeometry CornerRadius="50" Rect="0,0,70,70" />
+                            </ffimageloading:CachedImage.Clip>
+                        </ffimageloading:CachedImage>
+                        <StackLayout
+                            Grid.Column="1"
+                            HorizontalOptions="Start"
+                            Orientation="Vertical"
+                            Spacing="0"
+                            VerticalOptions="Center">
+                            <Label
+                                FontFamily="GothamBold"
+                                FontSize="{StaticResource FontSizeM}"
+                                HorizontalTextAlignment="Start"
+                                Text="{Binding UserName}"
+                                TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                                VerticalTextAlignment="Center" />
+                            <Label
+                                FontFamily="GothamLight"
+                                FontSize="{StaticResource FontSizeM}"
+                                HorizontalTextAlignment="Start"
+                                Text="{Binding LastMessage}"
+                                TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                                VerticalTextAlignment="Center" />
+                        </StackLayout>
+                        <BoxView
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            HeightRequest="0.5"
+                            HorizontalOptions="Fill"
+                            Opacity="0.3" />
+                    </Grid>
+                </ContentView>
+            </sho:DraggableViewCell>
+        </DataTemplate>
+        <DataTemplate x:Key="UserChatItemTemplate" x:DataType="models:UserChatModel">
+            <StackLayout Orientation="Vertical" Spacing="2">
+                <ffimageloading:CachedImage
+                    Aspect="AspectFill"
+                    DownsampleToViewSize="True"
+                    HeightRequest="120"
+                    IsOpaque="True"
+                    LoadingDelay="0"
+                    LoadingPriority="Lowest"
+                    Source="{Binding ProfilePicture}"
+                    WidthRequest="100">
+                    <ffimageloading:CachedImage.Clip>
+                        <RoundRectangleGeometry CornerRadius="10" Rect="0,0,100,120" />
+                    </ffimageloading:CachedImage.Clip>
+                </ffimageloading:CachedImage>
+                <Label
+                    FontFamily="GothamBold"
+                    FontSize="{StaticResource FontSizeM}"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Text="{Binding UserName}"
+                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+            </StackLayout>
+        </DataTemplate>
+        <vm:UserChatDataTemplateSelector
+            x:Key="userChatTempateSelector"
+            GetSwipeItemTemplate="{StaticResource GetSwipeTemplate}"
+            UserChatItemTemplate="{StaticResource UserChatItemTemplate}" />
+    </base:BasePage.Resources>
+    <base:BasePage.Content>
+        <Grid
+            Margin="0"
+            Padding="0"
+            RowDefinitions="Auto,*">
+            <controls:CustomNavigationBar
+                BackButtonCommand="{Binding BackCommand}"
+                HasBackButton="{Binding HasBackButton}"
+                IsVisible="{Binding IsVisibleNavigation}"
+                TitlePage="Loner" />
+            <!-- <Grid
+                Grid.Row="1"
+                Padding="15,10"
+                HorizontalOptions="Center"
+                RowDefinitions="*,20,Auto"
+                VerticalOptions="Center">
+                <ffimageloading:CachedImage
+                    Margin="50,0,0,0"
+                    HorizontalOptions="CenterAndExpand"
+                    WidthRequest="300"
+                    HeightRequest="300"
+                    Aspect="AspectFit"
+                    CacheType="Disk"
+                    DownsampleToViewSize="True"
+                    LoadingDelay="0"
+                    LoadingPriority="Low"
+                    Source="blank_empty_messge.png" />
+                <StackLayout
+                    Grid.Row="2"
+                    Orientation="Vertical"
+                    Spacing="10">
+                    <Label
+                        HorizontalTextAlignment="Center"
+                        FontFamily="GothamBold"
+                        FontSize="{StaticResource FontSizeL}"
+                        Text="{i18n:Translate Chat_Empty_Message_Title}"
+                        TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"  />
+                    <Label
+                        Grid.Column="1"
+                        FontFamily="GothamBold"
+                        FontSize="{StaticResource FontSizeM}"
+                        HorizontalTextAlignment="Center"
+                        LineBreakMode="WordWrap"
+                        Text="{i18n:Translate Chat_Empty_Message_Description}"
+                        TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"  />
+                </StackLayout>
+            </Grid>-->
+            <Grid
+                Grid.Row="1"
+                Padding="20,0"
+                RowDefinitions="Auto,10,Auto,20,Auto,20,*">
+                <Label
+                    FontFamily="GothamBold"
+                    FontSize="{StaticResource FontSizeM}"
+                    HorizontalOptions="Start"
+                    HorizontalTextAlignment="Center"
+                    Text="{i18n:Translate Chat_New_Match_Title}"
+                    TextColor="{toolkit:AppThemeResource PrimaryColor}" />
+                <CollectionView
+                    x:Name="userChatCollection"
+                    Grid.Row="2"
+                    HorizontalScrollBarVisibility="Never"
+                    ItemTemplate="{StaticResource userChatTempateSelector}"
+                    ItemsSource="{Binding UserChats}">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout ItemSpacing="20" Orientation="Horizontal" />
+                    </CollectionView.ItemsLayout>
+                </CollectionView>
+                <Label
+                    Grid.Row="4"
+                    FontFamily="GothamBold"
+                    FontSize="{StaticResource FontSizeM}"
+                    HorizontalOptions="Start"
+                    HorizontalTextAlignment="Center"
+                    Text="{i18n:Translate Chat_Message_Title}"
+                    TextColor="{toolkit:AppThemeResource PrimaryColor}" />
+                <RefreshView
+                    x:Name="refreshView"
+                    Grid.Row="6"
+                    Command="{Binding ReloadListCommand}"
+                    IsRefreshing="{Binding IsRefreshing}"
+                    ZIndex="0">
+                    <sho:CollectionView
+                        x:Name="chatMessageItemCollection"
+                        AutoDisconnectHandler="False"
+                        CollectionLayout="Vertical"
+                        ItemHeight="80"
+                        ItemSpacing="10"
+                        ItemTemplate="{StaticResource ChatMessageItemTemplate}"
+                        ItemsSource="{Binding UserChats, Mode=OneWay}"
+                        MinimumHeightRequest="10"
+                        TapCommand="{Binding UserChatItemClickedCommand}" />
+                </RefreshView>
+            </Grid>
+        </Grid>
+    </base:BasePage.Content>
+</base:BasePage>

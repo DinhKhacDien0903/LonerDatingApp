@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage
+    x:Class="LonerApp.Features.Pages.MainSwipePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:sho="http://sharpnado.com"
+    xmlns:swipe="clr-namespace:Plugin.Maui.SwipeCardView;assembly=Plugin.Maui.SwipeCardView"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    Title="MainSwipePage"
+    x:DataType="vm:SwipePageModel"
+    BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+    NavigationPage.HasNavigationBar="True"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="True">
+    <Page.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="White" StatusBarStyle="DarkContent" />
+    </Page.Behaviors>
+    <base:BasePage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="InterestItemStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#605A56" />
+                <Setter Property="TextTransform" Value="Default" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="BorderWidth" Value="0" />
+                <Setter Property="TextColor" Value="{toolkit:AppThemeResource TextButtonColor}" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="FontFamily" Value="GothamLight" />
+                <Setter Property="Shadow">
+                    <Setter.Value>
+                        <Shadow Opacity="0" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+        <DataTemplate x:Key="InterestItemTemplate" x:DataType="models:Interest">
+            <sho:DraggableViewCell IsDraggable="False">
+                <Button Margin="10,0" Style="{StaticResource InterestItemStyle}" />
+            </sho:DraggableViewCell>
+        </DataTemplate>
+    </base:BasePage.Resources>
+    <base:BasePage.Content>
+        <Grid
+            Margin="0"
+            Padding="0"
+            RowDefinitions="Auto,*">
+            <controls:CustomNavigationBar
+                BackButtonCommand="{Binding BackCommand}"
+                HasBackButton="{Binding HasBackButton}"
+                IsVisible="{Binding IsVisibleNavigation}"
+                OptionButtonCommand="{Binding FilterPressedCommand}"
+                OptionPage="&#xf233;"
+                TitlePage="Loner" />
+            <Grid Grid.Row="1" Loaded="SwipeCardViewContainer_Loaded">
+                <Border
+                    Padding="0"
+                    Background="Transparent"
+                    Stroke="Transparent" />
+                <swipe:SwipeCardView
+                    x:Name="SwipeCardView"
+                    Padding="8,0,0,0"
+                    ItemsSource="{Binding Users}"
+                    LoopCards="True"
+                    SupportedSwipeDirections="Left, Right, Up, Down"
+                    Swiped="SwipeCardView_Swiped">
+                    <swipe:SwipeCardView.ItemTemplate>
+                        <DataTemplate x:DataType="models:UserModel">
+                            <Grid x:Name="profileUser">
+                                <ffimageloading:CachedImage
+                                    Aspect="AspectFill"
+                                    Loaded="CachedImage_Loaded"
+                                    Source="{Binding Image}">
+                                </ffimageloading:CachedImage>
+                                <Grid
+                                    Margin="0,0,0,20"
+                                    Padding="15"
+                                    HorizontalOptions="Fill"
+                                    RowDefinitions="Auto,15,Auto,15,Auto"
+                                    VerticalOptions="End">
+                                    <StackLayout
+                                        Grid.Row="0"
+                                        HorizontalOptions="Start"
+                                        Orientation="Horizontal"
+                                        Spacing="10"
+                                        VerticalOptions="Center">
+                                        <Label
+                                            FontFamily="GothamBold"
+                                            FontSize="{StaticResource FontSizeXL}"
+                                            HorizontalOptions="Start"
+                                            Text="{Binding Name}"
+                                            TextColor="White"
+                                            VerticalOptions="Center" />
+                                        <Label
+                                            FontFamily="Gotham"
+                                            FontSize="{StaticResource FontSizeXL}"
+                                            HorizontalOptions="Start"
+                                            Text="{Binding Age}"
+                                            TextColor="White"
+                                            VerticalOptions="Center" />
+                                    </StackLayout>
+                                    <sho:CollectionView
+                                        x:Name="InterestsCollection"
+                                        Grid.Row="2"
+                                        AutoDisconnectHandler="False"
+                                        CollectionLayout="Horizontal"
+                                        EnableDragAndDrop="True"
+                                        HorizontalOptions="Start"
+                                        IsEnabled="True"
+                                        ItemHeight="30"
+                                        ItemSpacing="10"
+                                        ItemWidth="100"
+                                        ItemsSource="{Binding Interests}">
+                                        <sho:CollectionView.ItemTemplate>
+                                            <DataTemplate x:DataType="models:Interest">
+                                                <sho:DraggableViewCell IsDraggable="False">
+                                                    <Button Style="{StaticResource InterestItemStyle}" Text="{Binding ., x:DataType={x:Type x:String}}" />
+                                                </sho:DraggableViewCell>
+                                            </DataTemplate>
+                                        </sho:CollectionView.ItemTemplate>
+                                    </sho:CollectionView>
+                                    <StackLayout
+                                        Grid.Row="4"
+                                        HorizontalOptions="Center"
+                                        Orientation="Horizontal"
+                                        Spacing="30"
+                                        VerticalOptions="Center">
+                                        <Button
+                                            x:Name="dislikeButton"
+                                            BackgroundColor="Transparent"
+                                            Clicked="OnDislikeClicked"
+                                            CornerRadius="50"
+                                            HeightRequest="90"
+                                            ImageSource="dislike_icon.png"
+                                            MinimumWidthRequest="0"
+                                            WidthRequest="90" />
+                                        <Button
+                                            x:Name="superLikeButton"
+                                            BackgroundColor="Transparent"
+                                            Clicked="OnSuperLikeClicked"
+                                            CornerRadius="50"
+                                            HeightRequest="80"
+                                            ImageSource="star_icon.png"
+                                            MinimumWidthRequest="0"
+                                            WidthRequest="80" />
+                                        <Button
+                                            x:Name="likeButton"
+                                            BackgroundColor="Transparent"
+                                            Clicked="OnLikeClicked"
+                                            CornerRadius="50"
+                                            HeightRequest="90"
+                                            ImageSource="like_icon.png"
+                                            MinimumWidthRequest="0"
+                                            WidthRequest="90" />
+                                    </StackLayout>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </swipe:SwipeCardView.ItemTemplate>
+                </swipe:SwipeCardView>
+            </Grid>
+        </Grid>
+    </base:BasePage.Content>
+</base:BasePage>

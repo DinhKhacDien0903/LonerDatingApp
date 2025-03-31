@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+	<style name="MainTheme" parent="MainTheme.Base">
+	</style>
+	<style name="MainTheme.Base" parent="Theme.MaterialComponents.Light">
+		<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+		<item name="windowNoTitle">true</item>
+		<item name="windowActionBar">false</item>
+		<item name="colorPrimary">#1B76D2</item>
+		<item name="colorPrimaryDark">#1976D2</item>
+         which is used to tint widgets -->
+		<item name="colorAccent">#1976D2</item>
+		<item name="windowActionModeOverlay">true</item>
+		<item name="android:datePickerDialogTheme">@style/AppCompatDialogStyle</item>
+		<item name="android:actionMenuTextColor">#ffffff</item>
+		<item name="android:textAllCaps">false</item>
+		<item name="android:forceDarkAllowed">false</item>
+	</style>
+	<style name="AppCompatDialogStyle" parent="ThemeOverlay.AppCompat.Dialog">
+		<item name="colorAccent">#0056d3</item>
+	</style>
+
+	<style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+		<item name="spinBars">true</item>
+		<item name="color">#ffffff</item>
+	</style>
+
+	<style name="splashscreen" parent="MainTheme.Base">
+		<item name="android:windowBackground">@drawable/splash</item>
+		<item name="colorPrimaryDark">#21232A</item>
+		<item name="android:windowTranslucentNavigation">true</item>
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowIsTranslucent">false</item>
+		<item name="android:windowIsFloating">false</item>
+		<item name="android:windowSplashScreenBackground">#000000</item>
+		<item name="android:windowSplashScreenAnimatedIcon">@drawable/splashscreenanimatedicon</item>
+		<item name="android:backgroundDimEnabled">true</item>
+	</style>
+
+	<style name="Theme.AppCompat.Translucent" parent="Theme.AppCompat.NoActionBar">
+		<item name="android:windowBackground">@android:color/transparent</item>
+		<item name="android:colorBackgroundCacheHint">@null</item>
+		<item name="android:windowIsTranslucent">true</item>
+	</style>
+</resources>

@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35617.110
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LonerApp", "LonerApp\LonerApp.csproj", "{62636A0A-5C54-4EE4-8F1E-4DDF7AD60102}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{62636A0A-5C54-4EE4-8F1E-4DDF7AD60102}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62636A0A-5C54-4EE4-8F1E-4DDF7AD60102}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62636A0A-5C54-4EE4-8F1E-4DDF7AD60102}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{62636A0A-5C54-4EE4-8F1E-4DDF7AD60102}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62636A0A-5C54-4EE4-8F1E-4DDF7AD60102}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7485DE6B-5E0E-4B94-BFEF-8425D640AD88}
+	EndGlobalSection
+EndGlobal
