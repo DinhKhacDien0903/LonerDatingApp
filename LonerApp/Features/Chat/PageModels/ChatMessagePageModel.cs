@@ -7,11 +7,7 @@ namespace LonerApp.PageModels
     {
         [ObservableProperty]
         ObservableCollection<MessageModel> _messages = new();
-        public bool IsNeedLoadUsersData = true;
-        [ObservableProperty]
-        private bool _isShowError;
-        [ObservableProperty]
-        private bool _isContinue;
+
         [ObservableProperty]
         private bool _isVisibleNavigation;
         [ObservableProperty]
@@ -54,12 +50,9 @@ namespace LonerApp.PageModels
         public async override Task LoadDataAsync()
         {
             await base.LoadDataAsync();
-            ShouldLoadData = false;
             IsBusy = true;
             await InitDataAsync();
             IsBusy = false;
-            ShouldLoadData = true;
-            IsNeedLoadUsersData = false;
         }
 
         [RelayCommand]
@@ -101,12 +94,13 @@ namespace LonerApp.PageModels
                     Id = Guid.NewGuid().ToString(),
                     SenderId = "1",
                     ReceiverId = "2",
-                    Message = MessageEntryValue,
+                    Content = MessageEntryValue,
                     Type = MessageType.Text,
                     Timestamp = DateTime.Now,
                     IsMine = true,
                     IsRead = true
                 };
+
                 Messages.Add(message);
                 MessageEntryValue = string.Empty;
                 await Task.Delay(100);
@@ -122,8 +116,33 @@ namespace LonerApp.PageModels
                 IsBusy = false;
             }
 
-        }      
-        
+        }
+
+        [RelayCommand]
+        async Task OnMessageImageItemClickedAsync(object obj)
+        {
+            if (MessageImageItemClickedCommand.IsRunning || IsBusy)
+                return;
+            ShouldLoadData = false;
+            try
+            {
+                IsBusy = true;
+                var message = obj as MessageModel;
+                if (message != null)
+                {
+                    await NavigationService.PushToPageAsync<ImageViewerFullScreenPage>(param: message.ImageData, isPushModal: true);
+                    await Task.Delay(100);
+                }
+            }
+            catch (Exception e)
+            {
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
         [RelayCommand]
         async Task OnSendImageAsync(object obj)
         {
@@ -139,13 +158,33 @@ namespace LonerApp.PageModels
                 var choice = await AppHelper.CurrentMainPage.DisplayActionSheet(
                                     I18nHelper.Get("SetupPhotoPage_ImageDialog_Title"), I18nHelper.Get("Common_Cancel"), null, buttons);
 
+                var message = new MessageModel
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    SenderId = "1",
+                    ReceiverId = "2",
+                    Content = "",
+                    Type = MessageType.Image,
+                    Timestamp = DateTime.Now,
+                    ImageData = null,
+                    IsMine = true,
+                    IsRead = true
+                };
+
                 if (((string)choice).Equals(takePhoto))
                 {
-                    await OnExcuteTakePhotoAsync();
+                    await OnExcuteTakePhotoAsync(message);
                 }
                 else if (((string)choice).Equals(choosePhoto))
                 {
-                    await OnExcuteChoosePhotoAsync();
+                    await OnExcuteChoosePhotoAsync(message);
+                }
+
+                if (message.ImageData != null)
+                {
+                    Messages.Add(message);
+                    await Task.Delay(100);
+                    _chatList.ScrollTo(Messages.Last(), position: ScrollToPosition.End);
                 }
             }
             catch (Exception e)
@@ -154,64 +193,18 @@ namespace LonerApp.PageModels
             }
             finally
             {
-
                 IsBusy = false;
             }
 
         }
-        private async Task OnExcuteChoosePhotoAsync()
+
+        private async Task OnExcuteChoosePhotoAsync(MessageModel message)
         {
             var filename = Path.GetRandomFileName() + ".png";
             if (await this.AllowTakePhotoAsync())
             {
                 var _currentLocalImage = await CameraPluginExtensions.CancelableChoosePhotoAsync(filename);
-                if (_currentLocalImage != null)
-                {
-                    _currentLocalImage = await ProcessSelectedImageAsync(_currentLocalImage);
-                }
-            }
-        }
-
-        private async Task<string> ProcessSelectedImageAsync(string _currentLocalImage)
-        {
-            IsBusy = true;
-            using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
-            {
-                _currentLocalImage = await CameraPluginExtensions.TrimImageAsync(stream, _currentLocalImage);
-            }
-
-            if (!string.IsNullOrEmpty(_currentLocalImage) && await UploadImageAsync(_currentLocalImage))
-            {
-                using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
-                using (BinaryReader br = new BinaryReader(stream))
-                {
-                    byte[] imageBytes = br.ReadBytes((int)stream.Length);
-                    //itemSelected.ImagePath = ImageSource.FromStream(() => new MemoryStream(imageBytes));
-                }
-            }
-            else
-            {
-                _currentLocalImage = string.Empty;
-            }
-
-            IsBusy = false;
-            return _currentLocalImage;
-        }
-
-        private async Task OnExcuteTakePhotoAsync()
-        {
-            IsBusy = true;
-            if (await this.AllowTakePhotoAsync())
-            {
-                var filename = Path.GetRandomFileName() + ".png";
-                var _currentLocalImage = await CameraPluginExtensions.CancelableTakePhotoAsync(filename);
-                if (!string.IsNullOrEmpty(_currentLocalImage))
-                {
-                    using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
-                    {
-                        _currentLocalImage = await CameraPluginExtensions.TrimImageAsync(stream, _currentLocalImage);
-                    }
-                }
+                IsBusy = true;
 
                 if (!string.IsNullOrEmpty(_currentLocalImage) && await UploadImageAsync(_currentLocalImage))
                 {
@@ -219,12 +212,57 @@ namespace LonerApp.PageModels
                     using (BinaryReader br = new BinaryReader(stream))
                     {
                         byte[] imageBytes = br.ReadBytes((int)stream.Length);
-                        //itemSelected.ImagePath = ImageSource.FromStream(() => new MemoryStream(imageBytes));
+                        message.ImageData = imageBytes;
                     }
                 }
                 else
                 {
-                    //itemSelected.ImagePath = olderLocalImagePath;
+                    message.ImageData = GetDefaultImageBytes("mmm.jpeg");
+                }
+
+                IsBusy = false;
+            }
+        }
+
+        public byte[] GetDefaultImageBytes(string fileName)
+        {
+            try
+            {
+                using (Stream stream = FileSystem.OpenAppPackageFileAsync(fileName).Result)
+                {
+                    using (BinaryReader br = new BinaryReader(stream))
+                    {
+                        return br.ReadBytes((int)stream.Length);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading default image: {ex.Message}");
+                return null;
+            }
+        }
+
+        private async Task OnExcuteTakePhotoAsync(MessageModel message)
+        {
+            IsBusy = true;
+            if (await this.AllowTakePhotoAsync())
+            {
+                var filename = Path.GetRandomFileName() + ".png";
+                var _currentLocalImage = await CameraPluginExtensions.CancelableTakePhotoAsync(filename);
+
+                if (!string.IsNullOrEmpty(_currentLocalImage) && await UploadImageAsync(_currentLocalImage))
+                {
+                    using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
+                    using (BinaryReader br = new BinaryReader(stream))
+                    {
+                        byte[] imageBytes = br.ReadBytes((int)stream.Length);
+                        message.ImageData = imageBytes;
+                    }
+                }
+                else
+                {
+                    message.ImageData = GetDefaultImageBytes("mmm.jpeg");
                 }
             }
 
@@ -233,12 +271,6 @@ namespace LonerApp.PageModels
 
         private async Task<bool> UploadImageAsync(string imagePath)
         {
-            //var isUpLoadImage = await AlertHelper.ShowConfirmationAlertAsync(new AlertConfigure
-            //{
-            //    Title = I18nHelper.Get("SetupPhotoPage_SubmitPicture_Title"),
-            //    Message = I18nHelper.Get("SetupPhotoPage_SubmitPicture_Message")
-            //});
-
             var isUpLoadImage = true;
 
             if (isUpLoadImage)
@@ -275,59 +307,47 @@ namespace LonerApp.PageModels
 
         private void LoadSampleMessages()
         {
-            Messages.Add(new MessageModel { Id = "1", SenderId = "1", ReceiverId = "2", Message = "Chào bạn!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-10), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "2", SenderId = "2", ReceiverId = "1", Message = "Chào bạn! Bạn khỏe không?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-9), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "3", SenderId = "1", ReceiverId = "2", Message = "Mình khỏe, bạn thì sao?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-8), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "4", SenderId = "2", ReceiverId = "1", Message = "Mình cũng khỏe, cảm ơn!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-7), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "5", SenderId = "1", ReceiverId = "2", Message = "Dạo này bạn làm gì?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-6), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "6", SenderId = "2", ReceiverId = "1", Message = "Mình mới đi du lịch, đẹp lắm! 🌴", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-5), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "7", SenderId = "1", ReceiverId = "2", Message = "Wow, thật tuyệt!", Type = MessageType.Emoji, Timestamp = DateTime.Now.AddMinutes(-4), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "8", SenderId = "2", ReceiverId = "1", Message = "Mình có gửi hình cho bạn xem nè.", Type = MessageType.Image, Timestamp = DateTime.Now.AddMinutes(-3), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "9", SenderId = "1", ReceiverId = "2", Message = "Ảnh đẹp quá!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-2), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "10", SenderId = "2", ReceiverId = "1", Message = "Cảm ơn bạn!", Type = MessageType.Emoji, Timestamp = DateTime.Now.AddMinutes(-1), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "1", SenderId = "1", ReceiverId = "2", Message = "Chào bạn!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-10), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "2", SenderId = "2", ReceiverId = "1", Message = "Chào bạn! Bạn khỏe không?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-9), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "3", SenderId = "1", ReceiverId = "2", Message = "Mình khỏe, bạn thì sao?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-8), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "4", SenderId = "2", ReceiverId = "1", Message = "Mình cũng khỏe, cảm ơn!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-7), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "5", SenderId = "1", ReceiverId = "2", Message = "Dạo này bạn làm gì?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-6), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "6", SenderId = "2", ReceiverId = "1", Message = "Mình mới đi du lịch, đẹp lắm! 🌴", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-5), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "7", SenderId = "1", ReceiverId = "2", Message = "Wow, thật tuyệt!", Type = MessageType.Emoji, Timestamp = DateTime.Now.AddMinutes(-4), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "8", SenderId = "2", ReceiverId = "1", Message = "Mình có gửi hình cho bạn xem nè.", Type = MessageType.Image, Timestamp = DateTime.Now.AddMinutes(-3), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "9", SenderId = "1", ReceiverId = "2", Message = "Ảnh đẹp quá!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-2), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "10", SenderId = "2", ReceiverId = "1", Message = "Cảm ơn bạn!", Type = MessageType.Emoji, Timestamp = DateTime.Now.AddMinutes(-1), IsMine = false, IsRead = true });
+            Messages.Add(new MessageModel { Id = "1", SenderId = "1", ReceiverId = "2", Content = "Chào bạn!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-10), IsMine = true, IsRead = true });
+            Messages.Add(new MessageModel { Id = "2", SenderId = "2", ReceiverId = "1", Content = "Chào bạn! Bạn khỏe không?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-9), IsMine = false, IsRead = true });
+            Messages.Add(new MessageModel { Id = "3", SenderId = "1", ReceiverId = "2", Content = "Mình khỏe, bạn thì sao?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-8), IsMine = true, IsRead = true });
+            Messages.Add(new MessageModel { Id = "4", SenderId = "2", ReceiverId = "1", Content = "Mình cũng khỏe, cảm ơn!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-7), IsMine = false, IsRead = true });
+            Messages.Add(new MessageModel { Id = "5", SenderId = "1", ReceiverId = "2", Content = "Dạo này bạn làm gì?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-6), IsMine = true, IsRead = true });
+            Messages.Add(new MessageModel { Id = "6", SenderId = "2", ReceiverId = "1", Content = "Mình mới đi du lịch, đẹp lắm! 🌴", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-5), IsMine = false, IsRead = true });
+            Messages.Add(new MessageModel { Id = "9", SenderId = "1", ReceiverId = "2", Content = "Ảnh đẹp quá!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-2), IsMine = true, IsRead = true });
+            Messages.Add(new MessageModel { Id = "1", SenderId = "1", ReceiverId = "2", Content = "Chào bạn!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-10), IsMine = true, IsRead = true });
+            Messages.Add(new MessageModel { Id = "2", SenderId = "2", ReceiverId = "1", Content = "Chào bạn! Bạn khỏe không?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-9), IsMine = false, IsRead = true });
+            Messages.Add(new MessageModel { Id = "3", SenderId = "1", ReceiverId = "2", Content = "Mình khỏe, bạn thì sao?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-8), IsMine = true, IsRead = true });
+            Messages.Add(new MessageModel { Id = "4", SenderId = "2", ReceiverId = "1", Content = "Mình cũng khỏe, cảm ơn!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-7), IsMine = false, IsRead = true });
+            Messages.Add(new MessageModel { Id = "5", SenderId = "1", ReceiverId = "2", Content = "Dạo này bạn làm gì?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-6), IsMine = true, IsRead = true });
+            Messages.Add(new MessageModel { Id = "6", SenderId = "2", ReceiverId = "1", Content = "Mình mới đi du lịch, đẹp lắm! 🌴", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-5), IsMine = false, IsRead = true });
+            Messages.Add(new MessageModel { Id = "9", SenderId = "1", ReceiverId = "2", Content = "Ảnh đẹp quá!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-2), IsMine = true, IsRead = true });
         }
     }
 
     public class MessageChatItemDataTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate MineMessageItemTemplate { get; set; } = new();
-        public DataTemplate OtherMessageItemTemplate { get; set; } = new();
+        public DataTemplate MineMessageTextItemTemplate { get; set; } = new();
+        public DataTemplate OtherMessageTextItemTemplate { get; set; } = new();
+        public DataTemplate MineMessageImageItemTemplate { get; set; } = new();
+        public DataTemplate OtherMessageImageItemTemplate { get; set; } = new();
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
             var collectionView = container as CollectionView;
 
             //TODO: add empty template
             if (collectionView?.ItemsSource is not ObservableCollection<MessageModel> items || item is not MessageModel message)
-                return MineMessageItemTemplate;
+                return MineMessageTextItemTemplate;
 
-            return message.IsMine ? MineMessageItemTemplate : OtherMessageItemTemplate;
-        }
-    }
+            if (message.Type == MessageType.Text)
+            {
+                return message.IsMine ? MineMessageTextItemTemplate : OtherMessageTextItemTemplate;
+            }
+            else if (message.Type == MessageType.Image)
+            {
+                return message.IsMine ? MineMessageImageItemTemplate : OtherMessageImageItemTemplate;
+            }
 
-    public class MessageTextOrImageTemplateSelector : DataTemplateSelector
-    {
-        public DataTemplate MessageItemTextTemplate { get; set; } = new();
-        public DataTemplate MessageImageTextTemplate { get; set; } = new();
-        protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
-        {
-            var collectionView = container as CollectionView;
-
-            ////TODO: add empty template
-            //if (collectionView?.ItemsSource is not ObservableCollection<MessageModel> items || item is not MessageModel message)
-            //    return MineMessageItemTemplate;
-
-            //return message.IsMine ? MineMessageItemTemplate : OtherMessageItemTemplate;
-            return MessageImageTextTemplate;
+            return MineMessageTextItemTemplate;
         }
     }
 }

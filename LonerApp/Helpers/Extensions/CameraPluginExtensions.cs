@@ -55,6 +55,7 @@ namespace LonerApp.Helpers.Extensions
         {
             if (fileResult == null)
             {
+                ImagePath = string.Empty;
                 return;
             }
 

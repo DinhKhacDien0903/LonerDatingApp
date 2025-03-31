@@ -7,5 +7,11 @@
         double GetStatusBarHeight();
 
         double GetNavigationBarHeight();
+
+        bool IsSoftKeyboardVisible(Android.Views.View view);
+
+        void HideKeyboard();
+
+        void SetResizeKeyboardInput();
     }
 }

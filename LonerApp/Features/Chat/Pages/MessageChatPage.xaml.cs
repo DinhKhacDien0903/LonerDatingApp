@@ -14,11 +14,7 @@ public partial class MessageChatPage : BasePage
     {
         _vm.IsBusy = true;
         base.OnAppearing();
-        if (!_vm.IsPushPageWithNavService && _vm.IsNeedLoadUsersData)
-        {
-            await _vm.InitDataAsync();
-            await _vm.ViewIsAppearingAsync();
-        }
+        ServiceHelper.GetService<IDeviceService>().SetResizeKeyboardInput();
         _vm.IsBusy = false;
     }
 
@@ -37,7 +33,7 @@ public partial class MessageChatPage : BasePage
 
     private void MessageEditor_TextChanged(object sender, TextChangedEventArgs e)
     {
-        if(sender is not Editor editor)
+        if (sender is not Editor editor)
         {
             return;
         }
@@ -45,7 +41,7 @@ public partial class MessageChatPage : BasePage
 
     private void ChatList_Loaded(object sender, EventArgs e)
     {
-        if(sender is not CollectionView collectionView)
+        if (sender is not CollectionView collectionView)
         {
             return;
         }
@@ -72,12 +68,17 @@ public partial class MessageChatPage : BasePage
 
     private void MessageEditor_Focused(object sender, FocusEventArgs e)
     {
-        if(sender is not Editor editor)
+        if (sender is not Editor editor)
         {
             return;
         }
 
+        Overlay.IsVisible = true;
         lbUploadImage.IsVisible = false;
+        string hexColorChange = "#f7b2c8";
+        InputGrid.Stroke = Color.FromArgb(hexColorChange);
+        lbSend.TextColor = Color.FromArgb(hexColorChange);
+        MessageEditor.TextColor = Color.FromArgb(hexColorChange);
     }
 
     private void MessageEditor_Unfocused(object sender, FocusEventArgs e)
@@ -87,6 +88,40 @@ public partial class MessageChatPage : BasePage
             return;
         }
 
-        lbUploadImage.IsVisible = true;
+        InputGrid.Stroke = Color.FromArgb("#D9D9D9");
+        lbSend.TextColor = Color.FromArgb("#939393");
+        MessageEditor.TextColor = Color.FromArgb("#939393");
+        ServiceHelper.GetService<IDeviceService>().HideKeyboard();
+    }
+
+    private void Overlay_Tapped(object sender, TappedEventArgs e)
+    {
+        if (sender is not BoxView boxview)
+        {
+            return;
+        }
+
+        var point = e.GetPosition(InputGrid);
+        if (!ChatMessageList.Bounds.Contains(point.Value))
+        {
+            MessageEditor.Unfocus();
+            lbUploadImage.IsVisible = true;
+            Overlay.IsVisible = false;
+        }
+    }
+
+    private void Overlay_PanUpdated(object sender, PanUpdatedEventArgs e)
+    {
+        if (sender is not BoxView boxview)
+        {
+            return;
+        }
+
+        if (e.StatusType == GestureStatus.Started)
+        {
+            MessageEditor.Unfocus();
+            lbUploadImage.IsVisible = true;
+            Overlay.IsVisible = false;
+        }
     }
 }

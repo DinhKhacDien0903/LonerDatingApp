@@ -12,7 +12,7 @@
         private string? receiverId;
 
         [ObservableProperty]
-        private string? message;
+        private string? content;
 
         [ObservableProperty]
         private MessageType type;
@@ -25,6 +25,9 @@
 
         [ObservableProperty]
         private bool isRead;
+
+        [ObservableProperty]
+        private byte[]? imageData;
     }
 
     public enum MessageType

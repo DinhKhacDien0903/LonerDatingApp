@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage
+    x:Class="LonerApp.Features.Pages.ImageViewerFullScreenPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:converter="clr-namespace:LonerApp.Helpers.Converters"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    Title="ImageViewerFullScreenPage"
+    x:DataType="vm:ChatMessageImagePageModel"
+    BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+    NavigationPage.HasNavigationBar="True"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
+    <base:BasePage.Resources>
+        <x:Double x:Key="SizeMessageImageItem">140</x:Double>
+        <converter:ImageContentConverter x:Key="ImageContentConverter" />
+    </base:BasePage.Resources>
+    <Page.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="White" StatusBarStyle="DarkContent" />
+    </Page.Behaviors>
+    <Grid
+        Margin="0"
+        Padding="0"
+        RowDefinitions="Auto,*">
+        <controls:CustomNavigationBar
+            BackButtonCommand="{Binding BackCommand}"
+            HasBackButton="{Binding HasBackButton}"
+            IsVisible="{Binding IsVisibleNavigation}" />
+        <Grid
+            Grid.Row="1"
+            Padding="20,5"
+            HorizontalOptions="Center"
+            VerticalOptions="Center">
+            <ffimageloading:CachedImage
+                Aspect="AspectFit"
+                DownsampleToViewSize="True"
+                HeightRequest="650"
+                HorizontalOptions="Center"
+                IsOpaque="True"
+                Loaded="CachedImage_Loaded"
+                LoadingPriority="Lowest"
+                Source="{Binding ImageData, Converter={StaticResource ImageContentConverter}}"
+                WidthRequest="350" />
+        </Grid>
+    </Grid>
+</base:BasePage>

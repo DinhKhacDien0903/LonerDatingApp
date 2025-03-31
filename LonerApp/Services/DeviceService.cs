@@ -1,5 +1,10 @@
-﻿using Android.Graphics;
+﻿using Android.Content;
+using Android.Graphics;
 using Android.Media;
+using Android.Views.InputMethods;
+using AndroidX.Core.View;
+using Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;
+using Sharpnado.CollectionView.Droid.Helpers;
 
 namespace LonerApp.Services
 {
@@ -168,6 +173,43 @@ namespace LonerApp.Services
             }
 
             return 0;
+        }
+
+        public bool IsSoftKeyboardVisible(Android.Views.View view)
+        {
+            if (view != null)
+            {
+                var insets = ViewCompat.GetRootWindowInsets(view);
+                if (insets == null)
+                    return false;
+                var result = insets.IsVisible(WindowInsetsCompat.Type.Ime());
+                return result;
+            }
+
+            return false;
+        }
+
+        public void SetResizeKeyboardInput()
+        {
+            App.Current.On<Microsoft.Maui.Controls.PlatformConfiguration.Android>().UseWindowSoftInputModeAdjust(WindowSoftInputModeAdjust.Resize);
+        }
+
+        public void HideKeyboard()
+        {
+            var context = Android.App.Application.Context;
+            var inputMethodManager = context.GetSystemService(Context.InputMethodService) as InputMethodManager;
+            if (inputMethodManager != null)
+            {
+                var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
+                var token = activity.CurrentFocus?.WindowToken;
+                inputMethodManager.HideSoftInputFromWindow(token, HideSoftInputFlags.None);
+                if (inputMethodManager.IsNullOrDisposed())
+                    return;
+                activity.Window.DecorView.ClearFocus();
+                var isKeyboardShow = IsSoftKeyboardVisible(activity.Window.DecorView.RootView);
+                if (isKeyboardShow)
+                    inputMethodManager.HideSoftInputFromWindow(activity.Window.DecorView.RootView.WindowToken, HideSoftInputFlags.None);
+            }
         }
     }
 }

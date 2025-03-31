@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
     xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:converter="clr-namespace:LonerApp.Helpers.Converters"
     xmlns:f="clr-namespace:Fonts"
     xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
     xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
@@ -20,7 +21,10 @@
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False">
     <base:BasePage.Resources>
-        <DataTemplate x:Key="MineMessageItemTemplate" x:DataType="{x:Type models:MessageModel}">
+        <x:Double x:Key="SizeMessageImageItem">140</x:Double>
+        <converter:ImageContentConverter x:Key="ImageContentConverter" />
+
+        <DataTemplate x:Key="MineMessageTextItemTemplate" x:DataType="{x:Type models:MessageModel}">
             <Grid Padding="20,5" ColumnDefinitions="*,Auto">
                 <Border
                     Grid.Column="1"
@@ -32,13 +36,13 @@
                         HorizontalTextAlignment="Start"
                         LineBreakMode="WordWrap"
                         MaximumWidthRequest="250"
-                        Text="{Binding Message}"
+                        Text="{Binding Content}"
                         TextColor="White"
                         VerticalTextAlignment="Center" />
                 </Border>
             </Grid>
         </DataTemplate>
-        <DataTemplate x:Key="OtherMessageItemTemplate" x:DataType="{x:Type models:MessageModel}">
+        <DataTemplate x:Key="OtherMessageTextItemTemplate" x:DataType="{x:Type models:MessageModel}">
             <Grid Padding="20,10" ColumnDefinitions="Auto,*">
                 <Border
                     Padding="10"
@@ -49,16 +53,67 @@
                         HorizontalTextAlignment="Start"
                         LineBreakMode="WordWrap"
                         MaximumWidthRequest="250"
-                        Text="{Binding Message}"
+                        Text="{Binding Content}"
                         TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
                         VerticalTextAlignment="Center" />
                 </Border>
             </Grid>
         </DataTemplate>
+        <DataTemplate x:Key="MineMessageImageItemTemplate" x:DataType="{x:Type models:MessageModel}">
+            <Grid Padding="20,5" ColumnDefinitions="*,Auto">
+                <ffimageloading:CachedImage
+                    Grid.Column="1"
+                    Aspect="AspectFill"
+                    DownsampleToViewSize="True"
+                    HeightRequest="{StaticResource SizeMessageImageItem}"
+                    HorizontalOptions="End"
+                    IsOpaque="True"
+                    LoadingPriority="Lowest"
+                    Source="{Binding ImageData, Converter={StaticResource ImageContentConverter}}"
+                    WidthRequest="{StaticResource SizeMessageImageItem}">
+                    <ffimageloading:CachedImage.Clip>
+                        <RoundRectangleGeometry CornerRadius="10" Rect="0,0,140,140" />
+                    </ffimageloading:CachedImage.Clip>
+                </ffimageloading:CachedImage>
+                <BoxView
+                    x:Name="OverlayMessageImageItem"
+                    Grid.Column="1"
+                    BackgroundColor="Transparent">
+                    <BoxView.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatMessagePageModel}}, Path=MessageImageItemClickedCommand, x:DataType={x:Type vm:ChatMessagePageModel}}" CommandParameter="{Binding .}" />
+                    </BoxView.GestureRecognizers>
+                </BoxView>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="OtherMessageImageItemTemplate" x:DataType="{x:Type models:MessageModel}">
+            <Grid Padding="20,10" ColumnDefinitions="Auto,*">
+                <ffimageloading:CachedImage
+                    Aspect="AspectFit"
+                    DownsampleToViewSize="True"
+                    ErrorPlaceholder="bbbb.jpeg"
+                    HeightRequest="{StaticResource SizeMessageImageItem}"
+                    HorizontalOptions="End"
+                    IsOpaque="True"
+                    LoadingPriority="Lowest"
+                    Source="{Binding ImageData, Converter={StaticResource ImageContentConverter}}"
+                    WidthRequest="{StaticResource SizeMessageImageItem}">
+                    <ffimageloading:CachedImage.Clip>
+                        <RoundRectangleGeometry CornerRadius="10" Rect="0,0,140,140" />
+                    </ffimageloading:CachedImage.Clip>
+                </ffimageloading:CachedImage>
+                <BoxView x:Name="OverlayMessageImageItem" BackgroundColor="Transparent">
+                    <BoxView.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatMessagePageModel}}, Path=MessageImageItemClickedCommand, x:DataType={x:Type vm:ChatMessagePageModel}}" CommandParameter="{Binding .}" />
+                    </BoxView.GestureRecognizers>
+                </BoxView>
+            </Grid>
+        </DataTemplate>
         <vm:MessageChatItemDataTemplateSelector
             x:Key="messageChatItemDataTemplateSelector"
-            MineMessageItemTemplate="{StaticResource MineMessageItemTemplate}"
-            OtherMessageItemTemplate="{StaticResource OtherMessageItemTemplate}" />
+            MineMessageImageItemTemplate="{StaticResource MineMessageImageItemTemplate}"
+            MineMessageTextItemTemplate="{StaticResource MineMessageTextItemTemplate}"
+            OtherMessageImageItemTemplate="{StaticResource OtherMessageImageItemTemplate}"
+            OtherMessageTextItemTemplate="{StaticResource OtherMessageTextItemTemplate}" />
     </base:BasePage.Resources>
     <Grid
         Margin="0"
@@ -99,10 +154,12 @@
                 </Label.GestureRecognizers>
             </Label>
             <Border
+                x:Name="InputGrid"
                 Grid.Row="2"
                 Grid.Column="1"
                 Margin="10"
                 Padding="10,0,0,0"
+                Background="#EEEFF1"
                 Stroke="#D9D9D9"
                 StrokeThickness="2">
                 <ContentView>
@@ -123,6 +180,7 @@
                             TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
                             Unfocused="MessageEditor_Unfocused" />
                         <Label
+                            x:Name="lbSend"
                             Margin="10,0,10,0"
                             FontFamily="GothamBold"
                             FontSize="{StaticResource FontSizeM}"
@@ -138,5 +196,15 @@
                 </ContentView>
             </Border>
         </Grid>
+        <BoxView
+            x:Name="Overlay"
+            Grid.Row="1"
+            BackgroundColor="Transparent"
+            IsVisible="False">
+            <BoxView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="Overlay_Tapped" />
+                <PanGestureRecognizer PanUpdated="Overlay_PanUpdated" />
+            </BoxView.GestureRecognizers>
+        </BoxView>
     </Grid>
 </base:BasePage>
