@@ -84,7 +84,7 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnSendMessageAsync(object obj)
         {
-            if (string.IsNullOrEmpty(MessageEntryValue))
+            if (string.IsNullOrEmpty(MessageEntryValue.Trim()))
                 return;
             IsBusy = true;
             try

@@ -25,5 +25,6 @@
 	<uses-feature android:name="android.hardware.camera" />
 	<uses-feature android:name="android.hardware.camera.flash" />
 	<application android:enableOnBackInvokedCallback="true" tools:replace="android:label" android:icon="@mipmap/icon" android:hardwareAccelerated="true" android:largeHeap="true" android:allowBackup="false" android:resizeableActivity="false" android:supportsRtl="true" android:theme="@style/splashscreen">
+		<meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDihcXk9ZmfVtinjnxjA1jQaffxg58BEt4"/>
 	</application>
 </manifest>

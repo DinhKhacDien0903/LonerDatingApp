@@ -52,6 +52,7 @@ public static class DependencyInjection
         services.AddTransient<ChatPage>();
         services.AddTransient<MessageChatPage>();
         services.AddTransient<ImageViewerFullScreenPage>();
+        services.AddTransient<FilterMapPage>();
         return services;
     }
 }

@@ -20,9 +20,9 @@
             Route="chatPage" />
         <ShellContent
             Title=""
-            ContentTemplate="{DataTemplate pages:DetailProfilePage}"
+            ContentTemplate="{DataTemplate pages:FilterMapPage}"
             Icon="{StaticResource IconAccountControlPage}"
-            Route="accountPage" />
+            Route="filterMapPage" />
     </TabBar>
     <!--<Shell.FlyoutFooter>
         <Grid Padding="15">

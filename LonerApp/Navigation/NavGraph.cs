@@ -22,5 +22,8 @@ namespace LonerApp.Navigation;
             Routing.RegisterRoute(nameof(ImageCroppingPage), typeof(ImageCroppingPage));
             Routing.RegisterRoute(nameof(MainSwipePage), typeof(MainSwipePage));
             Routing.RegisterRoute(nameof(DetailProfilePage), typeof(DetailProfilePage));
+            Routing.RegisterRoute(nameof(FilterMapPage), typeof(FilterMapPage));
+            Routing.RegisterRoute(nameof(ChatPage), typeof(ChatPage));
+            Routing.RegisterRoute(nameof(MessageChatPage), typeof(MessageChatPage));
         }
     }

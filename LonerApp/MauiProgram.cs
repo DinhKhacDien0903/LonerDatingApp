@@ -24,6 +24,7 @@ namespace LonerApp
                 .ConfigureMauiHandlers(handlers =>
                 {
                 })
+                .UseMauiMaps()
                 .UseSwipeCardView()
                 .ConfigureMopups()
                 .UseSkiaSharp()

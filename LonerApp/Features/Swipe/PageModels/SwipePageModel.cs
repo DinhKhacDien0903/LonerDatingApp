@@ -101,6 +101,7 @@ namespace LonerApp.PageModels
         {
             if (FilterPressedCommand.IsRunning  || IsBusy)
                 return;
+            IsBusy = true;
             await NavigationService.PopPageAsync(isPopModal: true);
         }
 
