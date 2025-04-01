@@ -57,7 +57,7 @@ namespace LonerApp.PageModels
             Pins = new ObservableCollection<UserPinModel>
             {
                 new UserPinModel
-                {
+                {  
                     Label = "Linh",
                     Address = "Dai hoc Bach Khoa Ha Noi",
                     Type = PinType.Place,
@@ -164,6 +164,17 @@ namespace LonerApp.PageModels
             return null;
         }
 
+        [RelayCommand]
+        async Task OnSearchPressedAsync(object param)
+        {
+            if (!IsBusy)
+            {
+                IsBusy = true;
+                //await NavigationService.PushToPageAsync<SearchPage>(isPushModal: true);
+                await Task.Delay(100);
+                IsBusy = false;
+            }
+        }
         [RelayCommand]
         async Task OnBackAsync(object param)
         {

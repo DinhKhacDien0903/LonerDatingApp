@@ -32,9 +32,29 @@ public partial class FilterMapPage : BasePage
 
     private void Pin_MarkerClicked(object sender, PinClickedEventArgs e)
     {
+        if (sender is not Pin pin)
+            return;
         MainThread.BeginInvokeOnMainThread(async () =>
         {
-            await AlertHelper.ShowErrorAlertAsync("MarkerTapped" + (sender as Pin).BindingContext.ToString());
+            var currentLocation = await _vm.GetCurrentLocationAsync();
+            var targetLocation = pin.Location;
+
+            mapLonerDatingApp.MapElements.Clear();
+
+            var polyLine = new Polyline
+            {
+                StrokeColor = Colors.Pink,
+                StrokeWidth = 10,
+                Geopath = { currentLocation, targetLocation }
+            };
+
+            var currentLabel = pin.Label;
+            var distance = Location.CalculateDistance(currentLocation, targetLocation, DistanceUnits.Kilometers);
+
+            //TODO: change Km for current
+            var model = pin.BindingContext as UserPinModel;
+            model.Label = $"{currentLabel} - {distance:F2} km";
+            mapLonerDatingApp.MapElements.Add(polyLine);
         });
     }
 

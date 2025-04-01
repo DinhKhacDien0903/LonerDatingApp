@@ -29,6 +29,8 @@
             BackButtonCommand="{Binding BackCommand}"
             HasBackButton="{Binding HasBackButton}"
             IsVisible="{Binding IsVisibleNavigation}"
+            OptionButtonCommand="{Binding SearchPressedCommand}"
+            OptionPage="&#xf983;"
             TitlePage="Map" />
         <Grid Grid.Row="1" Loaded="Grid_Loaded">
             <maps:Map
@@ -42,8 +44,9 @@
                         <maps:Pin
                             Address="{Binding Address}"
                             InfoWindowClicked="Pin_InfoWindowClicked"
-                            Label="{Binding Label}"
+                            Label="{Binding Label, Mode=TwoWay}"
                             Location="{Binding Location}"
+                            MarkerClicked="Pin_MarkerClicked"
                             Type="{Binding Type}" />
                     </DataTemplate>
                 </maps:Map.ItemTemplate>
