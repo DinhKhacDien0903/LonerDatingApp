@@ -24,6 +24,7 @@ namespace LonerApp.Helpers
         TimesDisplayAlert,
         IsShowAppFeature,
         IsDealerPHDataInRealm,
+        CurrentLocation,
     }
 
     public static partial class UserSetting

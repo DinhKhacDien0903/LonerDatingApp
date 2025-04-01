@@ -79,8 +79,12 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnBackAsync(object param)
         {
-            if (!IsBusy)
-                await NavigationService.PopPageAsync(isPopModal: true);
+            if (BackCommand.IsRunning || IsBusy)
+                return;
+            IsBusy = true;
+            await NavigationService.PopPageAsync(isPopModal: true);
+            await Task.Delay(100);
+            IsBusy = false;
         }
 
         [RelayCommand]

@@ -99,16 +99,17 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnFilterPressedAsync(object param)
         {
-            if (FilterPressedCommand.IsRunning  || IsBusy)
+            if (FilterPressedCommand.IsRunning || IsBusy)
                 return;
             IsBusy = true;
-            await NavigationService.PopPageAsync(isPopModal: true);
+            await NavigationService.PushToPageAsync<FilterMapPage>();
+            IsBusy = false;
         }
 
         [RelayCommand]
         async Task OnOpenUserProfileAsync(object param)
         {
-            if (OpenUserProfileCommand.IsRunning  || IsBusy)
+            if (OpenUserProfileCommand.IsRunning || IsBusy)
                 return;
             IsBusy = true;
             await NavigationService.PopPageAsync(isPopModal: true);
@@ -119,7 +120,7 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnDislikePressedAsync(object param)
         {
-            if (DislikePressedCommand.IsRunning  || IsBusy)
+            if (DislikePressedCommand.IsRunning || IsBusy)
                 return;
             IsBusy = true;
             await Task.Delay(100);
@@ -129,7 +130,7 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnStarPressedAsync(object param)
         {
-            if (StarPressedCommand.IsRunning  || IsBusy)
+            if (StarPressedCommand.IsRunning || IsBusy)
                 return;
             IsBusy = true;
             await Task.Delay(100);
@@ -139,7 +140,7 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnLikePressedAsync(object param)
         {
-            if (LikePressedCommand.IsRunning  || IsBusy)
+            if (LikePressedCommand.IsRunning || IsBusy)
                 return;
             IsBusy = true;
             await Task.Delay(100);
@@ -149,7 +150,7 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnOpenDetailProfileAsync(object param)
         {
-            if (OpenDetailProfileCommand.IsRunning  || IsBusy)
+            if (OpenDetailProfileCommand.IsRunning || IsBusy)
                 return;
             IsBusy = true;
             IsNeedLoadUsersData = false;

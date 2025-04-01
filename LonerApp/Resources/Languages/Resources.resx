@@ -333,4 +333,10 @@
   <data name="Chat_Label_Send_Message" xml:space="preserve">
     <value>Send</value>
   </data>
+  <data name="FilterMap_CheckPermission_TurnOnLocationInSetting" xml:space="preserve">
+    <value>Go to settings and turn on location permission.</value>
+  </data>
+  <data name="FilterMap_CheckPermission_AlertTitle" xml:space="preserve">
+    <value>Can't show map.</value>
+  </data>
 </root>

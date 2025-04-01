@@ -29,6 +29,7 @@ public static class DependencyInjection
         services.AddTransient<ChatPageModel>();
         services.AddTransient<ChatMessagePageModel>();
         services.AddTransient<ChatMessageImagePageModel>();
+        services.AddTransient<FilterMapPageModel>();
         return services;
     }
 

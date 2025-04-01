@@ -333,4 +333,10 @@
   <data name="Chat_Label_Send_Message" xml:space="preserve">
     <value>Gửi</value>
   </data>
+  <data name="FilterMap_CheckPermission_TurnOnLocationInSetting" xml:space="preserve">
+    <value>Mở cài đặt và bật quyền truy cập vị trí.</value>
+  </data>
+  <data name="FilterMap_CheckPermission_AlertTitle" xml:space="preserve">
+    <value>Không thể hiển thị bản đồ.</value>
+  </data>
 </root>
