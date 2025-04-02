@@ -51,9 +51,6 @@ public partial class FilterMapPage : BasePage
             var currentLabel = pin.Label;
             var distance = Location.CalculateDistance(currentLocation, targetLocation, DistanceUnits.Kilometers);
 
-            //TODO: change Km for current
-            var model = pin.BindingContext as UserPinModel;
-            model.Label = $"{currentLabel} - {distance:F2} km";
             mapLonerDatingApp.MapElements.Add(polyLine);
         });
     }

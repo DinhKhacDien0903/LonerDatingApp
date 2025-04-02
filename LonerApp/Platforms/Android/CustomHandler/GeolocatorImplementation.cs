@@ -1,0 +1,72 @@
+using Android.Locations;
+using Android.OS;
+using Android.Runtime;
+using CommunityToolkit.Maui.Alerts;
+using Location = Android.Locations.Location;
+using Permissions = Microsoft.Maui.ApplicationModel.Permissions;
+
+namespace LonerApp;
+
+public class GeolocatorImplementation : IGeolocator
+{
+	GeolocationContinuousListener? locator;
+
+	public async Task StartListening(IProgress<Microsoft.Maui.Devices.Sensors.Location> positionChangedProgress, CancellationToken cancellationToken)
+	{
+        var alert = await AlertHelper.ShowConfirmationAlertAsync(
+        I18nHelper.Get("FilterMap_CheckPermission_TurnOnLocationInSetting"),
+        I18nHelper.Get("Dealer_CheckPermission_AlertTitle"));
+        if (alert)
+            ServiceHelper.GetService<IOpenSetting>().OpenSettingScreen();
+
+		locator = new GeolocationContinuousListener();
+		var taskCompletionSource = new TaskCompletionSource();
+		cancellationToken.Register(() =>
+		{
+			locator.Dispose();
+			locator = null;
+			taskCompletionSource.TrySetResult();
+		});
+		locator.OnLocationChangedAction = location =>
+			positionChangedProgress.Report(
+				new Microsoft.Maui.Devices.Sensors.Location(location.Latitude, location.Longitude));
+		await taskCompletionSource.Task;
+	}
+}
+
+internal class GeolocationContinuousListener : Java.Lang.Object, ILocationListener
+{
+	public Action<Location>? OnLocationChangedAction { get; set; }
+
+	LocationManager? locationManager;
+
+	public GeolocationContinuousListener()
+	{
+		locationManager = (LocationManager?)Android.App.Application.Context.GetSystemService(Android.Content.Context.LocationService);
+		locationManager?.RequestLocationUpdates(LocationManager.GpsProvider, 1000, 100, this);
+	}
+
+	public void OnLocationChanged(Location location)
+	{
+		OnLocationChangedAction?.Invoke(location);
+	}
+
+	public void OnProviderDisabled(string provider)
+	{
+	}
+
+	public void OnProviderEnabled(string provider)
+	{
+	}
+
+	public void OnStatusChanged(string? provider, [GeneratedEnum] Availability status, Bundle? extras)
+	{
+	}
+
+	protected override void Dispose(bool disposing)
+	{
+		base.Dispose(disposing);
+		locationManager?.RemoveUpdates(this);
+		locationManager?.Dispose();
+	}
+}

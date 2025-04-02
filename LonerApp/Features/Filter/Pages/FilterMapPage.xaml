@@ -41,7 +41,8 @@
                 MapType="Street">
                 <maps:Map.ItemTemplate>
                     <DataTemplate x:DataType="{x:Type models:UserPinModel}">
-                        <maps:Pin
+                        <controls:CustomPin
+                            ImageSource="{Binding ImageSource}"
                             Address="{Binding Address}"
                             InfoWindowClicked="Pin_InfoWindowClicked"
                             Label="{Binding Label, Mode=TwoWay}"

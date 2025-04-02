@@ -27,7 +27,7 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private ObservableCollection<UserModel> _users = new();
         [ObservableProperty]
-        private bool _isCurrentOtherUser;
+        private bool _isCurrentOtherUser = true;
         ContentPage? _previousPage;
         SwipePageModel? _swipePageModel;
         public ProfilePageModel(INavigationService navigationService)
@@ -38,11 +38,12 @@ namespace LonerApp.PageModels
 
         public override async Task InitAsync(object? initData)
         {
-            _previousPage = AppShell.Current.CurrentPage as ContentPage;
-            if(_previousPage != null)
-                _swipePageModel = _previousPage.BindingContext as SwipePageModel;
-            IsCurrentOtherUser = _previousPage is MainSwipePage;
-            await base.InitAsync(initData);
+            //TODO: Handle when user click on profile
+            // _previousPage = AppShell.Current.CurrentPage as ContentPage;
+            // if(_previousPage != null)
+            //     _swipePageModel = _previousPage.BindingContext as SwipePageModel;
+            // IsCurrentOtherUser = _previousPage is MainSwipePage;
+            // await base.InitAsync(initData);
             InitImages();
         }
 

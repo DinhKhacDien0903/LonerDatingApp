@@ -102,6 +102,7 @@ namespace LonerApp.PageModels
             if (FilterPressedCommand.IsRunning || IsBusy)
                 return;
             IsBusy = true;
+            IsNeedLoadUsersData = false;
             await NavigationService.PushToPageAsync<FilterMapPage>();
             IsBusy = false;
         }

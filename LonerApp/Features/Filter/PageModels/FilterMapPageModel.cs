@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls.Maps;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace LonerApp.PageModels
 {
@@ -15,7 +16,7 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private ObservableCollection<UserPinModel> _pins = new();
         private static bool isFirstLoad = true;
-
+        private UserPinModel? currentLocationPin;
         public FilterMapPageModel(INavigationService navigationService)
             : base(navigationService, true)
         {
@@ -31,16 +32,10 @@ namespace LonerApp.PageModels
         public override async Task LoadDataAsync()
         {
             await base.LoadDataAsync();
-            ShouldLoadData = false;
             IsBusy = true;
-            if (await CheckPermission.CheckPermissionAsync(Permission.Location) ==
-                PermisionResultKey.GoToSetting)
-            {
-                await CheckPermissionAsync();
-            }
             LoadPins();
             IsBusy = false;
-            ShouldLoadData = true;
+            ShouldLoadData = false;
         }
 
         async Task CheckPermissionAsync()
@@ -52,12 +47,13 @@ namespace LonerApp.PageModels
                 ServiceHelper.GetService<IOpenSetting>().OpenSettingScreen();
         }
 
-        private void LoadPins()
+        private async Task LoadPins()
         {
             Pins = new ObservableCollection<UserPinModel>
             {
                 new UserPinModel
-                {  
+                {
+                    ImageSource = "bbbb.jpeg",
                     Label = "Linh",
                     Address = "Dai hoc Bach Khoa Ha Noi",
                     Type = PinType.Place,
@@ -65,6 +61,7 @@ namespace LonerApp.PageModels
                 },
                 new UserPinModel
                 {
+                    ImageSource = "bbbb.jpeg",
                     Label = "Trang",
                     Address = "Dai hoc Kinh Te Quoc Dan",
                     Type = PinType.Place,
@@ -79,6 +76,7 @@ namespace LonerApp.PageModels
                 },
                 new UserPinModel
                 {
+                    ImageSource = "bbbb.jpeg",
                     Label = "Thu",
                     Address = "Dai hoc Quoc Gia Ha Noi",
                     Type = PinType.Place,
@@ -86,6 +84,7 @@ namespace LonerApp.PageModels
                 },
                 new UserPinModel
                 {
+                    ImageSource = "bbbb.jpeg",
                     Label = "Nga",
                     Address = "Dai hoc Su Pham Ha Noi",
                     Type = PinType.SearchResult,
@@ -93,6 +92,7 @@ namespace LonerApp.PageModels
                 },
                 new UserPinModel
                 {
+                    ImageSource = "bbbb.jpeg",
                     Label = "Mai",
                     Address = "Dai hoc Giao Thong Van Tai",
                     Type = PinType.SearchResult,
@@ -100,6 +100,7 @@ namespace LonerApp.PageModels
                 },
                 new UserPinModel
                 {
+                    ImageSource = "bbbb.jpeg",
                     Label = "Hanh",
                     Address = "Dai hoc Y Ha Noi",
                     Type = PinType.SearchResult,
@@ -107,6 +108,7 @@ namespace LonerApp.PageModels
                 },
                 new UserPinModel
                 {
+                    ImageSource = "bbbb.jpeg",
                     Label = "Van",
                     Address = "Hoc vien Bao Chi va Tuyen Truyen",
                     Type = PinType.Place ,
@@ -114,6 +116,7 @@ namespace LonerApp.PageModels
                 },
                 new UserPinModel
                 {
+                    ImageSource = "bbbb.jpeg",
                     Label = "Diep",
                     Address = "Dai hoc Xay Dung Ha Noi",
                     Type = PinType.Place,
@@ -121,24 +124,40 @@ namespace LonerApp.PageModels
                 },
                 new UserPinModel
                 {
+                    ImageSource = "bbbb.jpeg",
                     Label = "Lan",
                     Address = "Dai hoc Thuong Mai Ha Noi",
                     Type = PinType.Place,
                     Location = new Location(21.0326, 105.7902)
                 }
             };
+
+            foreach(var pin in Pins)
+            {
+                pin.Address = $"{pin.Address} - {GetDistance(await GetCurrentLocationAsync(), pin.Location)} km";
+            }
         }
 
+        private double GetDistance(Location fromLocation, Location destinationLocation)
+        {
+            return Math.Round(Location.CalculateDistance(fromLocation, destinationLocation, DistanceUnits.Kilometers), 2);
+        }
         public async Task<Location> GetCurrentLocationAsync()
         {
             try
             {
                 IsBusy = true;
-                //if(isFirstLoad)
-                //{
-                //    UserSetting.Remove(StorageKey.CurrentLocation.ToString());
-                //    isFirstLoad = false;
-                //}
+                if (await CheckPermission.CheckPermissionAsync(Permission.Location) ==
+                        PermisionResultKey.GoToSetting)
+                {
+                    await CheckPermissionAsync();
+                }
+
+                if(isFirstLoad)
+                {
+                   UserSetting.Remove(StorageKey.CurrentLocation.ToString());
+                   isFirstLoad = false;
+                }
 
                 var currentLocation = UserSetting.GetObject<Location>(StorageKey.CurrentLocation) ?? null;
                 if (currentLocation != null)
@@ -161,7 +180,7 @@ namespace LonerApp.PageModels
                 IsBusy = false;
             }
 
-            return null;
+            return new Location(21.0285,105.8542);
         }
 
         [RelayCommand]
