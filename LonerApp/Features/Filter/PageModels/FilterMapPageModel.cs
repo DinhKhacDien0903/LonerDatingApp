@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls.Maps;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 
 namespace LonerApp.PageModels
 {
@@ -10,6 +9,10 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private bool _isVisibleNavigation;
         [ObservableProperty]
+        private bool _isVisibleFilterContainer;
+        [ObservableProperty]
+        private bool _isShowRadiusSearchBar;
+        [ObservableProperty]
         private bool _hasBackButton;
         [ObservableProperty]
         private byte[]? _imageData;
@@ -17,6 +20,8 @@ namespace LonerApp.PageModels
         private ObservableCollection<UserPinModel> _pins = new();
         private static bool isFirstLoad = true;
         private UserPinModel? currentLocationPin;
+        //TODO: Handel get data in server
+        private static ObservableCollection<UserPinModel> _cachePins;
         public FilterMapPageModel(INavigationService navigationService)
             : base(navigationService, true)
         {
@@ -33,7 +38,8 @@ namespace LonerApp.PageModels
         {
             await base.LoadDataAsync();
             IsBusy = true;
-            LoadPins();
+            await LoadPins();
+            _cachePins = new ObservableCollection<UserPinModel>(Pins);
             IsBusy = false;
             ShouldLoadData = false;
         }
@@ -183,17 +189,52 @@ namespace LonerApp.PageModels
             return new Location(21.0285,105.8542);
         }
 
+        private ObservableCollection<UserPinModel> GetPinsInRadius(ObservableCollection<UserPinModel> allPins, double radius, Location curentLocation)
+        {
+            var result = new ObservableCollection<UserPinModel>();
+            foreach (var pin in allPins)
+            {
+                double distance = Math.Round(Location.CalculateDistance(curentLocation, pin.Location, DistanceUnits.Kilometers),2);
+                if (distance <= radius)
+                {
+                    result.Add(pin);
+                }
+            }
+
+            return result;
+        }
+
         [RelayCommand]
         async Task OnSearchPressedAsync(object param)
         {
-            if (!IsBusy)
-            {
-                IsBusy = true;
-                //await NavigationService.PushToPageAsync<SearchPage>(isPushModal: true);
-                await Task.Delay(100);
-                IsBusy = false;
-            }
+            if (SearchPressedCommand.IsRunning || IsBusy)
+                return;
+            IsBusy = true;
+            IsVisibleFilterContainer = !IsVisibleFilterContainer;
+            IsShowRadiusSearchBar = false;
+            //await NavigationService.PushToPageAsync<SearchPage>(isPushModal: true);
+            await Task.Delay(100);
+            IsBusy = false;
         }
+
+        [RelayCommand]
+        async Task OnFilterRadiusSearchAsync(object param)
+        {
+            if (param is not double radius)
+                return;
+            if (FilterRadiusSearchCommand.IsRunning || IsBusy)
+                return;
+
+            IsBusy = true;
+            IsShowRadiusSearchBar = !IsShowRadiusSearchBar;
+            IsVisibleFilterContainer = !IsVisibleFilterContainer;
+            ObservableCollection<UserPinModel> result = GetPinsInRadius(_cachePins, radius, await GetCurrentLocationAsync());
+            Pins.Clear();
+            Pins = result;
+            await Task.Delay(100);
+            IsBusy = false;
+        }
+
         [RelayCommand]
         async Task OnBackAsync(object param)
         {

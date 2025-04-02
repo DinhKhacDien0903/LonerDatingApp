@@ -73,7 +73,7 @@ public class CustomMapHandler : MapHandler
 					{
 						if (result?.Value is BitmapDrawable { Bitmap: not null } bitmapDrawable)
 						{
-							markerOption.SetIcon(BitmapDescriptorFactory.FromBitmap(GetMaximumBitmap(bitmapDrawable.Bitmap, 150, 150)));
+							markerOption.SetIcon(BitmapDescriptorFactory.FromBitmap(GetMaximumBitmap(bitmapDrawable.Bitmap, 100, 100)));
 						}
 
 						AddMarker(Map, pin, markerOption);

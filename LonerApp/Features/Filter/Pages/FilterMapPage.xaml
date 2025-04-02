@@ -18,6 +18,34 @@
     NavigationPage.HasNavigationBar="True"
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="True">
+    <base:BasePage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="borderFilterOption" TargetType="Border">
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Margin" Value="1" />
+                <Setter Property="Background" Value="{toolkit:AppThemeResource PrimaryColor}" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 5" />
+            </Style>
+
+            <Style x:Key="imgSelectedFilter" TargetType="Image">
+                <Setter Property="HorizontalOptions" Value="Start" />
+                <Setter Property="IsVisible" Value="False" />
+                <Setter Property="VerticalOptions" Value="Start" />
+                <Setter Property="HeightRequest" Value="20" />
+                <Setter Property="WidthRequest" Value="20" />
+                <Setter Property="Margin" Value="1,1,0,0" />
+                <Setter Property="Source">
+                    <Setter.Value>
+                        <FontImageSource
+                            FontFamily="MaterialFontFamily"
+                            Glyph="&#xf12c;"
+                            Size="20"
+                            Color="White" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </base:BasePage.Resources>
     <Page.Behaviors>
         <toolkit:StatusBarBehavior StatusBarColor="White" StatusBarStyle="DarkContent" />
     </Page.Behaviors>
@@ -32,9 +60,132 @@
             OptionButtonCommand="{Binding SearchPressedCommand}"
             OptionPage="&#xf983;"
             TitlePage="Map" />
-        <Grid Grid.Row="1" Loaded="Grid_Loaded">
+        <Grid
+            Grid.Row="1"
+            Loaded="Grid_Loaded"
+            RowDefinitions="Auto,10, *">
+            <Grid
+                Margin="16,8"
+                ColumnDefinitions="*,*,*"
+                ColumnSpacing="10"
+                HeightRequest="40"
+                HorizontalOptions="Fill"
+                IsVisible="{Binding IsVisibleFilterContainer}">
+                <Border
+                    Grid.ColumnSpan="3"
+                    Background="White"
+                    HeightRequest="60"
+                    StrokeThickness="0"
+                    WidthRequest="350">
+                    <Border.Shadow>
+                        <Shadow
+                            Brush="{StaticResource Black}"
+                            Opacity="0.2"
+                            Radius="5"
+                            Offset="1,1" />
+                    </Border.Shadow>
+                </Border>
+                <Grid>
+                    <Border x:Name="RadiusFilter" Style="{StaticResource borderFilterOption}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="RadiusFilterTapped" />
+                        </Border.GestureRecognizers>
+                        <Label
+                            HorizontalTextAlignment="Center"
+                            LineBreakMode="TailTruncation"
+                            MaxLines="2"
+                            Text="Radius"
+                            TextColor="White"
+                            VerticalTextAlignment="Center" />
+                    </Border>
+                    <Image x:Name="BackgroundSelectedAreaFilterImage" Style="{StaticResource imgSelectedFilter}" />
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Border x:Name="CategoryFilter" Style="{StaticResource borderFilterOption}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="CategoryFilterTapped" />
+                        </Border.GestureRecognizers>
+                        <Label
+                            x:Name="lbCategoryTitle"
+                            HorizontalTextAlignment="Center"
+                            LineBreakMode="TailTruncation"
+                            MaxLines="2"
+                            Text="City"
+                            TextColor="White"
+                            VerticalTextAlignment="Center" />
+                    </Border>
+                    <Image x:Name="BackgroundSelectedCategoryFilterImage" Style="{StaticResource imgSelectedFilter}" />
+                </Grid>
+                <Grid Grid.Column="2">
+                    <Border Style="{StaticResource borderFilterOption}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="CategoryFilterTapped" />
+                        </Border.GestureRecognizers>
+                        <Label
+                            HorizontalTextAlignment="Center"
+                            LineBreakMode="TailTruncation"
+                            MaxLines="2"
+                            Text="Reset"
+                            TextColor="White"
+                            VerticalTextAlignment="Center" />
+                    </Border>
+                </Grid>
+            </Grid>
+            <!--  Select radius for filter  -->
+            <Grid
+                Margin="16,8"
+                ColumnDefinitions="2*,*"
+                ColumnSpacing="10"
+                HeightRequest="40"
+                HorizontalOptions="Fill"
+                IsVisible="{Binding IsShowRadiusSearchBar}">
+                <Border
+                    Grid.ColumnSpan="3"
+                    Background="White"
+                    HeightRequest="60"
+                    StrokeThickness="0"
+                    WidthRequest="350">
+                    <Border.Shadow>
+                        <Shadow
+                            Brush="{StaticResource Black}"
+                            Opacity="0.2"
+                            Radius="5"
+                            Offset="1,1" />
+                    </Border.Shadow>
+                </Border>
+                <Slider
+                    x:Name="RadiusSlider"
+                    Maximum="100"
+                    MaximumTrackColor="{toolkit:AppThemeResource PrimaryColor}"
+                    Minimum="5"
+                    MinimumTrackColor="{toolkit:AppThemeResource PrimaryColor}"
+                    ThumbColor="{toolkit:AppThemeResource PrimaryColor}"
+                    ValueChanged="RadiusSlider_ValueChanged" />
+                <Label
+                    x:Name="RadiusLabel"
+                    Margin="0,-10,0,0"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Text="5 km"
+                    TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                    VerticalOptions="Start"
+                    VerticalTextAlignment="Start" />
+                <Border Grid.Column="1" Style="{StaticResource borderFilterOption}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="FilterRadiusSearch_Tapped" />
+                    </Border.GestureRecognizers>
+                    <Label
+                        HorizontalTextAlignment="Center"
+                        LineBreakMode="TailTruncation"
+                        MaxLines="2"
+                        Text="Search"
+                        TextColor="White"
+                        VerticalTextAlignment="Center" />
+                </Border>
+            </Grid>
             <maps:Map
                 x:Name="mapLonerDatingApp"
+                Grid.Row="2"
                 IsShowingUser="True"
                 IsTrafficEnabled="True"
                 ItemsSource="{Binding Pins}"
@@ -42,8 +193,8 @@
                 <maps:Map.ItemTemplate>
                     <DataTemplate x:DataType="{x:Type models:UserPinModel}">
                         <controls:CustomPin
-                            ImageSource="{Binding ImageSource}"
                             Address="{Binding Address}"
+                            ImageSource="{Binding ImageSource}"
                             InfoWindowClicked="Pin_InfoWindowClicked"
                             Label="{Binding Label, Mode=TwoWay}"
                             Location="{Binding Location}"
