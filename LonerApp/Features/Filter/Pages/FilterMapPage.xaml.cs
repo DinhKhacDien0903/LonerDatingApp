@@ -1,3 +1,4 @@
+using Java.Sql;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using System.Collections.ObjectModel;
@@ -10,7 +11,8 @@ public partial class FilterMapPage : BasePage
 {
     const string POLYLINE_DISTANCE_NAME = "PolyLineDistance";
     const string SEARCH_RADIUS_CIRCLE_NAME = "SearchRadiusCircle";
-    private Location _currentLocation = new();
+    const string DISTRICT_PIN_NAME = "DistrictPin";
+    private DistrictLocationModel? _currentDistrict;
     private FilterMapPageModel _vm;
     public FilterMapPage(FilterMapPageModel vm)
     {
@@ -21,18 +23,18 @@ public partial class FilterMapPage : BasePage
     protected async override void OnAppearing()
     {
         base.OnAppearing();
-        _currentLocation = await _vm.GetCurrentLocationAsync();
+        _vm.currentLocation = await _vm.GetCurrentLocationAsync();
     }
 
     private void Grid_Loaded(object sender, EventArgs e)
     {
         if (sender is not Grid grid)
             return;
-        // mapLonerDatingApp.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(_currentLocation.Latitude, _currentLocation.Longitude), Distance.FromMiles(10)));
-        MainThread.BeginInvokeOnMainThread(async() =>
+        MainThread.BeginInvokeOnMainThread(async () =>
         {
-            await Task.Delay(3000);
-            mapLonerDatingApp.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(_currentLocation.Latitude, _currentLocation.Longitude), Distance.FromMiles(10)));
+            await Task.Delay(2000);
+            mapLonerDatingApp.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(_vm.currentLocation.Latitude, _vm.currentLocation.Longitude), Distance.FromMiles(10)));
+            await DrawCircleMap(mapLonerDatingApp, _vm.CurrentRadius, _vm.currentLocation);
         });
     }
 
@@ -41,13 +43,15 @@ public partial class FilterMapPage : BasePage
         if (sender is not Pin pin)
             return;
 
-        await DrawPolyLine(mapLonerDatingApp, _currentLocation, pin.Location);
+        //Location: in here
+        await DrawPolyLine(mapLonerDatingApp, await _vm.GetCurrentLocationAsync(), pin.Location);
     }
 
     private void Pin_InfoWindowClicked(object sender, PinClickedEventArgs e)
     {
         if (sender is not Pin pin)
             return;
+
         MainThread.BeginInvokeOnMainThread(async () =>
         {
             _vm.IsBusy = true;
@@ -67,7 +71,6 @@ public partial class FilterMapPage : BasePage
 
     private void RadiusFilterTapped(object sender, TappedEventArgs e)
     {
-        //_vm.FilterRadiusPressedCommand.Execute(null);
         _vm.IsShowRadiusSearchBar = !_vm.IsShowRadiusSearchBar;
         _vm.IsVisibleFilterContainer = !_vm.IsVisibleFilterContainer;
     }
@@ -76,12 +79,12 @@ public partial class FilterMapPage : BasePage
     {
         if (sender is not Slider slider)
             return;
+        if (RadiusLabel == null || mapLonerDatingApp == null)
+            return;
 
         double radius = e.NewValue;
         RadiusLabel.Text = string.Format("{0:F0} km", slider.Value);
-        await DrawCircleMap(mapLonerDatingApp, radius, _currentLocation);
-        //SearchRadiusCircle.Radius = Distance.FromMeters(radius);
-        //SearchPlaces(currentLocation, radius, KeyWord);
+        await DrawCircleMap(mapLonerDatingApp, radius, _vm.currentLocation);
     }
 
     async Task DrawPolyLine(Map map, Location currentLocation, Location targetLocation)
@@ -121,6 +124,31 @@ public partial class FilterMapPage : BasePage
         });
     }
 
+    async Task AddDistrictPin(Map map, DistrictLocationModel district)
+    {
+        await MainThread.InvokeOnMainThreadAsync(() =>
+        {
+            RemoveDistrictPin(map);
+            var pin = new Pin
+            {
+                Label = district.ID,
+                Address = district.Name,
+                Type = PinType.Generic,
+                Location = district.Location,
+            };
+
+            pin.AutomationId = DISTRICT_PIN_NAME;
+            map.Pins.Add(pin);
+        });
+    }
+
+    void RemoveDistrictPin(Map map)
+    {
+        var previousPin = map.Pins.FirstOrDefault(x => x.AutomationId == DISTRICT_PIN_NAME);
+        if (previousPin != null)
+            map.Pins.Remove(previousPin);
+    }
+
     void RemovePolyLine(Map map)
     {
         var previousPolyLine = map.MapElements.FirstOrDefault(x => x.AutomationId == POLYLINE_DISTANCE_NAME);
@@ -137,18 +165,61 @@ public partial class FilterMapPage : BasePage
 
     private void FilterRadiusSearch_Tapped(object sender, TappedEventArgs e)
     {
-        RemovePolyLine(mapLonerDatingApp);
-        double radius = 5;
-        if (RadiusSlider != null)
-            radius = RadiusSlider.Value;
-        _vm.FilterRadiusSearchCommand.Execute(Math.Round(radius,2));
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            RemovePolyLine(mapLonerDatingApp);
+            double radius = 5;
+            if (RadiusSlider != null)
+                radius = RadiusSlider.Value;
+            if (_currentDistrict != null)
+                await AddDistrictPin(mapLonerDatingApp, _currentDistrict);
+            _vm.FilterRadiusSearchCommand.Execute(Math.Round(radius, 2));
+        });
     }
 
     private void ViewTransparentTapped(object sender, TappedEventArgs e)
     {
-        if(sender is not Grid grid)
+        if (sender is not Grid grid)
             return;
 
         _vm.IsVisibleDistrictCollection = false;
     }
+
+    private void DistrictItem_Tapped(object sender, TappedEventArgs e)
+    {
+        if (sender is not StackLayout stackLayout || stackLayout.BindingContext is not DistrictLocationModel district)
+            return;
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            _vm.IsBusy = true;
+            _currentDistrict = district;
+            _vm.IsVisibleDistrictCollection = false;
+            RemovePolyLine(mapLonerDatingApp);
+            mapLonerDatingApp.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(district.Location.Latitude, district.Location.Longitude), Distance.FromMiles(10)));
+            await Task.Delay(2000);
+            _vm.currentLocation = district.Location;
+            await DrawCircleMap(mapLonerDatingApp, _vm.CurrentRadius, _vm.currentLocation);
+            _vm.IsBusy = false;
+            _vm.SelectDistrictCommand.Execute(district);
+            await Task.Delay(200);
+            await AddDistrictPin(mapLonerDatingApp, district);
+        });
+    }
+    private void Reset_Tapped(object sender, TappedEventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            _vm.IsBusy = true;
+            RemovePolyLine(mapLonerDatingApp);
+            _vm.ResetData();
+            await _vm.LoadDataAsync();
+            await Task.Delay(1000);
+            mapLonerDatingApp.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(_vm.currentLocation.Latitude, _vm.currentLocation.Longitude), Distance.FromMiles(10)));
+            await DrawCircleMap(mapLonerDatingApp, _vm.CurrentRadius, _vm.currentLocation);
+            _vm.IsBusy = false;
+        });
+    }
 }
+
+//TODO: Reset => _currentLocation or Reload PageMap

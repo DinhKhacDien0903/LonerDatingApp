@@ -120,7 +120,7 @@
                 <Grid Grid.Column="2">
                     <Border Style="{StaticResource borderFilterOption}">
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="DistrictFilterTapped" />
+                            <TapGestureRecognizer Tapped="Reset_Tapped" />
                         </Border.GestureRecognizers>
                         <Label
                             HorizontalTextAlignment="Center"
@@ -131,58 +131,6 @@
                             VerticalTextAlignment="Center" />
                     </Border>
                 </Grid>
-            </Grid>
-            <!--  Select radius for filter  -->
-            <Grid
-                Margin="16,8"
-                ColumnDefinitions="2*,*"
-                ColumnSpacing="10"
-                HeightRequest="40"
-                HorizontalOptions="Fill"
-                IsVisible="{Binding IsShowRadiusSearchBar}">
-                <Border
-                    Grid.ColumnSpan="3"
-                    Background="White"
-                    HeightRequest="60"
-                    StrokeThickness="0"
-                    WidthRequest="350">
-                    <Border.Shadow>
-                        <Shadow
-                            Brush="{StaticResource Black}"
-                            Opacity="0.2"
-                            Radius="5"
-                            Offset="1,1" />
-                    </Border.Shadow>
-                </Border>
-                <Slider
-                    x:Name="RadiusSlider"
-                    Maximum="100"
-                    MaximumTrackColor="{toolkit:AppThemeResource PrimaryColor}"
-                    Minimum="5"
-                    MinimumTrackColor="{toolkit:AppThemeResource PrimaryColor}"
-                    ThumbColor="{toolkit:AppThemeResource PrimaryColor}"
-                    ValueChanged="RadiusSlider_ValueChanged" />
-                <Label
-                    x:Name="RadiusLabel"
-                    Margin="0,-10,0,0"
-                    HorizontalOptions="Center"
-                    HorizontalTextAlignment="Center"
-                    Text="5 km"
-                    TextColor="{toolkit:AppThemeResource PrimaryColor}"
-                    VerticalOptions="Start"
-                    VerticalTextAlignment="Start" />
-                <Border Grid.Column="1" Style="{StaticResource borderFilterOption}">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="FilterRadiusSearch_Tapped" />
-                    </Border.GestureRecognizers>
-                    <Label
-                        HorizontalTextAlignment="Center"
-                        LineBreakMode="TailTruncation"
-                        MaxLines="2"
-                        Text="Search"
-                        TextColor="White"
-                        VerticalTextAlignment="Center" />
-                </Border>
             </Grid>
             <!--  Map  -->
             <maps:Map
@@ -205,14 +153,74 @@
                     </DataTemplate>
                 </maps:Map.ItemTemplate>
             </maps:Map>
+            <!--  Select radius for filter  -->
+            <Grid
+                Margin="16,8"
+                ColumnDefinitions="2*,*"
+                ColumnSpacing="10"
+                HeightRequest="40"
+                HorizontalOptions="Fill"
+                IsVisible="{Binding IsShowRadiusSearchBar}">
+                <Border
+                    Grid.ColumnSpan="3"
+                    Background="White"
+                    HeightRequest="60"
+                    StrokeThickness="0"
+                    WidthRequest="350">
+                    <Border.Shadow>
+                        <Shadow
+                            Brush="{StaticResource Black}"
+                            Opacity="0.2"
+                            Radius="5"
+                            Offset="1,1" />
+                    </Border.Shadow>
+                </Border>
+                <Label
+                    x:Name="RadiusLabel"
+                    Margin="0,-10,0,0"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Text="10 km"
+                    TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                    VerticalOptions="Start"
+                    VerticalTextAlignment="Start" />
+                <Slider
+                    x:Name="RadiusSlider"
+                    Maximum="100"
+                    MaximumTrackColor="{toolkit:AppThemeResource PrimaryColor}"
+                    Minimum="5"
+                    MinimumTrackColor="{toolkit:AppThemeResource PrimaryColor}"
+                    ThumbColor="{toolkit:AppThemeResource PrimaryColor}"
+                    ValueChanged="RadiusSlider_ValueChanged"
+                    Value="{Binding CurrentRadius}" />
+                <Border Grid.Column="1" Style="{StaticResource borderFilterOption}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="FilterRadiusSearch_Tapped" />
+                    </Border.GestureRecognizers>
+                    <Label
+                        HorizontalTextAlignment="Center"
+                        LineBreakMode="TailTruncation"
+                        MaxLines="2"
+                        Text="Search"
+                        TextColor="White"
+                        VerticalTextAlignment="Center" />
+                </Border>
+            </Grid>
         </Grid>
+        <!--  Select distrinct for filter  -->
         <Grid
             x:Name="filterDistrictCollection"
             Grid.Row="1"
+            Padding="30,60,30,30"
             BackgroundColor="Transparent"
+            IsClippedToBounds="True"
             IsVisible="{Binding IsVisibleDistrictCollection}">
+            <Border
+                Background="White"
+                Stroke="{toolkit:AppThemeResource PrimaryColor}"
+                StrokeThickness="3" />
             <CollectionView
-                Margin="16,0"
+                Margin="20"
                 BackgroundColor="White"
                 ItemSizingStrategy="MeasureFirstItem"
                 ItemsSource="{Binding Districts, Mode=OneWay}"
@@ -224,9 +232,10 @@
                     <DataTemplate x:DataType="{x:Type models:DistrictLocationModel}">
                         <StackLayout>
                             <StackLayout.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding SelectDistrictCommand, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type vm:FilterMapPageModel}}, x:DataType=vm:FilterMapPageModel}" CommandParameter="{Binding .}" />
+                                <TapGestureRecognizer Tapped="DistrictItem_Tapped" />
                             </StackLayout.GestureRecognizers>
                             <Label
+                                Padding="20,0,0,0"
                                 HeightRequest="44"
                                 Text="{Binding Name, Mode=OneWay}"
                                 VerticalOptions="Center"
@@ -244,6 +253,7 @@
             </CollectionView>
             <Grid
                 x:Name="viewTransparentDistrict"
+                Margin="-30"
                 BackgroundColor="Transparent"
                 IsVisible="True">
                 <Grid.GestureRecognizers>
