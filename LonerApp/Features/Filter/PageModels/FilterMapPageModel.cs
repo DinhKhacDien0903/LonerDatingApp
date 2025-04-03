@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls.Maps;
+using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
 namespace LonerApp.PageModels
@@ -11,6 +12,8 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private bool _isVisibleFilterContainer;
         [ObservableProperty]
+        private bool _isVisibleDistrictCollection;
+        [ObservableProperty]
         private bool _isShowRadiusSearchBar;
         [ObservableProperty]
         private bool _hasBackButton;
@@ -18,6 +21,8 @@ namespace LonerApp.PageModels
         private byte[]? _imageData;
         [ObservableProperty]
         private ObservableCollection<UserPinModel> _pins = new();
+        [ObservableProperty]
+        private ObservableCollection<DistrictLocationModel> _districts = new();
         private static bool isFirstLoad = true;
         private UserPinModel? currentLocationPin;
         //TODO: Handel get data in server
@@ -144,6 +149,35 @@ namespace LonerApp.PageModels
             }
         }
 
+        public async Task LoadDistrictLocationAsync()
+        {
+            IsBusy = true;
+            ObservableCollection<DistrictLocationModel> districtLocation = new();
+            try
+            {
+                using var stream = await FileSystem.OpenAppPackageFileAsync("DistrictLocation.json");
+                using var reader = new StreamReader(stream);
+
+                var locationJson = await reader.ReadToEndAsync();
+                var cities = JsonConvert.DeserializeObject<ObservableCollection<DistrictLocationModel>>(locationJson);
+                if (cities != null)
+                {
+                    foreach (var city in cities)
+                    {
+                        Districts.Add(city);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                await AlertHelper.ShowErrorAlertAsync("Can't load district data");
+                throw;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
         private double GetDistance(Location fromLocation, Location destinationLocation)
         {
             return Math.Round(Location.CalculateDistance(fromLocation, destinationLocation, DistanceUnits.Kilometers), 2);
@@ -212,6 +246,7 @@ namespace LonerApp.PageModels
             IsBusy = true;
             IsVisibleFilterContainer = !IsVisibleFilterContainer;
             IsShowRadiusSearchBar = false;
+            IsVisibleDistrictCollection = false;
             //await NavigationService.PushToPageAsync<SearchPage>(isPushModal: true);
             await Task.Delay(100);
             IsBusy = false;
@@ -236,6 +271,25 @@ namespace LonerApp.PageModels
         }
 
         [RelayCommand]
+        async Task OnSelectDistrictAsync(object param)
+        {
+            if (param is not DistrictLocationModel district)
+                return;
+            if (SelectDistrictCommand.IsRunning || IsBusy)
+                return;
+
+            IsBusy = true;
+            // IsVisibleDistrictCollection = !IsVisibleDistrictCollection;
+            // IsShowRadiusSearchBar = false;
+            // IsVisibleFilterContainer = false;
+            // ObservableCollection<UserPinModel> result = GetPinsInRadius(_cachePins, 100, district.Location);
+            // Pins.Clear();
+            // Pins = result;
+            await Task.Delay(100);
+            IsBusy = false;
+        }
+        [RelayCommand]
+
         async Task OnBackAsync(object param)
         {
             if (!IsBusy)

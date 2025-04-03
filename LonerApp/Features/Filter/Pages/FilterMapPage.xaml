@@ -64,6 +64,7 @@
             Grid.Row="1"
             Loaded="Grid_Loaded"
             RowDefinitions="Auto,10, *">
+            <!--  Select Filter  -->
             <Grid
                 Margin="16,8"
                 ColumnDefinitions="*,*,*"
@@ -101,9 +102,9 @@
                     <Image x:Name="BackgroundSelectedAreaFilterImage" Style="{StaticResource imgSelectedFilter}" />
                 </Grid>
                 <Grid Grid.Column="1">
-                    <Border x:Name="CategoryFilter" Style="{StaticResource borderFilterOption}">
+                    <Border x:Name="DistrictFilter" Style="{StaticResource borderFilterOption}">
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="CategoryFilterTapped" />
+                            <TapGestureRecognizer Tapped="DistrictFilterTapped" />
                         </Border.GestureRecognizers>
                         <Label
                             x:Name="lbCategoryTitle"
@@ -119,7 +120,7 @@
                 <Grid Grid.Column="2">
                     <Border Style="{StaticResource borderFilterOption}">
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="CategoryFilterTapped" />
+                            <TapGestureRecognizer Tapped="DistrictFilterTapped" />
                         </Border.GestureRecognizers>
                         <Label
                             HorizontalTextAlignment="Center"
@@ -183,6 +184,7 @@
                         VerticalTextAlignment="Center" />
                 </Border>
             </Grid>
+            <!--  Map  -->
             <maps:Map
                 x:Name="mapLonerDatingApp"
                 Grid.Row="2"
@@ -203,6 +205,51 @@
                     </DataTemplate>
                 </maps:Map.ItemTemplate>
             </maps:Map>
+        </Grid>
+        <Grid
+            x:Name="filterDistrictCollection"
+            Grid.Row="1"
+            BackgroundColor="Transparent"
+            IsVisible="{Binding IsVisibleDistrictCollection}">
+            <CollectionView
+                Margin="16,0"
+                BackgroundColor="White"
+                ItemSizingStrategy="MeasureFirstItem"
+                ItemsSource="{Binding Districts, Mode=OneWay}"
+                SelectionMode="None"
+                VerticalOptions="Center"
+                VerticalScrollBarVisibility="Always"
+                ZIndex="1">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="{x:Type models:DistrictLocationModel}">
+                        <StackLayout>
+                            <StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectDistrictCommand, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type vm:FilterMapPageModel}}, x:DataType=vm:FilterMapPageModel}" CommandParameter="{Binding .}" />
+                            </StackLayout.GestureRecognizers>
+                            <Label
+                                HeightRequest="44"
+                                Text="{Binding Name, Mode=OneWay}"
+                                VerticalOptions="Center"
+                                VerticalTextAlignment="Center" />
+                            <BoxView
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="1"
+                                Opacity="0.3" />
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.Footer>
+                    <Label />
+                </CollectionView.Footer>
+            </CollectionView>
+            <Grid
+                x:Name="viewTransparentDistrict"
+                BackgroundColor="Transparent"
+                IsVisible="True">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="ViewTransparentTapped" />
+                </Grid.GestureRecognizers>
+            </Grid>
         </Grid>
     </Grid>
 </base:BasePage>

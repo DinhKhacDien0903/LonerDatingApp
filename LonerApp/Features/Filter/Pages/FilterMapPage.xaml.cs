@@ -28,8 +28,10 @@ public partial class FilterMapPage : BasePage
     {
         if (sender is not Grid grid)
             return;
-        MainThread.BeginInvokeOnMainThread(() =>
+        // mapLonerDatingApp.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(_currentLocation.Latitude, _currentLocation.Longitude), Distance.FromMiles(10)));
+        MainThread.BeginInvokeOnMainThread(async() =>
         {
+            await Task.Delay(3000);
             mapLonerDatingApp.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(_currentLocation.Latitude, _currentLocation.Longitude), Distance.FromMiles(10)));
         });
     }
@@ -54,9 +56,13 @@ public partial class FilterMapPage : BasePage
         });
     }
 
-    private void CategoryFilterTapped(object sender, TappedEventArgs e)
+    private void DistrictFilterTapped(object sender, TappedEventArgs e)
     {
-
+        _vm.IsVisibleDistrictCollection = !_vm.IsVisibleDistrictCollection;
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            await _vm.LoadDistrictLocationAsync();
+        });
     }
 
     private void RadiusFilterTapped(object sender, TappedEventArgs e)
@@ -136,5 +142,13 @@ public partial class FilterMapPage : BasePage
         if (RadiusSlider != null)
             radius = RadiusSlider.Value;
         _vm.FilterRadiusSearchCommand.Execute(Math.Round(radius,2));
+    }
+
+    private void ViewTransparentTapped(object sender, TappedEventArgs e)
+    {
+        if(sender is not Grid grid)
+            return;
+
+        _vm.IsVisibleDistrictCollection = false;
     }
 }
