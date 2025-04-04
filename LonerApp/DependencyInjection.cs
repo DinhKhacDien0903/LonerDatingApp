@@ -26,6 +26,7 @@ public static class DependencyInjection
         services.AddTransient<SetupPageModel>();
         services.AddTransient<SwipePageModel>();
         services.AddTransient<ProfilePageModel>();
+        services.AddTransient<MyProfilePageModel>();
         services.AddTransient<ChatPageModel>();
         services.AddTransient<ChatMessagePageModel>();
         services.AddTransient<ChatMessageImagePageModel>();
@@ -54,6 +55,7 @@ public static class DependencyInjection
         services.AddTransient<MessageChatPage>();
         services.AddTransient<ImageViewerFullScreenPage>();
         services.AddTransient<FilterMapPage>();
+        services.AddTransient<MyProfilePage>();
         return services;
     }
 }

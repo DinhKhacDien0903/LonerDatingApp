@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage
+    x:Class="LonerApp.Features.Pages.MyProfilePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    Title="MyProfilePage"
+    x:DataType="vm:MyProfilePageModel"
+    BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+    NavigationPage.HasNavigationBar="True"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="True">
+    <Page.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="White" StatusBarStyle="DarkContent" />
+    </Page.Behaviors>
+    <base:BasePage.Resources>
+        <x:Double x:Key="SizeMessageImageItem">280</x:Double>
+    </base:BasePage.Resources>
+    <Grid
+        Margin="0"
+        Padding="0"
+        RowDefinitions="Auto,*">
+        <controls:CustomNavigationBar
+            BackButtonCommand="{Binding BackCommand}"
+            HasBackButton="{Binding HasBackButton}"
+            IsVisible="{Binding IsVisibleNavigation}"
+            OptionPage="&#xf983;"
+            TitlePage="Loner" />
+        <Grid
+            Grid.Row="1"
+            Margin="0,100,0,0"
+            HorizontalOptions="Fill"
+            RowDefinitions="*,50,*"
+            RowSpacing="0"
+            VerticalOptions="Fill">
+            <Grid
+                Background="Transparent"
+                HeightRequest="500"
+                RowDefinitions="*,Auto"
+                VerticalOptions="Center">
+                <Ellipse
+                    Grid.RowSpan="3"
+                    Margin="0,0,0,0"
+                    Background="Transparent"
+                    HorizontalOptions="Fill"
+                    Stroke="Red"
+                    StrokeThickness="1"
+                    VerticalOptions="Fill" />
+                <ffimageloading:CachedImage
+                    Aspect="AspectFill"
+                    DownsampleToViewSize="True"
+                    HeightRequest="{StaticResource SizeMessageImageItem}"
+                    HorizontalOptions="Center"
+                    IsOpaque="True"
+                    LoadingPriority="Lowest"
+                    Source="bbbb.jpeg"
+                    WidthRequest="{StaticResource SizeMessageImageItem}">
+                    <ffimageloading:CachedImage.Clip>
+                        <RoundRectangleGeometry CornerRadius="140" Rect="0,0,280,280" />
+                    </ffimageloading:CachedImage.Clip>
+                </ffimageloading:CachedImage>
+                <Label
+                    Grid.Row="1"
+                    Background="Pink"
+                    FontFamily="GothamBold"
+                    FontSize="28"
+                    HorizontalOptions="Center"
+                    Text="John, 26"
+                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                    VerticalOptions="Start"
+                    VerticalTextAlignment="Start" />
+            </Grid>
+            <StackLayout
+                Grid.Row="2"
+                BackgroundColor="Transparent"
+                HorizontalOptions="Center"
+                Orientation="Horizontal"
+                Spacing="30"
+                VerticalOptions="Center">
+                <StackLayout
+                    HorizontalOptions="Start"
+                    Spacing="10"
+                    VerticalOptions="Center">
+                    <ImageButton
+                        BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+                        BorderColor="{toolkit:AppThemeResource BackgroundPageColor}"
+                        BorderWidth="1"
+                        CornerRadius="20">
+                        <ImageButton.Source>
+                            <FontImageSource
+                                FontFamily="MaterialFontFamily"
+                                Glyph="&#xf2c8;"
+                                Size="{StaticResource FontSizeXXL}"
+                                Color="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+                        </ImageButton.Source>
+                    </ImageButton>
+                    <Label
+                        FontFamily="GothamBold"
+                        FontSize="14"
+                        HorizontalOptions="Center"
+                        Text="Settings"
+                        TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                        TextTransform="Uppercase" />
+                </StackLayout>
+                <StackLayout
+                    Margin="0,60,0,0"
+                    HorizontalOptions="Start"
+                    Spacing="10"
+                    VerticalOptions="Center">
+                    <ImageButton
+                        BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+                        BorderColor="{toolkit:AppThemeResource BackgroundPageColor}"
+                        BorderWidth="1"
+                        CornerRadius="20">
+                        <ImageButton.Source>
+                            <FontImageSource
+                                FontFamily="MaterialFontFamily"
+                                Glyph="&#xf2c8;"
+                                Size="{StaticResource FontSizeXXL}"
+                                Color="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+                        </ImageButton.Source>
+                    </ImageButton>
+                    <Label
+                        FontFamily="GothamBold"
+                        FontSize="14"
+                        HorizontalOptions="Center"
+                        Text="Settings"
+                        TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                        TextTransform="Uppercase" />
+                </StackLayout>
+                <StackLayout
+                    HorizontalOptions="Start"
+                    Spacing="10"
+                    VerticalOptions="Center">
+                    <ImageButton
+                        BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+                        BorderColor="{toolkit:AppThemeResource BackgroundPageColor}"
+                        BorderWidth="1"
+                        CornerRadius="20">
+                        <ImageButton.Source>
+                            <FontImageSource
+                                FontFamily="MaterialFontFamily"
+                                Glyph="&#xf2c8;"
+                                Size="{StaticResource FontSizeXXL}"
+                                Color="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+                        </ImageButton.Source>
+                    </ImageButton>
+                    <Label
+                        FontFamily="GothamBold"
+                        FontSize="14"
+                        HorizontalOptions="Center"
+                        Text="Settings"
+                        TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                        TextTransform="Uppercase" />
+                </StackLayout>
+            </StackLayout>
+        </Grid>
+    </Grid>
+</base:BasePage>

@@ -151,6 +151,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Features/Profile/Pages/MyProfilePage.xaml.cs">
+	    <DependentUpon>MyProfilePage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Features/Swipe/Pages/MainSwipePage.xaml.cs">
 	    <DependentUpon>MainSwipePage.xaml</DependentUpon>
 	  </Compile>
