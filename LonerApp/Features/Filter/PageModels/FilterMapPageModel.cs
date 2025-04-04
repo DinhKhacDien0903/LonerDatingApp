@@ -47,7 +47,11 @@ namespace LonerApp.PageModels
         {
             await base.LoadDataAsync();
             IsBusy = true;
-            currentLocation = await GetCurrentLocationAsync();
+            await MainThread.InvokeOnMainThreadAsync(async() =>
+            {
+                currentLocation = await GetCurrentLocationAsync();
+                await Task.Delay(10);
+            });
             await LoadPins();
             //_cachePins = new ObservableCollection<UserPinModel>(Pins);
             IsBusy = false;
