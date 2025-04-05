@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage
+    x:Class="LonerApp.Features.Pages.EditProfilePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:sho="http://sharpnado.com"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    Title="EditProfilePage"
+    x:DataType="vm:EditProfilePageModel"
+    BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+    NavigationPage.HasNavigationBar="True"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="True">
+    <Page.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="White" StatusBarStyle="DarkContent" />
+    </Page.Behaviors>
+    <base:BasePage.Resources>
+        <DataTemplate x:Key="AddPhotoItemTemplate" x:DataType="models:AddPhotoModel">
+            <sho:DraggableViewCell IsDraggable="False">
+                <ContentView>
+                    <AbsoluteLayout>
+                        <Border
+                            x:Name="shoItemAddPhoto"
+                            HeightRequest="128"
+                            Stroke="{toolkit:AppThemeResource PrimaryColor}"
+                            StrokeDashArray="2,2"
+                            StrokeDashOffset="6"
+                            StrokeThickness="2"
+                            VerticalOptions="Fill"
+                            WidthRequest="90">
+                            <ffimageloading:CachedImage
+                                x:Name="imageTake"
+                                Aspect="AspectFit"
+                                DownsampleToViewSize="True"
+                                HorizontalOptions="Center"
+                                Source="{Binding ImagePath}"
+                                WidthRequest="90" />
+                        </Border>
+                        <BoxView
+                            AbsoluteLayout.LayoutBounds="0.8,1,35,35"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            BackgroundColor="White"
+                            CornerRadius="50"
+                            HeightRequest="20"
+                            WidthRequest="20" />
+                        <ImageButton
+                            AbsoluteLayout.LayoutBounds="0.8,1,35,35"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            BackgroundColor="Transparent"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:EditProfilePageModel}}, Path=AddPhotoItemClickedCommand, x:DataType={x:Type vm:EditProfilePageModel}}"
+                            CommandParameter="{Binding .}"
+                            HorizontalOptions="Center"
+                            TranslationX="2"
+                            TranslationY="2"
+                            VerticalOptions="Center">
+                            <ImageButton.Source>
+                                <FontImageSource
+                                    FontFamily="MaterialFontFamily"
+                                    Glyph="{Binding IconPath}"
+                                    Size="50"
+                                    Color="{toolkit:AppThemeResource PrimaryColor}" />
+                            </ImageButton.Source>
+                        </ImageButton>
+                    </AbsoluteLayout>
+                </ContentView>
+            </sho:DraggableViewCell>
+        </DataTemplate>
+    </base:BasePage.Resources>
+    <base:BasePage.Content>
+        <Grid
+            Margin="0"
+            Padding="0"
+            RowDefinitions="Auto,*">
+            <controls:CustomNavigationBar
+                BackButtonCommand="{Binding BackCommand}"
+                HasBackButton="{Binding HasBackButton}"
+                IsVisible="{Binding IsVisibleNavigation}"
+                OptionButtonCommand="{Binding DonePressedCommand}"
+                OptionPage="&#xf12c;"
+                TitlePage="Edit Infor" />
+            <Grid
+                Grid.Row="1"
+                HorizontalOptions="Center"
+                RowDefinitions="Auto, *">
+                <StackLayout
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    Orientation="Horizontal"
+                    Spacing="90">
+                    <Label
+                        x:Name="EditLabel"
+                        FontFamily="GothamBold"
+                        FontSize="{StaticResource FontSizeL}"
+                        HorizontalOptions="Center"
+                        Text="Edit"
+                        TextColor="{toolkit:AppThemeResource PrimaryColor}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="Label_Edit_Tapped" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                    <Label
+                        x:Name="PreviewLabel"
+                        FontFamily="GothamBold"
+                        FontSize="{StaticResource FontSizeL}"
+                        HorizontalOptions="Center"
+                        Text="Preview"
+                        TextColor="#939393">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="Label_Preview_Tapped" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </StackLayout>
+                <ScrollView Grid.Row="1">
+                    <StackLayout>
+                        <sho:CollectionView
+                            x:Name="AddPhotoCollection"
+                            AutoDisconnectHandler="False"
+                            CollectionLayout="Horizontal"
+                            CollectionPadding="20,0"
+                            EnableDragAndDrop="True"
+                            HorizontalOptions="Center"
+                            IsEnabled="True"
+                            ItemHeight="128"
+                            ItemSpacing="10"
+                            ItemTemplate="{StaticResource AddPhotoItemTemplate}"
+                            ItemWidth="120"
+                            ItemsSource="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:EditProfilePageModel}}, x:DataType={x:Type vm:EditProfilePageModel}, Path=AddPhotos}" />
+                        <StackLayout
+                            Margin="0,20,0,0"
+                            Padding="20,0,10,10"
+                            BackgroundColor="#F5F7FA"
+                            Orientation="Vertical"
+                            Spacing="10">
+                            <BoxView
+                                Margin="-20,0,-10,0"
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="1"
+                                HorizontalOptions="Fill"
+                                Opacity="0.3" />
+                            <Label
+                                FontFamily="GothamLight"
+                                FontSize="12"
+                                Text="Smart Photos continuously tests all your profile photos and  picks the best one to show first."
+                                TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+                            <Label
+                                FontFamily="GothamBold"
+                                FontSize="{StaticResource FontSizeM}"
+                                Text="About me"
+                                TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+                            <Border
+                                x:Name="InputGrid"
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="0"
+                                Padding="5,0,0,0"
+                                Background="#EEEFF1"
+                                Stroke="#D9D9D9"
+                                StrokeShape="RoundRectangle 10"
+                                StrokeThickness="2">
+                                <ContentView Margin="0" Padding="0">
+                                    <controls:BorderlessEditor
+                                        x:Name="AboutMeEditor"
+                                        AutoSize="TextChanges"
+                                        Focused="AboutMeEditor_Focused"
+                                        FontFamily="Gotham"
+                                        FontSize="{StaticResource FontSizeM}"
+                                        HorizontalOptions="Start"
+                                        MaximumHeightRequest="120"
+                                        MaximumWidthRequest="250"
+                                        Placeholder="Type fot about ...                             "
+                                        Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:EditProfilePageModel}}, x:DataType={x:Type vm:EditProfilePageModel}, Path=AboutMeEditorValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                                        TextChanged="AboutMeEditor_TextChanged"
+                                        TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                        Unfocused="AboutMeEditor_Unfocused" />
+                                </ContentView>
+                            </Border>
+                        </StackLayout>
+                        <StackLayout
+                            Padding="20,0,10,10"
+                            BackgroundColor="#F5F7FA"
+                            Orientation="Vertical"
+                            Spacing="10">
+                            <BoxView
+                                Margin="-20,0,-10,0"
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="2"
+                                HorizontalOptions="Fill"
+                                Opacity="0.3" />
+                            <Label
+                                FontFamily="GothamBold"
+                                FontSize="{StaticResource FontSizeM}"
+                                Text="Interest"
+                                TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+                            <BoxView
+                                Margin="-20,0,-10,0"
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="1"
+                                HorizontalOptions="Fill"
+                                Opacity="0.3" />
+                            <Grid
+                                Margin="-20,-10,-10,-10"
+                                BackgroundColor="White"
+                                ColumnDefinitions="*, Auto">
+                                <Label
+                                    Padding="20,10,10,10"
+                                    FontFamily="GothamLight"
+                                    FontSize="12"
+                                    HorizontalOptions="Fill"
+                                    Text="Smart Photos continuously tests all your profile photos and  picks the best one to show first."
+                                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                                    VerticalOptions="Fill" />
+                                <Label
+                                    Grid.Column="1"
+                                    Padding="0,0,10,0"
+                                    FontFamily="MaterialFontFamily"
+                                    FontSize="30"
+                                    Text="&#xf142;"
+                                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                                    VerticalTextAlignment="Center" />
+                            </Grid>
+                        </StackLayout>
+                        <StackLayout
+                            Padding="20,0,10,10"
+                            BackgroundColor="#F5F7FA"
+                            Orientation="Vertical"
+                            Spacing="10">
+                            <BoxView
+                                Margin="-20,0,-10,0"
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="2"
+                                HorizontalOptions="Fill"
+                                Opacity="0.3" />
+                            <Label
+                                FontFamily="GothamBold"
+                                FontSize="{StaticResource FontSizeM}"
+                                Text="Gender"
+                                TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+                            <BoxView
+                                Margin="-20,0,-10,0"
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="1"
+                                HorizontalOptions="Fill"
+                                Opacity="0.3" />
+                            <Grid
+                                Margin="-20,-10,-10,-10"
+                                BackgroundColor="White"
+                                ColumnDefinitions="*, Auto">
+                                <Label
+                                    Padding="20,10,10,10"
+                                    FontFamily="GothamLight"
+                                    FontSize="12"
+                                    HorizontalOptions="Fill"
+                                    Text="Men"
+                                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                                    VerticalOptions="Fill" />
+                                <Label
+                                    Grid.Column="1"
+                                    Padding="0,0,10,0"
+                                    FontFamily="MaterialFontFamily"
+                                    FontSize="30"
+                                    Text="&#xf142;"
+                                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                                    VerticalTextAlignment="Center" />
+                            </Grid>
+                        </StackLayout>
+                        <StackLayout
+                            Padding="20,0,10,10"
+                            BackgroundColor="#F5F7FA"
+                            Orientation="Vertical"
+                            Spacing="10">
+                            <BoxView
+                                Margin="-20,0,-10,0"
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="2"
+                                HorizontalOptions="Fill"
+                                Opacity="0.3" />
+                            <Label
+                                FontFamily="GothamBold"
+                                FontSize="{StaticResource FontSizeM}"
+                                Text="University"
+                                TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+                            <BoxView
+                                Margin="-20,0,-10,0"
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="1"
+                                HorizontalOptions="Fill"
+                                Opacity="0.3" />
+                            <Grid
+                                Margin="-20,-10,-10,-10"
+                                BackgroundColor="White"
+                                ColumnDefinitions="*, Auto">
+                                <Label
+                                    Padding="20,10,10,10"
+                                    FontFamily="GothamLight"
+                                    FontSize="12"
+                                    HorizontalOptions="Fill"
+                                    Text="HAUI"
+                                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                                    VerticalOptions="Fill" />
+                                <Label
+                                    Grid.Column="1"
+                                    Padding="0,0,10,0"
+                                    FontFamily="MaterialFontFamily"
+                                    FontSize="30"
+                                    Text="&#xf142;"
+                                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                                    VerticalTextAlignment="Center" />
+                            </Grid>
+                        </StackLayout>
+                    </StackLayout>
+                </ScrollView>
+            </Grid>
+            <BoxView
+                x:Name="Overlay"
+                Grid.RowSpan="2"
+                BackgroundColor="Transparent"
+                IsVisible="False">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="Overlay_Tapped" />
+                    <PanGestureRecognizer PanUpdated="Overlay_PanUpdated" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+        </Grid>
+    </base:BasePage.Content>
+</base:BasePage>

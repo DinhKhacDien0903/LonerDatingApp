@@ -30,28 +30,25 @@
             BackButtonCommand="{Binding BackCommand}"
             HasBackButton="{Binding HasBackButton}"
             IsVisible="{Binding IsVisibleNavigation}"
-            OptionPage="&#xf983;"
             TitlePage="Loner" />
         <Grid
             Grid.Row="1"
-            Margin="0,100,0,0"
             HorizontalOptions="Fill"
             RowDefinitions="*,50,*"
             RowSpacing="0"
-            VerticalOptions="Fill">
+            VerticalOptions="Center">
             <Grid
                 Background="Transparent"
-                HeightRequest="500"
-                RowDefinitions="*,Auto"
+                RowDefinitions="*,50,Auto"
                 VerticalOptions="Center">
-                <Ellipse
+                <!--<Ellipse
                     Grid.RowSpan="3"
                     Margin="0,0,0,0"
                     Background="Transparent"
                     HorizontalOptions="Fill"
                     Stroke="Red"
                     StrokeThickness="1"
-                    VerticalOptions="Fill" />
+                    VerticalOptions="Fill" />-->
                 <ffimageloading:CachedImage
                     Aspect="AspectFill"
                     DownsampleToViewSize="True"
@@ -66,8 +63,7 @@
                     </ffimageloading:CachedImage.Clip>
                 </ffimageloading:CachedImage>
                 <Label
-                    Grid.Row="1"
-                    Background="Pink"
+                    Grid.Row="2"
                     FontFamily="GothamBold"
                     FontSize="28"
                     HorizontalOptions="Center"
@@ -81,28 +77,27 @@
                 BackgroundColor="Transparent"
                 HorizontalOptions="Center"
                 Orientation="Horizontal"
-                Spacing="30"
+                Spacing="10"
                 VerticalOptions="Center">
                 <StackLayout
                     HorizontalOptions="Start"
-                    Spacing="10"
-                    VerticalOptions="Center">
+                    VerticalOptions="Center"
+                    ZIndex="10">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GotoSettingCommand}" />
+                    </StackLayout.GestureRecognizers>
                     <ImageButton
-                        BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
                         BorderColor="{toolkit:AppThemeResource BackgroundPageColor}"
-                        BorderWidth="1"
-                        CornerRadius="20">
-                        <ImageButton.Source>
-                            <FontImageSource
-                                FontFamily="MaterialFontFamily"
-                                Glyph="&#xf2c8;"
-                                Size="{StaticResource FontSizeXXL}"
-                                Color="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
-                        </ImageButton.Source>
+                        HeightRequest="90"
+                        Source="icon_setting.png"
+                        WidthRequest="100">
+                        <ImageButton.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GotoSettingCommand}" />
+                        </ImageButton.GestureRecognizers>
                     </ImageButton>
                     <Label
                         FontFamily="GothamBold"
-                        FontSize="14"
+                        FontSize="{StaticResource FontSizeS}"
                         HorizontalOptions="Center"
                         Text="Settings"
                         TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
@@ -111,53 +106,51 @@
                 <StackLayout
                     Margin="0,60,0,0"
                     HorizontalOptions="Start"
-                    Spacing="10"
                     VerticalOptions="Center">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GotoEditProfileCommand}" />
+                    </StackLayout.GestureRecognizers>
                     <ImageButton
                         BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
                         BorderColor="{toolkit:AppThemeResource BackgroundPageColor}"
-                        BorderWidth="1"
-                        CornerRadius="20">
-                        <ImageButton.Source>
-                            <FontImageSource
-                                FontFamily="MaterialFontFamily"
-                                Glyph="&#xf2c8;"
-                                Size="{StaticResource FontSizeXXL}"
-                                Color="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
-                        </ImageButton.Source>
+                        HeightRequest="90"
+                        Source="icon_edit.png"
+                        WidthRequest="100">
+                        <ImageButton.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GotoEditProfileCommand}" />
+                        </ImageButton.GestureRecognizers>
                     </ImageButton>
                     <Label
                         FontFamily="GothamBold"
-                        FontSize="14"
+                        FontSize="{StaticResource FontSizeM}"
                         HorizontalOptions="Center"
-                        Text="Settings"
+                        Text="edit profile"
                         TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
                         TextTransform="Uppercase" />
                 </StackLayout>
-                <StackLayout
-                    HorizontalOptions="Start"
-                    Spacing="10"
-                    VerticalOptions="Center">
+                <StackLayout HorizontalOptions="Start" VerticalOptions="Center">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GotoGooglePlayCommand}" />
+                    </StackLayout.GestureRecognizers>
                     <ImageButton
                         BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
                         BorderColor="{toolkit:AppThemeResource BackgroundPageColor}"
-                        BorderWidth="1"
-                        CornerRadius="20">
-                        <ImageButton.Source>
-                            <FontImageSource
-                                FontFamily="MaterialFontFamily"
-                                Glyph="&#xf2c8;"
-                                Size="{StaticResource FontSizeXXL}"
-                                Color="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
-                        </ImageButton.Source>
+                        HeightRequest="90"
+                        Source="icon_store.png"
+                        WidthRequest="100">
+                        <ImageButton.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GotoGooglePlayCommand}" />
+                        </ImageButton.GestureRecognizers>
                     </ImageButton>
                     <Label
                         FontFamily="GothamBold"
-                        FontSize="14"
+                        FontSize="{StaticResource FontSizeS}"
                         HorizontalOptions="Center"
-                        Text="Settings"
+                        Text="Store"
                         TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
-                        TextTransform="Uppercase" />
+                        TextTransform="Uppercase"
+                        VerticalOptions="Start"
+                        VerticalTextAlignment="Start" />
                 </StackLayout>
             </StackLayout>
         </Grid>

@@ -17,7 +17,7 @@
             Title=""
             ContentTemplate="{DataTemplate pages:ChatPage}"
             Icon="{StaticResource IconChatPage}"
-            Route="chatPage" /> -->
+            Route="chatPage" />-->
         <ShellContent
             Title=""
             ContentTemplate="{DataTemplate pages:MyProfilePage}"

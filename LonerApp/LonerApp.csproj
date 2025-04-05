@@ -151,9 +151,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Features/Profile/Pages/MyProfilePage.xaml.cs">
-	    <DependentUpon>MyProfilePage.xaml</DependentUpon>
-	  </Compile>
 	  <Compile Update="Features/Swipe/Pages/MainSwipePage.xaml.cs">
 	    <DependentUpon>MainSwipePage.xaml</DependentUpon>
 	  </Compile>
@@ -191,6 +188,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Features\Profile\Pages\DetailProfilePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Features\Profile\Pages\EditProfilePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="UI\Controls\CustomButton.xaml">

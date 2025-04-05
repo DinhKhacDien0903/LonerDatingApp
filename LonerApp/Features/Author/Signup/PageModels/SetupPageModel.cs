@@ -322,7 +322,7 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnAddPhotoItemClickedAsync(object param)
         {
-            if (GenderContinueCommand.IsRunning || param is not AddPhotoModel itemSelected)
+            if (AddPhotoItemClickedCommand.IsRunning || param is not AddPhotoModel itemSelected)
             {
                 return;
             }
@@ -368,20 +368,20 @@ namespace LonerApp.PageModels
 
         private async Task<bool> CheckRemoveOrUpdateImageAsync(AddPhotoModel item)
         {
-            if(item.IconPath.Equals("\uf6fe"))
+            if (item.IconPath.Equals("\uf6fe"))
             {
                 string removePhoto = I18nHelper.Get("SetupPhotoPage_ImageDialog_RemovePhoto");
                 string updatePhoto = I18nHelper.Get("SetupPhotoPage_ImageDialog_UpdatePhoto");
-                string[] choices = {removePhoto, updatePhoto};
+                string[] choices = { removePhoto, updatePhoto };
                 var choiceEdit = await AppHelper.CurrentMainPage.DisplayActionSheet(
                     I18nHelper.Get("SetupPhotoPage_ImageDialog_Title"), I18nHelper.Get("Common_Cancel"), null, choices);
-                if((string)choiceEdit == removePhoto)
+                if ((string)choiceEdit == removePhoto)
                 {
                     item.ImagePath = ImageSource.FromFile("blank_image.png");
                     item.IconPath = "\uf417";
                     return true;
                 }
-                else if((string)choiceEdit == updatePhoto)
+                else if ((string)choiceEdit == updatePhoto)
                 {
                     return false;
                 }

@@ -22,5 +22,11 @@ namespace LonerApp.Helpers
         {
             return GetService<TPageModel>() ?? throw new GetPageModelException<TPageModel>();
         }
+
+        public static TViewModel GetPageModelObservable<TViewModel>()
+                 where TViewModel : ObservableObject
+        {
+            return Current.GetService<TViewModel>() ?? throw new Exception("Failed to resolve PageModel for TabbedPage");
+        }
     }
 }
