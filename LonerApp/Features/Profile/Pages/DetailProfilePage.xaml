@@ -49,131 +49,190 @@
             </Border>
         </DataTemplate>
     </base:BasePage.Resources>
-    <ScrollView>
-        <Grid
-            Margin="0"
+    <Grid
+        Margin="0"
+        Padding="0"
+        RowDefinitions="*,*"
+        RowSpacing="0">
+        <cards:CoverFlowView
+            x:Name="coverFlowImage"
             Padding="0"
-            RowDefinitions="*,*"
-            RowSpacing="0">
-            <cards:CoverFlowView
-                x:Name="coverFlowImage"
-                Padding="0"
-                AutomationId="carouselMotorcycles"
-                HeightRequest="360"
-                IsAutoNavigatingAnimationEnabled="False"
-                IsClippedToBounds="False"
-                IsViewReusingEnabled="False"
-                ItemsSource="{Binding Images}"
-                SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
-                <cards:CoverFlowView.ItemTemplate>
+            AutomationId="carouselMotorcycles"
+            HeightRequest="360"
+            IsAutoNavigatingAnimationEnabled="False"
+            IsClippedToBounds="False"
+            IsViewReusingEnabled="False"
+            ItemsSource="{Binding Images}"
+            SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
+            <cards:CoverFlowView.ItemTemplate>
+                <DataTemplate>
+                    <ffimageloading:CachedImage
+                        Aspect="AspectFill"
+                        CacheType="Disk"
+                        DownsampleToViewSize="True"
+                        HeightRequest="{Binding Source={x:Reference coverFlowImage}, Path=HeightRequest, x:DataType={x:Type cards:CoverFlowView}}"
+                        LoadingDelay="0"
+                        LoadingPriority="Low"
+                        Source="{Binding ., x:DataType={x:Type ImageSource}}" />
+                </DataTemplate>
+            </cards:CoverFlowView.ItemTemplate>
+            <cardViewControls:IndicatorsControl
+                Margin="0,0,0,4"
+                HeightRequest="10"
+                SelectedIndicatorStyle="{StaticResource ActiveIndicator}"
+                UnselectedIndicatorStyle="{StaticResource InactiveIndicator}"
+                VerticalOptions="End"
+                ZIndex="1">
+                <cardViewControls:IndicatorsControl.ItemTemplate>
                     <DataTemplate>
-                        <ffimageloading:CachedImage
-                            Aspect="AspectFit"
-                            CacheType="Disk"
-                            DownsampleToViewSize="True"
-                            HeightRequest="{Binding Source={x:Reference coverFlowImage}, Path=HeightRequest, x:DataType={x:Type cards:CoverFlowView}}"
-                            LoadingDelay="0"
-                            LoadingPriority="Low"
-                            Source="{Binding ., x:DataType={x:Type x:String}}" />
+                        <Ellipse
+                            HeightRequest="6"
+                            HorizontalOptions="Center"
+                            StrokeThickness="0"
+                            VerticalOptions="Center"
+                            WidthRequest="6" />
                     </DataTemplate>
-                </cards:CoverFlowView.ItemTemplate>
-                <cardViewControls:IndicatorsControl
-                    Margin="0,0,0,4"
-                    HeightRequest="10"
-                    SelectedIndicatorStyle="{StaticResource ActiveIndicator}"
-                    UnselectedIndicatorStyle="{StaticResource InactiveIndicator}"
-                    VerticalOptions="End"
-                    ZIndex="1">
-                    <cardViewControls:IndicatorsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Ellipse
-                                HeightRequest="6"
-                                HorizontalOptions="Center"
-                                StrokeThickness="0"
-                                VerticalOptions="Center"
-                                WidthRequest="6" />
-                        </DataTemplate>
-                    </cardViewControls:IndicatorsControl.ItemTemplate>
-                </cardViewControls:IndicatorsControl>
-            </cards:CoverFlowView>
-            <Grid
-                Grid.Row="1"
-                Margin="0"
-                Padding="10,0"
-                RowDefinitions="*,*,*,*"
-                RowSpacing="5">
-                <Button
-                    Margin="0,-80,10,0"
-                    Padding="0"
-                    BackgroundColor="Transparent"
-                    Command="{Binding CloseDetailProfileCommand}"
-                    CornerRadius="50"
-                    HeightRequest="50"
-                    HorizontalOptions="End"
-                    ImageSource="icon_profile_down.png"
-                    MinimumWidthRequest="0"
-                    WidthRequest="50" />
-                <StackLayout Orientation="Vertical" Spacing="5">
-                    <StackLayout Orientation="Horizontal" Spacing="10">
-                        <Label
-                            FontFamily="GothamBold"
-                            FontSize="{StaticResource FontSizeL}"
-                            Text="Sophia"
-                            TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
-                        <Label
-                            Grid.Column="1"
-                            FontFamily="Gotham"
-                            FontSize="{StaticResource FontSizeL}"
-                            Text="24"
-                            TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
-                    </StackLayout>
-                    <StackLayout
-                        Orientation="Horizontal"
-                        Spacing="10"
-                        VerticalOptions="Center">
-                        <Label
-                            FontFamily="MaterialFontFamily"
-                            FontSize="{StaticResource FontSizeS}"
-                            Text="&#xf474;"
-                            TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
-                            VerticalTextAlignment="Center" />
-                        <Label
-                            Grid.Column="1"
-                            FontFamily="GothamLight"
-                            FontSize="{StaticResource FontSizeS}"
-                            Text="University of California, Davis"
-                            TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
-                            VerticalTextAlignment="Center" />
-                    </StackLayout>
-                    <StackLayout
-                        Orientation="Horizontal"
-                        Spacing="10"
-                        VerticalOptions="Center">
-                        <Label
-                            FontFamily="MaterialFontFamily"
-                            FontSize="{StaticResource FontSizeS}"
-                            Text="&#xf34e;"
-                            TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
-                            VerticalTextAlignment="Center" />
-                        <Label
-                            Grid.Column="1"
-                            FontFamily="GothamLight"
-                            FontSize="{StaticResource FontSizeS}"
-                            Text="15 kilometres away"
-                            TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
-                            VerticalTextAlignment="Center" />
-                    </StackLayout>
-                    <BoxView
-                        BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
-                        HeightRequest="1"
-                        HorizontalOptions="Fill"
-                        Opacity="0.3" />
-                </StackLayout>
-                <ScrollView
-                    Grid.Row="1"
-                    HeightRequest="80"
-                    VerticalScrollBarVisibility="Never">
+                </cardViewControls:IndicatorsControl.ItemTemplate>
+            </cardViewControls:IndicatorsControl>
+        </cards:CoverFlowView>
+        <Grid
+            Grid.Row="1"
+            Margin="0"
+            Padding="10,0"
+            x:DataType="{x:Type models:UserModel}"
+            BindingContext="{Binding MyProfile}"
+            RowDefinitions="*,Auto"
+            RowSpacing="5">
+            <Button
+                Margin="0,-30,10,0"
+                Padding="0"
+                Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=CloseDetailProfileCommand}"
+                CornerRadius="50"
+                HeightRequest="50"
+                HorizontalOptions="End"
+                ImageSource="icon_profile_down.png"
+                MinimumWidthRequest="0"
+                VerticalOptions="Start"
+                WidthRequest="50"
+                ZIndex="100" />
+            <ScrollView HorizontalScrollBarVisibility="Never">
+                <Grid RowDefinitions="*,*,*">
+                    <!--  description information  -->
                     <StackLayout Orientation="Vertical" Spacing="5">
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <Label
+                                FontFamily="GothamBold"
+                                FontSize="{StaticResource FontSizeL}"
+                                Text="{Binding Name}"
+                                TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+                            <Label
+                                Grid.Column="1"
+                                FontFamily="Gotham"
+                                FontSize="{StaticResource FontSizeL}"
+                                Text="24"
+                                TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+                        </StackLayout>
+                        <StackLayout
+                            Orientation="Horizontal"
+                            Spacing="10"
+                            VerticalOptions="Center">
+                            <Label
+                                FontFamily="MaterialFontFamily"
+                                FontSize="{StaticResource FontSizeS}"
+                                Text="&#xf0d6;"
+                                TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                VerticalTextAlignment="Center" />
+                            <Label
+                                Grid.Column="1"
+                                FontFamily="GothamLight"
+                                FontSize="{StaticResource FontSizeS}"
+                                Text="{Binding Work}"
+                                TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                VerticalTextAlignment="Center" />
+                        </StackLayout>
+                        <StackLayout
+                            Orientation="Horizontal"
+                            Spacing="10"
+                            VerticalOptions="Center">
+                            <Label
+                                FontFamily="MaterialFontFamily"
+                                FontSize="{StaticResource FontSizeS}"
+                                Text="&#xf474;"
+                                TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                VerticalTextAlignment="Center" />
+                            <Label
+                                Grid.Column="1"
+                                FontFamily="GothamLight"
+                                FontSize="{StaticResource FontSizeS}"
+                                Text="{Binding University}"
+                                TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                VerticalTextAlignment="Center" />
+                        </StackLayout>
+                        <StackLayout
+                            Orientation="Horizontal"
+                            Spacing="10"
+                            VerticalOptions="Center">
+                            <Label
+                                FontFamily="MaterialFontFamily"
+                                FontSize="{StaticResource FontSizeS}"
+                                Text="&#xf2dc;"
+                                TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                VerticalTextAlignment="Center" />
+                            <Label
+                                Grid.Column="1"
+                                FontFamily="GothamLight"
+                                FontSize="{StaticResource FontSizeS}"
+                                Text="{Binding Address}"
+                                TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                VerticalTextAlignment="Center" />
+                        </StackLayout>
+                        <StackLayout
+                            Orientation="Horizontal"
+                            Spacing="10"
+                            VerticalOptions="Center">
+                            <Label
+                                FontFamily="MaterialFontFamily"
+                                FontSize="{StaticResource FontSizeS}"
+                                Text="&#xf004;"
+                                TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                VerticalTextAlignment="Center" />
+                            <Label
+                                Grid.Column="1"
+                                FontFamily="GothamLight"
+                                FontSize="{StaticResource FontSizeS}"
+                                Text="{Binding Gender}"
+                                TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                VerticalTextAlignment="Center" />
+                        </StackLayout>
+                        <StackLayout
+                            Orientation="Horizontal"
+                            Spacing="10"
+                            VerticalOptions="Center">
+                            <Label
+                                FontFamily="MaterialFontFamily"
+                                FontSize="{StaticResource FontSizeS}"
+                                Text="&#xf34e;"
+                                TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                VerticalTextAlignment="Center" />
+                            <Label
+                                Grid.Column="1"
+                                FontFamily="GothamLight"
+                                FontSize="{StaticResource FontSizeS}"
+                                Text="15 kilometres away"
+                                TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                VerticalTextAlignment="Center" />
+                        </StackLayout>
+                        <BoxView
+                            BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            HeightRequest="1"
+                            HorizontalOptions="Fill"
+                            Opacity="0.3" />
+                    </StackLayout>
+                    <!--  about me  -->
+                    <StackLayout
+                        Grid.Row="1"
+                        Orientation="Vertical"
+                        Spacing="5">
                         <Label
                             FontFamily="GothamBold"
                             FontSize="{StaticResource FontSizeS}"
@@ -182,7 +241,7 @@
                         <Label
                             FontFamily="GothamLight"
                             FontSize="{StaticResource FontSizeS}"
-                            Text="Insta @sophia22"
+                            Text="{Binding About}"
                             TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
                             VerticalTextAlignment="Center" />
                         <Label
@@ -193,76 +252,77 @@
                             TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
                             VerticalTextAlignment="Center" />
                     </StackLayout>
-                </ScrollView>
-                <StackLayout
-                    Grid.Row="2"
-                    Orientation="Vertical"
-                    Spacing="5">
-                    <BoxView
-                        BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
-                        HeightRequest="1"
-                        HorizontalOptions="Fill"
-                        Opacity="0.3" />
-                    <Label
-                        FontFamily="GothamBold"
-                        FontSize="{StaticResource FontSizeS}"
-                        Text="My Interests"
-                        TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
-                    <CollectionView
-                        HorizontalScrollBarVisibility="Never"
-                        ItemTemplate="{StaticResource InterestItemTemplate}"
-                        ItemsSource="{Binding Interests}">
-                        <CollectionView.ItemsLayout>
-                            <LinearItemsLayout ItemSpacing="10" Orientation="Horizontal" />
-                        </CollectionView.ItemsLayout>
-                    </CollectionView>
-                    <BoxView
-                        BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
-                        HeightRequest="1"
-                        HorizontalOptions="Fill"
-                        Opacity="0.3" />
-                </StackLayout>
-                <StackLayout
-                    Grid.Row="3"
-                    HorizontalOptions="Center"
-                    IsVisible="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=IsCurrentOtherUser}"
-                    Orientation="Horizontal"
-                    Spacing="20"
-                    VerticalOptions="Center">
-                    <Button
-                        x:Name="dislikeButton"
-                        Margin="0"
-                        Padding="0"
-                        BackgroundColor="Transparent"
-                        Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=DislikePressedCommand}"
-                        CommandParameter="{Binding .}"
-                        HeightRequest="50"
-                        ImageSource="icon_profile_dislike.png"
-                        MinimumWidthRequest="0"
-                        WidthRequest="50" />
-                    <Button
-                        x:Name="superLikeButton"
-                        Padding="0"
-                        BackgroundColor="Transparent"
-                        Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=StarPressedCommand}"
-                        CommandParameter="{Binding .}"
-                        HeightRequest="40"
-                        ImageSource="icon_profile_superlike.png"
-                        MinimumWidthRequest="0"
-                        WidthRequest="40" />
-                    <Button
-                        x:Name="likeButton"
-                        Margin="0"
-                        Padding="0"
-                        BackgroundColor="Transparent"
-                        Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=LikePressedCommand}"
-                        CommandParameter="{Binding .}"
-                        HeightRequest="50"
-                        ImageSource="icon_profile_like_2.png"
-                        MinimumWidthRequest="0"
-                        WidthRequest="50" />
-                </StackLayout>
-            </Grid>
+                    <!--  iterest collection  -->
+                    <StackLayout
+                        Grid.Row="2"
+                        Orientation="Vertical"
+                        Spacing="5">
+                        <BoxView
+                            BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            HeightRequest="1"
+                            HorizontalOptions="Fill"
+                            Opacity="0.3" />
+                        <Label
+                            FontFamily="GothamBold"
+                            FontSize="{StaticResource FontSizeS}"
+                            Text="My Interests"
+                            TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+                        <CollectionView
+                            HorizontalScrollBarVisibility="Never"
+                            ItemTemplate="{StaticResource InterestItemTemplate}"
+                            ItemsSource="{Binding Interests}">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout ItemSpacing="10" Orientation="Horizontal" />
+                            </CollectionView.ItemsLayout>
+                        </CollectionView>
+                        <BoxView
+                            BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            HeightRequest="1"
+                            HorizontalOptions="Fill"
+                            Opacity="0.3" />
+                    </StackLayout>
+                </Grid>
+            </ScrollView>
+            <StackLayout
+                Grid.Row="1"
+                HorizontalOptions="Center"
+                IsVisible="True"
+                Orientation="Horizontal"
+                Spacing="20"
+                VerticalOptions="End">
+                <Button
+                    x:Name="dislikeButton"
+                    Margin="0"
+                    Padding="0"
+                    BackgroundColor="Transparent"
+                    Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=DislikePressedCommand}"
+                    CommandParameter="{Binding .}"
+                    HeightRequest="50"
+                    ImageSource="icon_profile_dislike.png"
+                    MinimumWidthRequest="0"
+                    WidthRequest="50" />
+                <Button
+                    x:Name="superLikeButton"
+                    Padding="0"
+                    BackgroundColor="Transparent"
+                    Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=StarPressedCommand}"
+                    CommandParameter="{Binding .}"
+                    HeightRequest="40"
+                    ImageSource="icon_profile_superlike.png"
+                    MinimumWidthRequest="0"
+                    WidthRequest="40" />
+                <Button
+                    x:Name="likeButton"
+                    Margin="0"
+                    Padding="0"
+                    BackgroundColor="Transparent"
+                    Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=LikePressedCommand}"
+                    CommandParameter="{Binding .}"
+                    HeightRequest="50"
+                    ImageSource="icon_profile_like_2.png"
+                    MinimumWidthRequest="0"
+                    WidthRequest="50" />
+            </StackLayout>
         </Grid>
-    </ScrollView>
+    </Grid>
 </base:BasePage>

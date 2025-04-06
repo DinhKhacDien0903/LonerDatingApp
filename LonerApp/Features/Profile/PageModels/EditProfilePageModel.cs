@@ -10,11 +10,25 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private bool _isVisibleNavigation;
         [ObservableProperty]
-        private bool _hasBackButton;
+        private bool _hasBackButton;        
+        [ObservableProperty]
+        private bool _isPreviewVisible;        
+        [ObservableProperty]
+        private bool _isEditVisible;
         [ObservableProperty]
         private ObservableCollection<AddPhotoModel> _addPhotos;
         [ObservableProperty]
         private string _aboutMeEditorValue;
+        [ObservableProperty]
+        private string _myGender;
+        [ObservableProperty]
+        private string _myInterest;
+        [ObservableProperty]
+        private string _myUniversity;
+        [ObservableProperty]
+        private string _workEditorValue;
+        [ObservableProperty]
+        private UserModel _myProfile;
         public EditProfilePageModel(INavigationService navigationService)
             : base(navigationService, true)
         {
@@ -23,6 +37,8 @@ namespace LonerApp.PageModels
 
         public override async Task InitAsync(object? initData)
         {
+            IsEditVisible = true;
+            IsPreviewVisible = false;
             AddPhotos = new ObservableCollection<AddPhotoModel>(
                 Enumerable.Range(1, 6).Select(_ => new AddPhotoModel()).ToList());
             await base.InitAsync(initData);
@@ -32,7 +48,6 @@ namespace LonerApp.PageModels
         {
             return base.LoadDataAsync();
         }
-
 
         [RelayCommand]
         async Task OnDonePressedAsync(object param)
@@ -44,6 +59,70 @@ namespace LonerApp.PageModels
             //await NavigationService.PushToPageAsync<SettingPage>();
             await Task.Delay(100);
             IsBusy = false;
+        }        
+
+        [RelayCommand]
+        async Task OnGotoSetupInterestAsync(object param)
+        {
+            if (DonePressedCommand.IsRunning || IsBusy)
+                return;
+            IsBusy = true;
+            await NavigationService.PushToPageAsync<SetupInterestPage>();
+            await Task.Delay(100);
+            IsBusy = false;
+        }
+
+        [RelayCommand]
+        async Task OnGotoSetupGenderAsync(object param)
+        {
+            if (DonePressedCommand.IsRunning || IsBusy)
+                return;
+            IsBusy = true;
+            await NavigationService.PushToPageAsync<SetupGenderPage>();
+            IsBusy = false;
+        }
+
+        [RelayCommand]
+        async Task OnGotoSetupUniversityAsync(object param)
+        {
+            if (DonePressedCommand.IsRunning || IsBusy)
+                return;
+            IsBusy = true;
+            await NavigationService.PushToPageAsync<SetupUniversityPage>();
+            await Task.Delay(100);
+            IsBusy = false;
+        }
+
+        [RelayCommand]
+        async Task OnGotoDetailProfileAsync(object param)
+        {
+            if (GotoDetailProfileCommand.IsRunning || IsBusy)
+                return;
+            IsBusy = true;
+            await NavigationService.PushToPageAsync<DetailProfilePage>(param: MyProfile, isPushModal: true);
+            await Task.Delay(100);
+            IsBusy = false;
+        }
+
+        public void ShowPreviewProfile()
+        {
+            if (MyInterest == null || AddPhotos == null || !MyInterest.Any() || !AddPhotos.Any())
+                return;
+            var interest = MyInterest.Split(',').Select(s => s.Trim()).ToList();
+            MyProfile = new UserModel
+            {
+                Name = "John Doe 1",
+                Age = 25,
+                Status = "Single",
+                ListImage = AddPhotos,
+                Image = AddPhotos.FirstOrDefault(x => !x.IsDefaultImage).ImagePath,
+                Interests = new ObservableCollection<string>(interest),
+                University = MyUniversity,
+                About = AboutMeEditorValue,
+                Address = "Ha noi, Viet Nam",
+                Gender = MyGender,
+                Work = WorkEditorValue
+            };
         }
 
         #region Handle Add Image
@@ -114,6 +193,7 @@ namespace LonerApp.PageModels
 
             return true;
         }
+        
         private async Task OnExcuteChoosePhotoAsync(AddPhotoModel itemSelected)
         {
             string olderLocalImagePath = itemSelected.ImagePath.ToString();
@@ -162,7 +242,7 @@ namespace LonerApp.PageModels
         private async Task OnExcuteTakePhotoAsync(AddPhotoModel itemSelected)
         {
             IsBusy = true;
-            ImageSource olderLocalImagePath = itemSelected.ImagePath;
+            var olderLocalImagePath = itemSelected.ImagePath;
             if (await this.AllowTakePhotoAsync())
             {
                 var filename = Path.GetRandomFileName() + ".png";
@@ -182,6 +262,7 @@ namespace LonerApp.PageModels
                     {
                         byte[] imageBytes = br.ReadBytes((int)stream.Length);
                         itemSelected.ImagePath = ImageSource.FromStream(() => new MemoryStream(imageBytes));
+                        itemSelected.ImagePath = _currentLocalImage;
                     }
                 }
                 else

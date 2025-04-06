@@ -6,7 +6,7 @@ namespace LonerApp.PageModels
     public partial class ProfilePageModel : BasePageModel
     {
         [ObservableProperty]
-        ObservableCollection<string> _images = new();
+        ObservableCollection<ImageSource> _images = new();
         [ObservableProperty]
         ObservableCollection<string> _interests = new();
         public bool IsNeedLoadUsersData = true;
@@ -28,6 +28,8 @@ namespace LonerApp.PageModels
         private ObservableCollection<UserModel> _users = new();
         [ObservableProperty]
         private bool _isCurrentOtherUser = true;
+        [ObservableProperty]
+        private UserModel _myProfile;
         ContentPage? _previousPage;
         SwipePageModel? _swipePageModel;
         public ProfilePageModel(INavigationService navigationService)
@@ -39,40 +41,40 @@ namespace LonerApp.PageModels
         public override async Task InitAsync(object? initData)
         {
             //TODO: Handle when user click on profile
-            // _previousPage = AppShell.Current.CurrentPage as ContentPage;
-            // if(_previousPage != null)
-            //     _swipePageModel = _previousPage.BindingContext as SwipePageModel;
-            // IsCurrentOtherUser = _previousPage is MainSwipePage;
-            // await base.InitAsync(initData);
-            InitImages();
+            _previousPage = AppShell.Current.CurrentPage as ContentPage;
+            if (_previousPage != null)
+                _swipePageModel = _previousPage.BindingContext as SwipePageModel;
+            IsCurrentOtherUser = _previousPage is MainSwipePage;
+            if (initData is UserModel user)
+            {
+                MyProfile = user;
+                await InitImages();
+            }
+            await base.InitAsync(initData);
         }
 
         public async Task InitImages()
         {
             IsBusy = true;
             await Task.Delay(1);
-            Images = new ObservableCollection<string>
+            var x = new ObservableCollection<ImageSource>(MyProfile.ListImage.Where(x => !x.IsDefaultImage).Select(x => x.ImagePath));
+            foreach(var item in x)
             {
-                "bbbb.jpeg",
-                "lllll.jpeg",
-                "mmm.jpeg",
-                "nnn.jpeg",
-                "image_user_1.jpeg",
-                "image_user_2.jpeg"
-            };
-
-            Interests = new ObservableCollection<string>
-            {
-                "Âm nhạc",
-                "Thể thao",
-                "Du lịch" ,
-                "Nấu ăn" ,
-                "Lập trình" ,
-                "Chụp ảnh" ,
-                "Vẽ tranh" ,
-                "Đọc sách" ,
-            };
-
+                if(item is ImageSource k)
+                {
+                    Images.Add(k);
+                }
+            }
+            await Task.Delay(100);
+            //Images = new ObservableCollection<string>
+            //{
+            //    "bbbb.jpeg",
+            //    "lllll.jpeg",
+            //    "mmm.jpeg",
+            //    "nnn.jpeg",
+            //    "image_user_1.jpeg",
+            //    "image_user_2.jpeg"
+            //};
             SelectedIndex = 0;
             IsBusy = false;
         }

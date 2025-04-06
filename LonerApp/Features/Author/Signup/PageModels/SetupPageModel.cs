@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using FluentValidation;
+using LonerApp.Models;
 using System.Collections.ObjectModel;
 
 namespace LonerApp.PageModels
@@ -83,6 +84,8 @@ namespace LonerApp.PageModels
         private MonthValidator _monthValidator = new();
         private YearValidator _yearValidator = new();
         private string _currentLocalImage;
+        ContentPage? _previousPage;
+        EditProfilePageModel? _editProfilePageModel;
 
         public SetupPageModel(INavigationService navigationService)
         : base(navigationService, true)
@@ -91,16 +94,18 @@ namespace LonerApp.PageModels
 
         public override async Task InitAsync(object? initData)
         {
-            await base.InitAsync(initData);
+            _previousPage = AppShell.Current.CurrentPage as ContentPage;
+            if (_previousPage != null)
+                _editProfilePageModel = _previousPage.BindingContext as EditProfilePageModel;
             HasBackButton = true;
             IsVisibleNavigation = true;
+            await base.InitAsync(initData);
         }
 
         public override async Task LoadDataAsync()
         {
             await base.LoadDataAsync();
             var currentPage = AppShell.Current.CurrentPage;
-            var currentPage1 = AppHelper.CurrentMainPage;
             if (currentPage is SetupGenderPage || currentPage is SetupShowGenderForMe)
             {
                 Gender = new ObservableCollection<Gender>
@@ -112,29 +117,15 @@ namespace LonerApp.PageModels
             }
             else if (currentPage is SetupInterestPage)
             {
-                Interests = new ObservableCollection<Interest>
+                Interests = new ObservableCollection<Interest>();
+                foreach (InterestEnum interestEnum in Enum.GetValues(typeof(InterestEnum)))
                 {
-                    new Interest { ID = 1, Value = "Âm nhạc" },
-                    new Interest { ID = 2, Value = "Thể thao" },
-                    new Interest { ID = 3, Value = "Du lịch" },
-                    new Interest { ID = 4, Value = "Nấu ăn" },
-                    new Interest { ID = 5, Value = "Lập trình" },
-                    new Interest { ID = 6, Value = "Chụp ảnh" },
-                    new Interest { ID = 7, Value = "Vẽ tranh" },
-                    new Interest { ID = 8, Value = "Đọc sách" },
-                    new Interest { ID = 9, Value = "Xem phim" },
-                    new Interest { ID = 10, Value = "Chơi game" },
-                    new Interest { ID = 11, Value = "Viết lách" },
-                    new Interest { ID = 12, Value = "Học ngoại ngữ" },
-                    new Interest { ID = 13, Value = "Đi bộ" },
-                    new Interest { ID = 14, Value = "Yoga" },
-                    new Interest { ID = 15, Value = "Thời trang" },
-                    new Interest { ID = 16, Value = "Câu cá" },
-                    new Interest { ID = 17, Value = "Cắm trại" },
-                    new Interest { ID = 18, Value = "Khiêu vũ" },
-                    new Interest { ID = 19, Value = "Làm vườn" },
-                    new Interest { ID = 20, Value = "Chơi nhạc cụ" }
-                };
+                    Interests.Add(new Interest
+                    {
+                        ID = (int)interestEnum,
+                        Value = interestEnum.GetDisplayName()
+                    });
+                }
             }
             else if (currentPage is SetupPhotosPage)
             {
@@ -208,7 +199,15 @@ namespace LonerApp.PageModels
             try
             {
                 IsBusy = true;
-                await NavigationService.PushToPageAsync<SetupShowGenderForMe>(isPushModal: false);
+                if(_previousPage is EditProfilePage editPage)
+                {
+                    var genderChoosed = Gender.Where(x => x.IsSelected).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(genderChoosed.Value))
+                        _editProfilePageModel.MyGender = genderChoosed.Value;
+                    await NavigationService.PopPageAsync(isPopModal: false);
+                }
+                else
+                    await NavigationService.PushToPageAsync<SetupShowGenderForMe>(isPushModal: false);
             }
             catch (Exception ex)
             {
@@ -246,7 +245,14 @@ namespace LonerApp.PageModels
             try
             {
                 IsBusy = true;
-                await NavigationService.PushToPageAsync<SetupInterestPage>(isPushModal: false);
+                if (_previousPage is EditProfilePage editPage)
+                {
+                    if (!string.IsNullOrEmpty(UniversityValue))
+                        _editProfilePageModel.MyUniversity = UniversityValue.Trim();
+                    await NavigationService.PopPageAsync(isPopModal: false);
+                }
+                else
+                    await NavigationService.PushToPageAsync<SetupInterestPage>(isPushModal: false);
             }
             catch (Exception ex)
             {
@@ -265,7 +271,15 @@ namespace LonerApp.PageModels
             try
             {
                 IsBusy = true;
-                await NavigationService.PushToPageAsync<SetupPhotosPage>(isPushModal: false);
+                if (_previousPage is EditProfilePage editPage)
+                {
+                    var interestChoosed = Interests.Where(x => x.IsSelected).ToList();
+                    if (interestChoosed.Any())
+                        _editProfilePageModel.MyInterest = string.Join(", ", interestChoosed.Select(x => x.Value));
+                    await NavigationService.PopPageAsync(isPopModal: false);
+                }
+                else
+                    await NavigationService.PushToPageAsync<SetupPhotosPage>(isPushModal: false);
             }
             catch (Exception ex)
             {

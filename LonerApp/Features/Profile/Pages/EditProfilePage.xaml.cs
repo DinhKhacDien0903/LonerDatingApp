@@ -1,12 +1,13 @@
-using Google.Android.Material.Color.Utilities;
+using Microsoft.Maui.Controls.Shapes;
 
 namespace LonerApp.Features.Pages;
 
 public partial class EditProfilePage : BasePage
 {
+    private EditProfilePageModel _vm;
     public EditProfilePage(EditProfilePageModel vm)
     {
-        BindingContext = vm;
+        BindingContext = _vm =vm;
         InitializeComponent();
     }
 
@@ -23,6 +24,8 @@ public partial class EditProfilePage : BasePage
 
         label.TextColor = Color.FromArgb("#FE3675");
         PreviewLabel.TextColor = Color.FromArgb("#939393");
+        _vm.IsEditVisible = true;
+        _vm.IsPreviewVisible = false;
     }
 
     private void Label_Preview_Tapped(object sender, TappedEventArgs e)
@@ -32,6 +35,23 @@ public partial class EditProfilePage : BasePage
 
         label.TextColor = Color.FromArgb("#FE3675");
         EditLabel.TextColor = Color.FromArgb("#939393");
+        _vm.IsEditVisible = false;
+        _vm.IsPreviewVisible = true;
+        _vm.ShowPreviewProfile();
+    }
+
+    private void CachedImage_Loaded(object sender, EventArgs e)
+    {
+        if (sender is not FFImageLoading.Maui.CachedImage cachedImage)
+        {
+            return;
+        }
+
+        cachedImage.Clip = new RoundRectangleGeometry
+        {
+            CornerRadius = 20,
+            Rect = new Rect(0, 0, Constants.WidthDevice - 16, Constants.HEIGHT_OF_SWIPE_CARD_VIEW_CONTAINER - 20)
+        };
     }
 
     private void AboutMeEditor_TextChanged(object sender, TextChangedEventArgs e)
@@ -46,8 +66,8 @@ public partial class EditProfilePage : BasePage
             return;
         }
 
-        var point = e.GetPosition(InputGrid);
         AboutMeEditor.Unfocus();
+        WorkEditor.Unfocus();
         Overlay.IsVisible = false;
     }
 
@@ -61,6 +81,7 @@ public partial class EditProfilePage : BasePage
         if (e.StatusType == GestureStatus.Started)
         {
             AboutMeEditor.Unfocus();
+            WorkEditor.Unfocus();
             Overlay.IsVisible = false;
         }
     }

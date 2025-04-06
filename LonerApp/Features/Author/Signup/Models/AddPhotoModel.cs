@@ -2,6 +2,8 @@
 {
     public partial class AddPhotoModel : BaseModel
     {
+        //[ObservableProperty]
+        //ImageSource _imagePath = ImageSource.FromFile("blank_image.png"); 
         [ObservableProperty]
         ImageSource _imagePath = ImageSource.FromFile("blank_image.png");
         [ObservableProperty]
