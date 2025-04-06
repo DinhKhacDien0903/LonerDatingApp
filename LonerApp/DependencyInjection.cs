@@ -32,6 +32,7 @@ public static class DependencyInjection
         services.AddTransient<ChatMessagePageModel>();
         services.AddTransient<ChatMessageImagePageModel>();
         services.AddTransient<FilterMapPageModel>();
+        services.AddTransient<SettingPageModel>();
         return services;
     }
 
@@ -58,6 +59,7 @@ public static class DependencyInjection
         services.AddTransient<FilterMapPage>();
         services.AddTransient<MyProfilePage>();
         services.AddTransient<EditProfilePage>();
+        services.AddTransient<SettingPage>();
         return services;
     }
 }

@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage
+    x:Class="LonerApp.Features.Pages.SettingPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    Title="SettingPage"
+    x:DataType="vm:SettingPageModel"
+    BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+    NavigationPage.HasNavigationBar="True"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="True">
+    <Page.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="White" StatusBarStyle="DarkContent" />
+    </Page.Behaviors>
+    <base:BasePage.Content>
+        <Grid
+            Margin="0"
+            Padding="0"
+            RowDefinitions="Auto,*">
+            <controls:CustomNavigationBar
+                BackButtonCommand="{Binding BackCommand}"
+                HasBackButton="{Binding HasBackButton}"
+                IsVisible="{Binding IsVisibleNavigation}"
+                OptionButtonCommand="{Binding DonePressedCommand}"
+                OptionPage="&#xf12c;"
+                TitlePage="Setting" />
+            <ScrollView
+                Grid.Row="1"
+                BackgroundColor="Transparent"
+                HorizontalScrollBarVisibility="Never">
+                <Grid
+                    BackgroundColor="Transparent"
+                    RowDefinitions="Auto, *"
+                    RowSpacing="10">
+                    <Border
+                        Margin="10,0"
+                        Background="#f5eded"
+                        StrokeShape="RoundRectangle 10"
+                        StrokeThickness="0">
+                        <StackLayout BackgroundColor="Transparent" Spacing="5">
+                            <Label
+                                Margin="0"
+                                FontFamily="GothamBold"
+                                FontSize="{StaticResource FontSizeL}"
+                                HorizontalOptions="Center"
+                                HorizontalTextAlignment="Center"
+                                LineBreakMode="TailTruncation"
+                                MaxLines="1"
+                                Text="Loner"
+                                TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                                VerticalOptions="Center"
+                                VerticalTextAlignment="Center" />
+                            <Label
+                                FontFamily="Gotham"
+                                FontSize="{StaticResource FontSizeS}"
+                                HorizontalOptions="Center"
+                                HorizontalTextAlignment="Center"
+                                LineBreakMode="TailTruncation"
+                                MaxLines="1"
+                                Text="Priority Likes, See who Likes you and More"
+                                TextColor="{toolkit:AppThemeResource PrimaryColor}" />
+                        </StackLayout>
+                    </Border>
+                    <StackLayout Grid.Row="1">
+                        <StackLayout
+                            Padding="20,0,10,10"
+                            BackgroundColor="White"
+                            Orientation="Vertical"
+                            Spacing="10">
+                            <BoxView
+                                Margin="-20,0,-10,0"
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="1"
+                                HorizontalOptions="Fill"
+                                Opacity="0.3" />
+                            <Label
+                                FontFamily="GothamBold"
+                                FontSize="{StaticResource FontSizeM}"
+                                Text="ACCOUNT SETTINGS"
+                                TextColor="#939393" />
+                            <BoxView
+                                Margin="-20,0,-10,0"
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="1"
+                                HorizontalOptions="Fill"
+                                Opacity="0.3" />
+                            <!--  phone number setting  -->
+                            <Grid ColumnDefinitions="*,Auto,Auto" VerticalOptions="Center">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding GotoSetupPhoneNumberCommand}" />
+                                </Grid.GestureRecognizers>
+                                <Label
+                                    FontFamily="Gotham"
+                                    FontSize="14"
+                                    Text="Phone Number"
+                                    TextColor="#4A4A4A"
+                                    VerticalTextAlignment="Center" />
+                                <Label
+                                    Grid.Column="1"
+                                    FontFamily="GothamBold"
+                                    FontSize="13"
+                                    HorizontalTextAlignment="End"
+                                    Text="0777712640"
+                                    TextColor="#939393"
+                                    VerticalTextAlignment="Center" />
+                                <Label
+                                    Grid.Column="2"
+                                    FontFamily="MaterialFontFamily"
+                                    FontSize="25"
+                                    HorizontalOptions="End"
+                                    Text="&#xf142;"
+                                    TextColor="#939393"
+                                    VerticalTextAlignment="Center" />
+                            </Grid>
+                            <BoxView
+                                Margin="-20,0,-10,0"
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="1"
+                                HorizontalOptions="Fill"
+                                Opacity="0.2" />
+
+                            <!--  email setting  -->
+                            <Grid ColumnDefinitions="*,Auto,Auto" VerticalOptions="Center">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding GotoSetupPhoneNumberCommand}" />
+                                </Grid.GestureRecognizers>
+                                <Label
+                                    FontFamily="Gotham"
+                                    FontSize="14"
+                                    Text="Email"
+                                    TextColor="#4A4A4A"
+                                    VerticalTextAlignment="Center" />
+                                <Label
+                                    Grid.Column="1"
+                                    FontFamily="GothamBold"
+                                    FontSize="13"
+                                    HorizontalTextAlignment="End"
+                                    Text="loremipsum@gmail.com"
+                                    TextColor="#939393"
+                                    VerticalTextAlignment="Center" />
+                                <Label
+                                    Grid.Column="2"
+                                    FontFamily="MaterialFontFamily"
+                                    FontSize="25"
+                                    HorizontalOptions="End"
+                                    Text="&#xf142;"
+                                    TextColor="#939393"
+                                    VerticalTextAlignment="Center" />
+                            </Grid>
+                            <BoxView
+                                Margin="-20,0,-10,0"
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="1"
+                                HorizontalOptions="Fill"
+                                Opacity="0.2" />
+                        </StackLayout>
+                        <StackLayout
+                            Padding="20,0,10,10"
+                            BackgroundColor="White"
+                            Orientation="Vertical"
+                            Spacing="10">
+                            <Label
+                                Grid.Column="1"
+                                FontFamily="GothamBold"
+                                FontSize="13"
+                                HorizontalTextAlignment="Start"
+                                Text="A verified Phone Number and Email help secure your account."
+                                TextColor="#939393"
+                                VerticalTextAlignment="Center" />
+                            <Label
+                                FontFamily="GothamBold"
+                                FontSize="{StaticResource FontSizeM}"
+                                HorizontalTextAlignment="Start"
+                                Text="Discovery"
+                                TextColor="#939393"
+                                VerticalTextAlignment="Center" />
+                            <BoxView
+                                Margin="-20,0,-10,0"
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="2"
+                                HorizontalOptions="Fill"
+                                Opacity="0.3" />
+                            <!--  location  -->
+                            <Grid ColumnDefinitions="Auto, *">
+                                <Label
+                                    FontFamily="Gotham"
+                                    FontSize="14"
+                                    Text="Location"
+                                    TextColor="#4A4A4A"
+                                    VerticalTextAlignment="Center" />
+                                <Border
+                                    Grid.Column="1"
+                                    Margin="0"
+                                    Padding="5,0,0,0"
+                                    Background="#EEEFF1"
+                                    HorizontalOptions="End"
+                                    Stroke="#D9D9D9"
+                                    StrokeShape="RoundRectangle 10"
+                                    StrokeThickness="1"
+                                    WidthRequest="200">
+                                    <ContentView Margin="0" Padding="0">
+                                        <controls:BorderlessEditor
+                                            x:Name="LocationEditor"
+                                            AutoSize="TextChanges"
+                                            Focused="LocationEditor_Focused"
+                                            FontFamily="Gotham"
+                                            FontSize="{StaticResource FontSizeM}"
+                                            HorizontalOptions="Start"
+                                            MaximumHeightRequest="120"
+                                            MaximumWidthRequest="250"
+                                            Placeholder="Location ...         "
+                                            Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SettingPageModel}}, x:DataType={x:Type vm:SettingPageModel}, Path=LocationEditorValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                                            TextChanged="LocationEditor_TextChanged"
+                                            TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                            Unfocused="LocationEditor_Unfocused" />
+                                    </ContentView>
+                                </Border>
+                            </Grid>
+                            <BoxView
+                                Margin="-20,0,-10,0"
+                                BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                HeightRequest="1"
+                                HorizontalOptions="Fill"
+                                Opacity="0.3" />
+                        </StackLayout>
+                        <!--  gender  -->
+                        <Grid
+                            Padding="20,0,10,10"
+                            ColumnDefinitions="*,Auto,Auto"
+                            VerticalOptions="Center">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GotoSetupPhoneNumberCommand}" />
+                            </Grid.GestureRecognizers>
+                            <Label
+                                FontFamily="Gotham"
+                                FontSize="14"
+                                Text="Show Gender"
+                                TextColor="#4A4A4A"
+                                VerticalTextAlignment="Center" />
+                            <Label
+                                Grid.Column="1"
+                                FontFamily="GothamBold"
+                                FontSize="13"
+                                HorizontalTextAlignment="End"
+                                Text="Women"
+                                TextColor="#939393"
+                                VerticalTextAlignment="Center" />
+                            <Label
+                                Grid.Column="2"
+                                FontFamily="MaterialFontFamily"
+                                FontSize="25"
+                                HorizontalOptions="End"
+                                Text="&#xf142;"
+                                TextColor="#939393"
+                                VerticalTextAlignment="Center" />
+                        </Grid>
+                        <BoxView
+                            Margin="-20,0,-10,0"
+                            BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            HeightRequest="1"
+                            HorizontalOptions="Fill"
+                            Opacity="0.3" />
+                        <!--  Age  -->
+                        <Grid
+                            Margin="0,10,0,0"
+                            Padding="20,0,10,10"
+                            ColumnDefinitions="*,Auto,Auto"
+                            VerticalOptions="Center">
+                            <Label
+                                FontFamily="Gotham"
+                                FontSize="14"
+                                Text="Age Preference"
+                                TextColor="#4A4A4A"
+                                VerticalTextAlignment="Center" />
+                            <StackLayout
+                                Grid.Column="1"
+                                Orientation="Horizontal"
+                                Spacing="10">
+                                <Label
+                                    FontFamily="GothamBold"
+                                    FontSize="13"
+                                    HorizontalTextAlignment="End"
+                                    Text="From"
+                                    TextColor="#939393"
+                                    VerticalTextAlignment="Center" />
+                                <Border
+                                    Margin="0"
+                                    Background="#EEEFF1"
+                                    HeightRequest="50"
+                                    Stroke="#D9D9D9"
+                                    StrokeShape="RoundRectangle 10"
+                                    StrokeThickness="1"
+                                    VerticalOptions="Center"
+                                    WidthRequest="50">
+                                    <ContentView Margin="0" Padding="0">
+                                        <controls:BorderlessEditor
+                                            x:Name="FromAgeEditor"
+                                            AutoSize="TextChanges"
+                                            Focused="LocationEditor_Focused"
+                                            FontFamily="Gotham"
+                                            FontSize="{StaticResource FontSizeM}"
+                                            HeightRequest="50"
+                                            HorizontalOptions="Center"
+                                            HorizontalTextAlignment="Center"
+                                            Keyboard="Numeric"
+                                            MaxLength="2"
+                                            Placeholder="18"
+                                            Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SettingPageModel}}, x:DataType={x:Type vm:SettingPageModel}, Path=FromAgeEditorValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                                            TextChanged="LocationEditor_TextChanged"
+                                            TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                                            Unfocused="LocationEditor_Unfocused"
+                                            VerticalOptions="Center"
+                                            VerticalTextAlignment="Center"
+                                            WidthRequest="50" />
+                                    </ContentView>
+                                </Border>
+                                <Label
+                                    FontFamily="GothamBold"
+                                    FontSize="13"
+                                    HorizontalTextAlignment="End"
+                                    Text="To"
+                                    TextColor="#939393"
+                                    VerticalTextAlignment="Center" />
+                                <Border
+                                    Margin="0"
+                                    Background="#EEEFF1"
+                                    HeightRequest="50"
+                                    Stroke="#D9D9D9"
+                                    StrokeShape="RoundRectangle 10"
+                                    StrokeThickness="1"
+                                    VerticalOptions="Center"
+                                    WidthRequest="50">
+                                    <ContentView Margin="0" Padding="0">
+                                        <controls:BorderlessEditor
+                                            x:Name="ToAgeEditor"
+                                            AutoSize="TextChanges"
+                                            Focused="LocationEditor_Focused"
+                                            FontFamily="Gotham"
+                                            FontSize="{StaticResource FontSizeM}"
+                                            HeightRequest="50"
+                                            HorizontalOptions="Center"
+                                            HorizontalTextAlignment="Center"
+                                            Keyboard="Numeric"
+                                            MaxLength="2"
+                                            Placeholder="18"
+                                            Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SettingPageModel}}, x:DataType={x:Type vm:SettingPageModel}, Path=ToAgeEditorValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                                            TextChanged="LocationEditor_TextChanged"
+                                            TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                                            Unfocused="LocationEditor_Unfocused"
+                                            VerticalOptions="Center"
+                                            VerticalTextAlignment="Center"
+                                            WidthRequest="50" />
+                                    </ContentView>
+                                </Border>
+                            </StackLayout>
+                        </Grid>
+                        <BoxView
+                            Margin="-20,0,-10,0"
+                            BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            HeightRequest="1"
+                            HorizontalOptions="Fill"
+                            Opacity="0.3" />
+                        <Label
+                            Grid.Column="1"
+                            Margin="0,10"
+                            FontFamily="GothamBold"
+                            FontSize="{StaticResource FontSizeM}"
+                            HorizontalTextAlignment="Center"
+                            Text="Log out"
+                            TextColor="#939393"
+                            VerticalTextAlignment="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding DonePressedCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                        <BoxView
+                            Margin="-20,0,-10,0"
+                            BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            HeightRequest="1"
+                            HorizontalOptions="Fill"
+                            Opacity="0.3" />
+                        <Label
+                            Grid.Column="1"
+                            Margin="0,10"
+                            FontFamily="GothamBold"
+                            FontSize="{StaticResource FontSizeM}"
+                            HorizontalTextAlignment="Center"
+                            Text="Delete account"
+                            TextColor="#939393"
+                            VerticalTextAlignment="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding DonePressedCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                        <BoxView
+                            Margin="-20,0,-10,0"
+                            BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            HeightRequest="1"
+                            HorizontalOptions="Fill"
+                            Opacity="0.3" />
+                    </StackLayout>
+                </Grid>
+            </ScrollView>
+            <BoxView
+                x:Name="Overlay"
+                Grid.RowSpan="2"
+                BackgroundColor="Transparent"
+                IsVisible="False">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="Overlay_Tapped" />
+                    <PanGestureRecognizer PanUpdated="Overlay_PanUpdated" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+        </Grid>
+    </base:BasePage.Content>
+</base:BasePage>

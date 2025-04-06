@@ -35,7 +35,7 @@ public partial class MyProfilePageModel : BasePageModel
         if (GotoSettingCommand.IsRunning || IsBusy)
             return;
         IsBusy = true;
-        //await NavigationService.PushToPageAsync<SettingPage>();
+        await NavigationService.PushToPageAsync<SettingPage>();
         await Task.Delay(100);
         IsBusy = false;
     }

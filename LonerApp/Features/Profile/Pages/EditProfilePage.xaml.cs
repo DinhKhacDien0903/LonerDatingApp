@@ -59,6 +59,7 @@ public partial class EditProfilePage : BasePage
         if (sender is not Editor aboutMeEditor)
             return;
     }
+
     private void Overlay_Tapped(object sender, TappedEventArgs e)
     {
         if (sender is not BoxView boxview)
