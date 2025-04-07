@@ -128,7 +128,7 @@
                             <!--  email setting  -->
                             <Grid ColumnDefinitions="*,Auto,Auto" VerticalOptions="Center">
                                 <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding GotoSetupPhoneNumberCommand}" />
+                                    <TapGestureRecognizer Command="{Binding GotoSetupEmailCommand}" />
                                 </Grid.GestureRecognizers>
                                 <Label
                                     FontFamily="Gotham"
@@ -235,7 +235,7 @@
                             ColumnDefinitions="*,Auto,Auto"
                             VerticalOptions="Center">
                             <Grid.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding GotoSetupPhoneNumberCommand}" />
+                                <TapGestureRecognizer Command="{Binding GotoSetupShowGenderCommand}" />
                             </Grid.GestureRecognizers>
                             <Label
                                 FontFamily="Gotham"
@@ -376,7 +376,7 @@
                             TextColor="#939393"
                             VerticalTextAlignment="Center">
                             <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding DonePressedCommand}" />
+                                <TapGestureRecognizer Command="{Binding LogoutPressedCommand}" />
                             </Label.GestureRecognizers>
                         </Label>
                         <BoxView
@@ -395,7 +395,7 @@
                             TextColor="#939393"
                             VerticalTextAlignment="Center">
                             <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding DonePressedCommand}" />
+                                <TapGestureRecognizer Command="{Binding DeleteAccountPressedCommand}" />
                             </Label.GestureRecognizers>
                         </Label>
                         <BoxView

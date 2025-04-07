@@ -43,9 +43,51 @@ namespace LonerApp.PageModels
         }
 
         [RelayCommand]
+        async Task OnGotoSetupEmailAsync(object param)
+        {
+            if (GotoSetupEmailCommand.IsRunning || IsBusy)
+                return;
+            IsBusy = true;
+            await NavigationService.PushToPageAsync<EmailAuthor>();
+            IsBusy = false;
+        }
+
+        [RelayCommand]
+        async Task OnGotoSetupShowGenderAsync(object param)
+        {
+            if (GotoSetupShowGenderCommand.IsRunning || IsBusy)
+                return;
+            IsBusy = true;
+            await NavigationService.PushToPageAsync<SetupShowGenderForMe>();
+            IsBusy = false;
+        }
+
+        [RelayCommand]
         async Task OnDonePressedAsync(object param)
         {
             if (DonePressedCommand.IsRunning || IsBusy)
+                return;
+            IsBusy = true;
+            //await NavigationService.PushToPageAsync<SettingPage>();
+            await Task.Delay(100);
+            IsBusy = false;
+        }
+        
+        [RelayCommand]
+        async Task OnLogoutPressedAsync(object param)
+        {
+            if (LogoutPressedCommand.IsRunning || IsBusy)
+                return;
+            IsBusy = true;
+            //await NavigationService.PushToPageAsync<SettingPage>();
+            await Task.Delay(100);
+            IsBusy = false;
+        }        
+
+        [RelayCommand]
+        async Task OnDeleteAccountPressedAsync(object param)
+        {
+            if (DeleteAccountPressedCommand.IsRunning || IsBusy)
                 return;
             IsBusy = true;
             //await NavigationService.PushToPageAsync<SettingPage>();

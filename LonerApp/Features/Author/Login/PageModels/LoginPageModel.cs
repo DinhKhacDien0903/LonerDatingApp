@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using FluentValidation;
 using System.Collections.ObjectModel;
+using Twilio;
+using Twilio.Rest.Verify.V2.Service;
 
 namespace LonerApp.PageModels
 {
@@ -107,6 +109,15 @@ namespace LonerApp.PageModels
             {
                 IsShowError = false;
                 //TODO: Handle OTP.
+                var accountSid = "AC42be1218f22e662224f57255a40e61db";
+                var authToken = "cae95aa66aa256c7c192200f3d2232ec";
+                TwilioClient.Init(accountSid, authToken);
+
+                var verification = VerificationResource.Create(
+                    to: "+84777712640",
+                    channel: "sms",
+                    pathServiceSid: "VA197516f6d68a53f646a7274fd2f3cadd"
+                );
                 await NavigationService.PushToPageAsync<VerifyPhoneNumberAuthorPage>(param: $"{PhoneNumberValue} ", isPushModal: true);
             }
             else
@@ -123,6 +134,22 @@ namespace LonerApp.PageModels
             IsBusy = true;
             VerifyPhoneNumberValue = VerifyPhoneNumberValue.Trim();
             //TODO: Check confirm code to database
+            var accountSid = "AC42be1218f22e662224f57255a40e61db";
+            var authToken = "cae95aa66aa256c7c192200f3d2232ec";
+            TwilioClient.Init(accountSid, authToken);
+
+            var verification = VerificationCheckResource.Create(
+                to: "+84777712640",
+                code: VerifyPhoneNumberValue,
+                pathServiceSid: "VA197516f6d68a53f646a7274fd2f3cadd"
+            );
+
+            if (verification.Status == "approved")
+            {
+                ErrorTextValue = "Nhập đúng";
+            }
+            else
+                ErrorTextValue = "Nhập sai";
             var validatorResult = _verifiedPhoneNumber.Validate(this);
             if (validatorResult.IsValid)
             {

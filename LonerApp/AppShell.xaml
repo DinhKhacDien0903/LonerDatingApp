@@ -20,7 +20,7 @@
             Route="chatPage" />-->
         <ShellContent
             Title=""
-            ContentTemplate="{DataTemplate pages:MyProfilePage}"
+            ContentTemplate="{DataTemplate pages:SignInPage}"
             Icon="{StaticResource IconAccountControlPage}"
             Route="myProfilePage" />
     </TabBar>

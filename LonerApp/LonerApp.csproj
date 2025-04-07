@@ -128,6 +128,7 @@
 		<PackageReference Include="Onion.Maui.GoogleMaps" Version="6.1.0" />
 		<PackageReference Include="Realm" Version="20.0.0" />
 		<PackageReference Include="System.Runtime.Caching" Version="9.0.0" />
+		<PackageReference Include="Twilio" Version="7.9.1" />
 	</ItemGroup>
 	<!-- Platform packages -->
 	<!--<ItemGroup Condition="'$(TargetFramework)'=='net9.0-android35.0'">
