@@ -286,7 +286,7 @@
             <StackLayout
                 Grid.Row="1"
                 HorizontalOptions="Center"
-                IsVisible="True"
+                IsVisible="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=IsCurrentOtherUser}"
                 Orientation="Horizontal"
                 Spacing="20"
                 VerticalOptions="End">
