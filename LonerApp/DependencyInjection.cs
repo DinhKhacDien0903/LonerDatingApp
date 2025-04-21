@@ -1,3 +1,4 @@
+using LonerApp.Features.Services;
 using LonerApp.Platforms.Android.Services;
 using LonerApp.UI.GlobalPages;
 using Mopups.Interfaces;
@@ -15,6 +16,8 @@ public static class DependencyInjection
         services.AddSingleton<IPopupNavigationService, PopupNavigationService>();
         services.AddSingleton<IOpenSetting, OpenSetting>();
         services.AddSingleton<IDeviceService, DeviceService>();
+        services.AddSingleton<IApiService, ApiService>();
+        services.AddSingleton<ISwipeService, SwipeService>();
 #endif
         return services;
     }

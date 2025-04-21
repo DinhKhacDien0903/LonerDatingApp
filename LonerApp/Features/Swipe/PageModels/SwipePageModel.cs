@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using LonerApp.Features.Services;
 using System.Collections.ObjectModel;
 
 namespace LonerApp.PageModels
 {
     public partial class SwipePageModel : BasePageModel
     {
+        private readonly ISwipeService _swipeService;
         public bool IsNeedLoadUsersData = true;
         [ObservableProperty]
         private string _entryValue = string.Empty;
@@ -21,15 +23,17 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private ObservableCollection<UserModel> _users = new();
 
-        public SwipePageModel(INavigationService navigationService)
+        public SwipePageModel(INavigationService navigationService, ISwipeService swipeService)
             : base(navigationService, true)
         {
             IsVisibleNavigation = true;
+            _swipeService = swipeService;
         }
 
         public override async Task InitAsync(object? initData)
         {
             await base.InitAsync(initData);
+            var data = await _swipeService.GetProfilesAsync("Swipe/profiles", "401e55dd-399a-424b-8ccf-7aa154b4258c");
             InitUsers();
             IsNeedLoadUsersData = false;
         }

@@ -1,20 +1,25 @@
 namespace LonerApp.Features.Pages;
+
+using LonerApp.Features.Services;
 using Microsoft.Maui.Controls.Shapes;
 using Plugin.Maui.SwipeCardView.Core;
 
 public partial class MainSwipePage : BasePage
 {
     private readonly SwipePageModel _vm;
-    public MainSwipePage(SwipePageModel vm)
+    private readonly ISwipeService _swipeService;
+    public MainSwipePage(SwipePageModel vm, ISwipeService swipeService)
     {
         BindingContext = _vm = vm;
+        _swipeService = swipeService;
         InitializeComponent();
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         _vm.IsBusy = true;
         base.OnAppearing();
+        var data = await _swipeService.GetProfilesAsync("Swipe/profiles", "401e55dd-399a-424b-8ccf-7aa154b4258c");
         _vm.IsBusy = false;
     }
 

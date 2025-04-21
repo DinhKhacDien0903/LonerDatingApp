@@ -13,3 +13,4 @@ global using LonerApp.Validators;
 global using System.Windows.Input;
 global using LonerApp.UI.Controls;
 global using LonerApp.Models;
+global using LonerApp.Apis;
