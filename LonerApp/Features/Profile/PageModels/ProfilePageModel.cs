@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using LonerApp.Features.Services;
 using System.Collections.ObjectModel;
 
 namespace LonerApp.PageModels
@@ -6,7 +7,7 @@ namespace LonerApp.PageModels
     public partial class ProfilePageModel : BasePageModel
     {
         [ObservableProperty]
-        ObservableCollection<ImageSource> _images = new();
+        ObservableCollection<string> _images = new();
         [ObservableProperty]
         ObservableCollection<string> _interests = new();
         public bool IsNeedLoadUsersData = true;
@@ -25,17 +26,17 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private int _selectedIndex;
         [ObservableProperty]
-        private ObservableCollection<UserModel> _users = new();
-        [ObservableProperty]
         private bool _isCurrentOtherUser = true;
         [ObservableProperty]
-        private UserModel _myProfile;
+        private UserProfileDetailResponse _myProfile = new();
         ContentPage? _previousPage;
         SwipePageModel? _swipePageModel;
-        public ProfilePageModel(INavigationService navigationService)
+        private readonly IProfileService _profileService;
+        public ProfilePageModel(INavigationService navigationService, IProfileService profileService)
             : base(navigationService, true)
         {
             IsVisibleNavigation = true;
+            _profileService = profileService;
         }
 
         public override async Task InitAsync(object? initData)
@@ -45,36 +46,39 @@ namespace LonerApp.PageModels
             if (_previousPage != null)
                 _swipePageModel = _previousPage.BindingContext as SwipePageModel;
             IsCurrentOtherUser = _previousPage is MainSwipePage;
-            if (initData is UserModel user)
+            //if (initData is UserModel user)
+            //{
+            //    MyProfile = user;
+            //    await InitImages();
+            //}
+            if(initData is string userId)
             {
-                MyProfile = user;
-                await InitImages();
+                MyProfile.Id = userId;
             }
+
             await base.InitAsync(initData);
         }
 
+        public override async Task LoadDataAsync()
+        {
+            string queryParams = $"{EnvironmentsExtensions.QUERY_PARAMS_USER_ID}{MyProfile.Id}";
+            MyProfile = (await _profileService.GetProfileDetailAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILE_DETAIL, queryParams))?.UserDetail ?? new();
+            await InitImages();
+            await base.LoadDataAsync();
+        }
         public async Task InitImages()
         {
             IsBusy = true;
             await Task.Delay(1);
-            var x = new ObservableCollection<ImageSource>(MyProfile.ListImage.Where(x => !x.IsDefaultImage).Select(x => x.ImagePath));
+            List<string> x = [ ..MyProfile?.Photos ?? []];
             foreach(var item in x)
             {
-                if(item is ImageSource k)
+                if(item is string k)
                 {
                     Images.Add(k);
                 }
             }
             await Task.Delay(100);
-            //Images = new ObservableCollection<string>
-            //{
-            //    "bbbb.jpeg",
-            //    "lllll.jpeg",
-            //    "mmm.jpeg",
-            //    "nnn.jpeg",
-            //    "image_user_1.jpeg",
-            //    "image_user_2.jpeg"
-            //};
             SelectedIndex = 0;
             IsBusy = false;
         }

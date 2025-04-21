@@ -145,7 +145,6 @@
 	<ItemGroup>
 	  <Folder Include="Features/Filter/PageModels/" />
 	  <Folder Include="Features\Main\Models\" />
-	  <Folder Include="Features\Profile\Models\" />
 	  <Folder Include="Resources\Raw\" />
 	  <Folder Include="UI\Converters\" />
 	  <Folder Include="UI\MarkupExtension\" />

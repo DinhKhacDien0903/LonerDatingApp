@@ -1,4 +1,11 @@
+using LonerApp.Apis;
+
 namespace LonerApp.Models;
+
+public class GetProfilesResponse
+{
+    public PaginatedResponse<UserProfileResponse>? User { get; set; }
+}
 
 public class UserProfileResponse
 {

@@ -32,7 +32,7 @@
                 <Setter Property="FontSize" Value="13" />
                 <Setter Property="FontFamily" Value="GothamLight" />
                 <Setter Property="Shadow">
-                    <Setter.Value>
+                    <Setter.Value> 
                         <Shadow Opacity="0" />
                     </Setter.Value>
                 </Setter>
@@ -69,13 +69,12 @@
                     SupportedSwipeDirections="Left, Right, Up, Down"
                     Swiped="SwipeCardView_Swiped">
                     <swipe:SwipeCardView.ItemTemplate>
-                        <DataTemplate x:DataType="models:UserModel">
+                        <DataTemplate x:DataType="models:UserProfileResponse">
                             <Grid x:Name="profileUser">
                                 <ffimageloading:CachedImage
                                     Aspect="AspectFill"
                                     Loaded="CachedImage_Loaded"
-                                    Source="{Binding Image}">
-                                </ffimageloading:CachedImage>
+                                    Source="{Binding AvatarUrl}" />
                                 <Grid
                                     Margin="0,0,0,20"
                                     Padding="15"
@@ -92,7 +91,7 @@
                                             FontFamily="GothamBold"
                                             FontSize="{StaticResource FontSizeXL}"
                                             HorizontalOptions="Start"
-                                            Text="{Binding Name}"
+                                            Text="{Binding Username}"
                                             TextColor="White"
                                             VerticalOptions="Center" />
                                         <Label

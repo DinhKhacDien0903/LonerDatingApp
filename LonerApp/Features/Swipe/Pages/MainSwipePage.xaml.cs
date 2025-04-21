@@ -15,11 +15,10 @@ public partial class MainSwipePage : BasePage
         InitializeComponent();
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         _vm.IsBusy = true;
         base.OnAppearing();
-        var data = await _swipeService.GetProfilesAsync("Swipe/profiles", "401e55dd-399a-424b-8ccf-7aa154b4258c");
         _vm.IsBusy = false;
     }
 
@@ -47,12 +46,12 @@ public partial class MainSwipePage : BasePage
         };
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
         if (!_vm.IsPushPageWithNavService && _vm.IsNeedLoadUsersData)
         {
-            _vm.InitUsers();
+           await _vm.LoadDataAsync();
         }
     }
 

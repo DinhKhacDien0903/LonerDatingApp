@@ -18,6 +18,7 @@ public static class DependencyInjection
         services.AddSingleton<IDeviceService, DeviceService>();
         services.AddSingleton<IApiService, ApiService>();
         services.AddSingleton<ISwipeService, SwipeService>();
+        services.AddSingleton<IProfileService, ProfileService>();
 #endif
         return services;
     }

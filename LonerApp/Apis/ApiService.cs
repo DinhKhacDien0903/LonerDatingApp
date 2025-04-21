@@ -8,12 +8,18 @@ namespace LonerApp.Apis;
 public class ApiService : IApiService
 {
     private readonly HttpClient _httpClient;
+    private static readonly JsonSerializerOptions DEFAULT_OPTIONS = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     public ApiService()
     {
         var handler = new HttpClientHandler
         {
             ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
         };
+
         _httpClient = new HttpClient(handler)
         {
             BaseAddress = new Uri(GetBaseUrl())
@@ -42,18 +48,11 @@ public class ApiService : IApiService
     {
         try
         {
-            // var url = string.IsNullOrEmpty(queryParams) ? endpoint : $"{endpoint}?{queryParams}";
-            var url = string.IsNullOrEmpty(queryParams) ? endpoint : $"{endpoint}?PaginationRequest.UserId={queryParams}";
+            var url = string.IsNullOrEmpty(queryParams) ? endpoint : $"{endpoint}{queryParams}";
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
-            var check = await response.Content.ReadAsStringAsync();
-            System.Console.WriteLine($"Response: {check}");
-            if (string.IsNullOrEmpty(check))
-            {
-                return default;
-            }
 
-            return await response.Content.ReadFromJsonAsync<T>();
+            return await response.Content.ReadFromJsonAsync<T>(DEFAULT_OPTIONS);
         }
         catch (HttpRequestException ex)
         {
@@ -73,7 +72,7 @@ public class ApiService : IApiService
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(endpoint, content);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>();
+            return await response.Content.ReadFromJsonAsync<T>(DEFAULT_OPTIONS);
         }
         catch (HttpRequestException ex)
         {
@@ -93,7 +92,7 @@ public class ApiService : IApiService
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await _httpClient.PutAsync(endpoint, content);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>();
+            return await response.Content.ReadFromJsonAsync<T>(DEFAULT_OPTIONS);
         }
         catch (HttpRequestException ex)
         {
@@ -105,7 +104,7 @@ public class ApiService : IApiService
         }
     }
 
-    private string GetBaseUrl() => Enviroments.URl_SERVER_HTTPS_EMULATOR;
+    private string GetBaseUrl() => Environments.URl_SERVER_HTTPS_DEVICE_WIFI;
 }
 public class ApiException : Exception
 {

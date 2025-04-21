@@ -2,19 +2,19 @@ using LonerApp.Apis;
 
 namespace LonerApp.Features.Services;
 
-public class SwipeService : ISwipeService
+public class ProfileService : IProfileService
 {
     private readonly IApiService _apiService;
-    public SwipeService(IApiService apiService)
+    public ProfileService(IApiService apiService)
     {
         _apiService = apiService;
     }
 
-    public async Task<GetProfilesResponse?> GetProfilesAsync(string endpoint, string UserId)
+    public async Task<GetProfileDetailResponse?> GetProfileDetailAsync(string endpoint, string UserId)
     {
         try
         {
-            var response = await _apiService.GetAsync<GetProfilesResponse>(endpoint, UserId);
+            var response = await _apiService.GetAsync<GetProfileDetailResponse>(endpoint, UserId);
             return response;
         }
         catch (Exception ex)

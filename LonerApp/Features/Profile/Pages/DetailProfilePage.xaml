@@ -54,17 +54,13 @@
         Padding="0"
         RowDefinitions="*,*"
         RowSpacing="0">
-        <cards:CoverFlowView
+        <CarouselView
             x:Name="coverFlowImage"
-            Padding="0"
             AutomationId="carouselMotorcycles"
-            HeightRequest="360"
-            IsAutoNavigatingAnimationEnabled="False"
-            IsClippedToBounds="False"
-            IsViewReusingEnabled="False"
+            IndicatorView="indicatorView"
             ItemsSource="{Binding Images}"
-            SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
-            <cards:CoverFlowView.ItemTemplate>
+            Position="{Binding SelectedIndex, Mode=TwoWay}">
+            <CarouselView.ItemTemplate>
                 <DataTemplate>
                     <ffimageloading:CachedImage
                         Aspect="AspectFill"
@@ -73,33 +69,42 @@
                         HeightRequest="{Binding Source={x:Reference coverFlowImage}, Path=HeightRequest, x:DataType={x:Type cards:CoverFlowView}}"
                         LoadingDelay="0"
                         LoadingPriority="Low"
-                        Source="{Binding ., x:DataType={x:Type ImageSource}}" />
+                        Source="{Binding ., x:DataType={x:Type x:String}}" />
                 </DataTemplate>
-            </cards:CoverFlowView.ItemTemplate>
-            <cardViewControls:IndicatorsControl
+            </CarouselView.ItemTemplate>
+        </CarouselView>
+        <IndicatorView
+            x:Name="indicatorView"
+            Margin="0,0,0,4"
+            HeightRequest="10"
+            HorizontalOptions="Center"
+            IndicatorColor="LightGray"
+            SelectedIndicatorColor="White"
+            VerticalOptions="End"
+            ZIndex="1" />
+        <!--<cardViewControls:IndicatorsControl
                 Margin="0,0,0,4"
                 HeightRequest="10"
                 SelectedIndicatorStyle="{StaticResource ActiveIndicator}"
                 UnselectedIndicatorStyle="{StaticResource InactiveIndicator}"
                 VerticalOptions="End"
                 ZIndex="1">
-                <cardViewControls:IndicatorsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Ellipse
+            <cardViewControls:IndicatorsControl.ItemTemplate>
+                <DataTemplate>
+                    <Ellipse
                             HeightRequest="6"
                             HorizontalOptions="Center"
                             StrokeThickness="0"
                             VerticalOptions="Center"
                             WidthRequest="6" />
-                    </DataTemplate>
-                </cardViewControls:IndicatorsControl.ItemTemplate>
-            </cardViewControls:IndicatorsControl>
-        </cards:CoverFlowView>
+                </DataTemplate>
+            </cardViewControls:IndicatorsControl.ItemTemplate>
+        </cardViewControls:IndicatorsControl>-->
         <Grid
             Grid.Row="1"
             Margin="0"
             Padding="10,0"
-            x:DataType="{x:Type models:UserModel}"
+            x:DataType="{x:Type models:UserProfileDetailResponse}"
             BindingContext="{Binding MyProfile}"
             RowDefinitions="*,Auto"
             RowSpacing="5">
@@ -123,13 +128,13 @@
                             <Label
                                 FontFamily="GothamBold"
                                 FontSize="{StaticResource FontSizeL}"
-                                Text="{Binding Name}"
+                                Text="{Binding UserName}"
                                 TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
                             <Label
                                 Grid.Column="1"
                                 FontFamily="Gotham"
                                 FontSize="{StaticResource FontSizeL}"
-                                Text="24"
+                                Text="{Binding Age}"
                                 TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
                         </StackLayout>
                         <StackLayout

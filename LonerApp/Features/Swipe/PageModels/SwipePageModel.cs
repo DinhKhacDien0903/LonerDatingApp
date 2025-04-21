@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using LonerApp.Apis;
 using LonerApp.Features.Services;
 using System.Collections.ObjectModel;
 
@@ -21,7 +22,7 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private bool _hasBackButton;
         [ObservableProperty]
-        private ObservableCollection<UserModel> _users = new();
+        private ObservableCollection<UserProfileResponse> _users = new();
 
         public SwipePageModel(INavigationService navigationService, ISwipeService swipeService)
             : base(navigationService, true)
@@ -33,60 +34,16 @@ namespace LonerApp.PageModels
         public override async Task InitAsync(object? initData)
         {
             await base.InitAsync(initData);
-            var data = await _swipeService.GetProfilesAsync("Swipe/profiles", "401e55dd-399a-424b-8ccf-7aa154b4258c");
-            InitUsers();
             IsNeedLoadUsersData = false;
         }
 
-        public void InitUsers()
+        public override async Task LoadDataAsync()
         {
-            IsBusy = true;
-            Users = new ObservableCollection<UserModel>
-            {
-                new UserModel
-                {
-                    Name = "John Doe 1",
-                    Age = 25,
-                    Status = "Single",
-                    Image = "bbbb.jpeg",
-                },
-                new UserModel
-                {
-                    Name = "John Doe 2",
-                    Age = 26,
-                    Status = "Single",
-                    Image = "lllll.jpeg",
-                },
-                new UserModel
-                {
-                    Name = "John Doe 3",
-                    Age = 27,
-                    Status = "Single",
-                    Image ="mmm.jpeg",
-                },
-                new UserModel
-                {
-                    Name = "John Doe 3",
-                    Age = 27,
-                    Status = "Single",
-                    Image ="nnn.jpeg",
-                },
-                new UserModel
-                {
-                    Name = "John Doe 3",
-                    Age = 27,
-                    Status = "Single",
-                    Image ="image_user_1.jpeg",
-                },
-                new UserModel
-                {
-                    Name = "John Doe 3",
-                    Age = 27,
-                    Status = "Single",
-                    Image ="image_user_2.jpeg",
-                },
-            };
-            IsBusy = false;
+            //TODO: Get userId in cache
+            string queryParams = $"{EnvironmentsExtensions.QUERY_PARAMS_PAGINATION_REQUEST}60ada144-f342-46b1-b6a5-0ae41ee83740";
+            var data = await _swipeService.GetProfilesAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILES, queryParams);
+            Users = [.. data?.User?.Items ?? []];
+            await base.LoadDataAsync();
         }
 
         [RelayCommand]
@@ -108,17 +65,6 @@ namespace LonerApp.PageModels
             IsBusy = true;
             IsNeedLoadUsersData = false;
             await NavigationService.PushToPageAsync<FilterMapPage>();
-            IsBusy = false;
-        }
-
-        [RelayCommand]
-        async Task OnOpenUserProfileAsync(object param)
-        {
-            if (OpenUserProfileCommand.IsRunning || IsBusy)
-                return;
-            IsBusy = true;
-            await NavigationService.PopPageAsync(isPopModal: true);
-            await Task.Delay(100);
             IsBusy = false;
         }
 
@@ -159,7 +105,7 @@ namespace LonerApp.PageModels
                 return;
             IsBusy = true;
             IsNeedLoadUsersData = false;
-            await NavigationService.PushToPageAsync<DetailProfilePage>(isPushModal: true);
+            await NavigationService.PushToPageAsync<DetailProfilePage>(param: (param as UserProfileResponse)?.Id ,isPushModal: true);
             await Task.Delay(100);
             IsBusy = false;
         }
