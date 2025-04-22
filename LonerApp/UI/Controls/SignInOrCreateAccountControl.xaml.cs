@@ -44,6 +44,12 @@ public partial class SignInOrCreateAccountControl : ContentView
         typeof(SignInOrCreateAccountControl),
         defaultValue: false);
 
+    public static readonly BindableProperty IsVerifyEmailProperty =
+        BindableProperty.Create(nameof(IsVerifyEmail),
+        typeof(bool),
+        typeof(SignInOrCreateAccountControl),
+        defaultValue: false);
+
     public static readonly BindableProperty IsEmailProperty =
         BindableProperty.Create(nameof(IsEmail),
         typeof(bool),
@@ -91,13 +97,18 @@ public partial class SignInOrCreateAccountControl : ContentView
         get => (bool)GetValue(IsPhoneNumberProperty);
         set => SetValue(IsPhoneNumberProperty, value);
     }
-    
+
     public bool IsVerifyPhoneNumber
     {
         get => (bool)GetValue(IsVerifyPhoneNumberProperty);
         set => SetValue(IsVerifyPhoneNumberProperty, value);
     }
 
+    public bool IsVerifyEmail
+    {
+        get => (bool)GetValue(IsVerifyEmailProperty);
+        set => SetValue(IsVerifyEmailProperty, value);
+    }
     public bool IsEmail
     {
         get => (bool)GetValue(IsEmailProperty);

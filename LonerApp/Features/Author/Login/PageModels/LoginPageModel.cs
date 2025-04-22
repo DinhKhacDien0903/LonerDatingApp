@@ -15,7 +15,6 @@ namespace LonerApp.PageModels
                 .PhoneNumber();
         }
     }
-
     public class LoginEmailValidator : AbstractValidator<LoginPageModel>
     {
         public LoginEmailValidator()
@@ -25,7 +24,6 @@ namespace LonerApp.PageModels
                 .Email();
         }
     }
-
     public class VerifiedPhoneNumberValidator : AbstractValidator<LoginPageModel>
     {
         public VerifiedPhoneNumberValidator()
@@ -64,8 +62,9 @@ namespace LonerApp.PageModels
         private readonly LoginPhoneNumberValidator _phoneNumberValidator = new();
         private readonly VerifiedPhoneNumberValidator _verifiedPhoneNumber = new();
         private readonly LoginEmailValidator _emailNumberValidator = new();
+        private readonly IAuthorService _authorService;
 
-        public LoginPageModel(INavigationService navigationService)
+        public LoginPageModel(INavigationService navigationService, IAuthorService authorService)
             : base(navigationService, true)
         {
             Countries = new ObservableCollection<Country>
@@ -75,6 +74,7 @@ namespace LonerApp.PageModels
                 };
 
             SelectCountry = Countries[0].Name ?? string.Empty;
+            _authorService = authorService;
         }
 
         public override async Task InitAsync(object? initData)
@@ -167,20 +167,55 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnEmailContinueAsync(object param)
         {
-            IsBusy = true;
-            EmailValue = EmailValue.Trim();
-            var validatorResult = _emailNumberValidator.Validate(this);
-            if (validatorResult.IsValid)
+            try
             {
-                IsShowError = false;
-                await NavigationService.PushToPageAsync<SetupNamePage>(isPushModal: false);
+                IsBusy = true;
+
+                EmailValue = EmailValue?.Trim() ?? string.Empty;
+
+                var validationResult = _emailNumberValidator.Validate(this);
+                if (!validationResult.IsValid)
+                {
+                    DisplayError(validationResult.Errors.FirstOrDefault()?.ErrorMessage ?? "Invalid email");
+                    return;
+                }
+
+                var sendMailResponse = await _authorService.SendMailOtpAsync(new()
+                {
+                    Email = EmailValue
+                });
+
+                if (sendMailResponse?.IsSuccess == true)
+                {
+                    ClearError();
+                    await NavigationService.PushToPageAsync<VerifyPhoneEmailAuthorPage>(param: EmailValue, isPushModal: false);
+                    await Task.Delay(100);
+                }
+                else
+                {
+                    DisplayError(sendMailResponse?.Message ?? "An error occurred while sending verification email");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                IsShowError = true;
-                ErrorTextValue = validatorResult.Errors[0].ErrorMessage;
+                DisplayError($"Unexpected error: {ex.Message}");
             }
-            IsBusy = false;
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private void DisplayError(string message)
+        {
+            IsShowError = true;
+            ErrorTextValue = message;
+        }
+
+        private void ClearError()
+        {
+            IsShowError = false;
+            ErrorTextValue = string.Empty;
         }
 
         [RelayCommand]

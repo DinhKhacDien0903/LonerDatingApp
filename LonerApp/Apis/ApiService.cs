@@ -71,8 +71,7 @@ public class ApiService : IApiService
             var json = JsonSerializer.Serialize(data);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(endpoint, content);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>(DEFAULT_OPTIONS);
+            return await ApiResponseHelper.HandleResponse<T>(response);
         }
         catch (HttpRequestException ex)
         {
@@ -104,7 +103,7 @@ public class ApiService : IApiService
         }
     }
 
-    private string GetBaseUrl() => Environments.URl_SERVER_HTTPS_DEVICE_WIFI;
+    private string GetBaseUrl() => Environments.URl_SERVER_HTTPS_EMULATOR;
 }
 public class ApiException : Exception
 {

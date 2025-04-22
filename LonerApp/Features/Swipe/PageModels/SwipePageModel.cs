@@ -23,6 +23,7 @@ namespace LonerApp.PageModels
         private bool _hasBackButton;
         [ObservableProperty]
         private ObservableCollection<UserProfileResponse> _users = new();
+        private static string _currentUserId = string.Empty;
 
         public SwipePageModel(INavigationService navigationService, ISwipeService swipeService)
             : base(navigationService, true)
@@ -33,6 +34,8 @@ namespace LonerApp.PageModels
 
         public override async Task InitAsync(object? initData)
         {
+            if (initData is string UserId)
+                _currentUserId = UserId.Trim();
             await base.InitAsync(initData);
             IsNeedLoadUsersData = false;
         }
@@ -40,7 +43,7 @@ namespace LonerApp.PageModels
         public override async Task LoadDataAsync()
         {
             //TODO: Get userId in cache
-            string queryParams = $"{EnvironmentsExtensions.QUERY_PARAMS_PAGINATION_REQUEST}60ada144-f342-46b1-b6a5-0ae41ee83740";
+            string queryParams = $"{EnvironmentsExtensions.QUERY_PARAMS_PAGINATION_REQUEST}{_currentUserId}";
             var data = await _swipeService.GetProfilesAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILES, queryParams);
             Users = [.. data?.User?.Items ?? []];
             await base.LoadDataAsync();
@@ -105,7 +108,7 @@ namespace LonerApp.PageModels
                 return;
             IsBusy = true;
             IsNeedLoadUsersData = false;
-            await NavigationService.PushToPageAsync<DetailProfilePage>(param: (param as UserProfileResponse)?.Id ,isPushModal: true);
+            await NavigationService.PushToPageAsync<DetailProfilePage>(param: (param as UserProfileResponse)?.Id, isPushModal: true);
             await Task.Delay(100);
             IsBusy = false;
         }

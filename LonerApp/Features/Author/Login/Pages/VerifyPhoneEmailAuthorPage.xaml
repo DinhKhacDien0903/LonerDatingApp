@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               x:Class="LonerApp.Features.Pages.VerifyPhoneEmailAuthorPage"
+               Title="VerifyPhoneEmailAuthorPage"
+               xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+               xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+               xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+               xmlns:models="clr-namespace:LonerApp.Models"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:vm="clr-namespace:LonerApp.PageModels"
+               x:DataType="vm:VerfyEmailPageModel"
+               BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+               NavigationPage.HasNavigationBar="True"
+               Shell.NavBarIsVisible="False"
+               Shell.TabBarIsVisible="False">
+    <Page.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="White"
+                                   StatusBarStyle="DarkContent"/>
+    </Page.Behaviors>
+    <base:BasePage.Content>
+        <controls:SignInOrCreateAccountControl
+            Title="{i18n:Translate Label_PhoneNumber_Identity}"
+            ContinueCommand="{Binding EmailIdentityContinueCommand}"
+            ErrorValue="{Binding ErrorTextValue}"
+            IsEmail="False"
+            IsPhoneNumber="False"
+            IsShowError="{Binding IsShowError}"
+            IsVerifyEmail="True"
+            IsVerifyPhoneNumber="False"/>
+    </base:BasePage.Content>
+</base:BasePage>

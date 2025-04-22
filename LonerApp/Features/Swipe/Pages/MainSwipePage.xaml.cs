@@ -49,6 +49,7 @@ public partial class MainSwipePage : BasePage
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
+        Shell.SetTabBarIsVisible(this, true);
         if (!_vm.IsPushPageWithNavService && _vm.IsNeedLoadUsersData)
         {
            await _vm.LoadDataAsync();

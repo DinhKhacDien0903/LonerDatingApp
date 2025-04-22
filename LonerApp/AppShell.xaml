@@ -10,7 +10,7 @@
     <TabBar>
         <ShellContent
             Title=""
-            ContentTemplate="{DataTemplate pages:MainSwipePage}"
+            ContentTemplate="{DataTemplate pages:SignInPage}"
             Icon="{StaticResource IconHomePage}"
             Route="mainSwipePage" />
         <ShellContent
@@ -24,22 +24,4 @@
             Icon="{StaticResource IconAccountControlPage}"
             Route="myProfilePage" />
     </TabBar>
-    <!--<Shell.FlyoutFooter>
-        <Grid Padding="15">
-            <sf:SfSegmentedControl
-                x:Name="ThemeSegmentedControl"
-                HorizontalOptions="Center"
-                SegmentHeight="40"
-                SegmentWidth="40"
-                SelectionChanged="SfSegmentedControl_SelectionChanged"
-                VerticalOptions="Center">
-                <sf:SfSegmentedControl.ItemsSource>
-                    <x:Array Type="{x:Type sf:SfSegmentItem}">
-                        <sf:SfSegmentItem ImageSource="{StaticResource IconLight}" />
-                        <sf:SfSegmentItem ImageSource="{StaticResource IconDark}" />
-                    </x:Array>
-                </sf:SfSegmentedControl.ItemsSource>
-            </sf:SfSegmentedControl>
-        </Grid>
-    </Shell.FlyoutFooter>-->
 </Shell>

@@ -20,6 +20,8 @@ public static class EnvironmentsExtensions
     //Endpoints
     public const string ENDPOINT_GET_PROFILES = "Swipe/profiles";
     public const string ENDPOINT_GET_PROFILE_DETAIL = "User/profile-detail";
+    public const string ENDPOINT_SEND_MAIL_OTP = "Auth/send-mail-otp";
+    public const string ENDPOINT_VERIFY_AND_REGISTER_MAIL= "Auth/verify-mail-otp-and-register";
 
     //Query Params
     public const string QUERY_PARAMS_PAGINATION_REQUEST = "?PaginationRequest.UserId=";

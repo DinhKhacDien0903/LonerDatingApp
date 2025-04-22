@@ -19,6 +19,7 @@ public static class DependencyInjection
         services.AddSingleton<IApiService, ApiService>();
         services.AddSingleton<ISwipeService, SwipeService>();
         services.AddSingleton<IProfileService, ProfileService>();
+        services.AddSingleton<IAuthorService, AuthorService>();
 #endif
         return services;
     }
@@ -27,6 +28,7 @@ public static class DependencyInjection
     {
         services.AddTransient<MainPageModel>();
         services.AddTransient<LoginPageModel>();
+        services.AddTransient<VerfyEmailPageModel>();
         services.AddTransient<SetupPageModel>();
         services.AddTransient<SwipePageModel>();
         services.AddTransient<ProfilePageModel>();
@@ -47,6 +49,7 @@ public static class DependencyInjection
         services.AddTransient<PhoneNumberAuthor>();
         services.AddTransient<EmailAuthor>();
         services.AddTransient<VerifyPhoneNumberAuthorPage>();
+        services.AddTransient<VerifyPhoneEmailAuthorPage>();
         services.AddTransient<SetupNamePage>();
         services.AddTransient<SetupDateOfBirthPage>();
         services.AddTransient<SetupGenderPage>();

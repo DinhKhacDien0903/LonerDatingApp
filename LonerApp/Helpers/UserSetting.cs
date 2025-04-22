@@ -25,6 +25,9 @@ namespace LonerApp.Helpers
         IsShowAppFeature,
         IsDealerPHDataInRealm,
         CurrentLocation,
+        UserId,
+        AccessToken,
+        RefreshToken
     }
 
     public static partial class UserSetting
@@ -97,7 +100,7 @@ namespace LonerApp.Helpers
                 {
                     _semaphoreSlim.Release();
                 }
-                
+
                 //TODO: Set language for app
                 //if (isSuccessful && nameof(StorageKey.Locale).Equals(key))
                 //{
