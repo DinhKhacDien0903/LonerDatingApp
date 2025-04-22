@@ -79,8 +79,7 @@
                             Text="{i18n:Translate Create_Account_Button}"
                             TextColor="#676767" />
                         <Button
-                            Command="{Binding SignInCommand}"
-                            CommandParameter="{Binding .}"
+                            Clicked="Signup_Clicked"
                             Style="{StaticResource SecondaryButtonStyle}"
                             Text="{i18n:Translate Signup_Button}" />
                     </StackLayout>

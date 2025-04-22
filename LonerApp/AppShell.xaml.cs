@@ -1,8 +1,4 @@
-﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core;
-using Font = Microsoft.Maui.Font;
-
-namespace LonerApp
+﻿namespace LonerApp
 {
     public partial class AppShell : Shell
     {

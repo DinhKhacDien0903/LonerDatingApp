@@ -94,7 +94,7 @@ namespace LonerApp.PageModels
 
         public override async Task InitAsync(object? initData)
         {
-            _previousPage = AppShell.Current.CurrentPage as ContentPage;
+            _previousPage = AppShell.Current?.CurrentPage as ContentPage;
             if (_previousPage != null)
                 _editProfilePageModel = _previousPage.BindingContext as EditProfilePageModel;
             HasBackButton = true;
@@ -105,7 +105,7 @@ namespace LonerApp.PageModels
         public override async Task LoadDataAsync()
         {
             await base.LoadDataAsync();
-            var currentPage = AppShell.Current.CurrentPage;
+            var currentPage = AppShell.Current?.CurrentPage;
             if (currentPage is SetupGenderPage || currentPage is SetupShowGenderForMe)
             {
                 Gender = new ObservableCollection<Gender>

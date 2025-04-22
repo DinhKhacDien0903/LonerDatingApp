@@ -4,6 +4,7 @@ namespace LonerApp
 {
     public partial class App : Application
     {
+        public static Window Window { get; private set; }
         public static BasePageModel? CurrentPageModel
         {
             get
@@ -61,7 +62,25 @@ namespace LonerApp
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            if (Window != null)
+            {
+                //ServiceHelper.GetService<ISystemStyleManager>().SetNavigationBarColor(ThemeUtil.GetResourceColorByKey("PrimaryColor").GetHexString());
+                //if (App.CurrentViewModel is SelectCountryViewModel || App.CurrentViewModel is HomeViewModel)
+                //{
+                //    ServiceHelper.GetService<ISystemStyleManager>().SetStatusBarColor(ThemeUtil.GetBackgroundCoverColor());
+                //}
+                //else
+                //{
+                //    ServiceHelper.GetService<ISystemStyleManager>().SetStatusBarColor(ThemeUtil.GetResourceColorByKey("PrimaryColor").GetHexString());
+                //}
+
+                //IsAppSleepingOrCovered = false;
+                return Window;
+            }
+
+            //Window = new Window(new LoadingPage());
+            Window = new Window(new NavigationPage(new LoadingPage()));
+            return Window;
         }
 
         public static void RefreshApp()

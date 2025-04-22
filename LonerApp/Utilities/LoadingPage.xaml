@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage
+    x:Class="LonerApp.Utilities.LoadingPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    Title="LoadingPage"
+    x:DataType="vm:ChatPageModel"
+    BackgroundColor="Blue"
+    NavigationPage.HasNavigationBar="True"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
+    <base:BasePage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <!--<RowDefinition Height="*" />-->
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!--<Grid Grid.RowSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="6*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <StackLayout
+                    Grid.Column="1"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+                    <Image
+                        x:Name="imgLogo"
+                        Aspect="AspectFit"
+                        Source="logo_black.png" />
+                </StackLayout>
+            </Grid>-->
+
+            <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                <Label
+                    x:Name="LoadingText"
+                    FontSize="20"
+                    TextColor="White" />
+                <ActivityIndicator
+                    x:Name="indicator"
+                    IsRunning="False"
+                    Color="{toolkit:AppThemeResource PrimaryKey}" />
+            </StackLayout>
+        </Grid>
+    </base:BasePage.Content>
+</base:BasePage>

@@ -3,9 +3,9 @@ namespace LonerApp.Features.Pages;
 public partial class PhoneNumberAuthor : BasePage
 {
     private readonly LoginPageModel _vm;
-    public PhoneNumberAuthor(LoginPageModel vm)
+    public PhoneNumberAuthor()
     {
-        BindingContext = _vm = vm;
+        BindingContext = _vm = ServiceHelper.GetPageModelObservable<LoginPageModel>();
         InitializeComponent();
     }
     protected override void OnAppearing()

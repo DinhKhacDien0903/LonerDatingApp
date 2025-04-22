@@ -46,6 +46,8 @@ namespace LonerApp
                 handlers.AddHandler<Microsoft.Maui.Controls.Maps.Map, CustomMapHandler>();
             });
             //register DI
+            builder.Services.AddSingleton<INavigationOtherShellService>(sp =>
+                new NavigationOtherShellService(type => sp.GetService(type) as ContentPage));
             builder.Services.AddApplications();
             builder.Services.RegisterPageModels();
             builder.Services.RegisterPages();

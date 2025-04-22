@@ -3,10 +3,10 @@ namespace LonerApp.Features.Pages;
 public partial class EmailAuthor : BasePage
 {
     private readonly LoginPageModel _vm;
-    public EmailAuthor(LoginPageModel vm)
+    public EmailAuthor()
 	{
 		InitializeComponent();
-        BindingContext = _vm = vm;
+        BindingContext = _vm =  ServiceHelper.GetPageModelObservable<LoginPageModel>();
     }
 
     protected override void OnAppearing()

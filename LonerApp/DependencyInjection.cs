@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddSingleton<IPopupNavigation>(MopupService.Instance);
         services.AddSingleton<ISystemStyleManager, SystemStyleManager>();
         services.AddSingleton<INavigationService, NavigationService>();
+        //services.AddSingleton<INavigationOtherShellService, NavigationOtherShellService>();
         services.AddSingleton<IPopupNavigationService, PopupNavigationService>();
         services.AddSingleton<IOpenSetting, OpenSetting>();
         services.AddSingleton<IDeviceService, DeviceService>();

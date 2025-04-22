@@ -29,14 +29,19 @@ public partial class VerfyEmailPageModel : BasePageModel
     [ObservableProperty]
     private bool _hasBackButton;
     private readonly IAuthorService _authorService;
+    private readonly INavigationOtherShellService _navigationOtherShell;
     private readonly VerifiedEmailValidator _emailNumberValidator = new();
 
-    public VerfyEmailPageModel(INavigationService navigationService, IAuthorService authorService)
+    public VerfyEmailPageModel
+        (INavigationService navigationService,
+        IAuthorService authorService,
+        INavigationOtherShellService navigationOtherShell)
         : base(navigationService, true)
     {
         _authorService = authorService;
         HasBackButton = true;
         IsVisibleNavigation = true;
+        _navigationOtherShell = navigationOtherShell;
     }
 
     public override async Task InitAsync(object? initData)
@@ -62,6 +67,13 @@ public partial class VerfyEmailPageModel : BasePageModel
                 DisplayError(validationResult.Errors.FirstOrDefault()?.ErrorMessage ?? "Invalid Code");
                 return;
             }
+            //UserSetting.Remove("IsLoggedIn");
+            var isLoggingInValue = UserSetting.Get(StorageKey.IsLoggedIn);
+            bool isLoggingIn;
+            if (string.IsNullOrEmpty(isLoggingInValue))
+                isLoggingIn = false;
+            else
+                isLoggingIn = Convert.ToBoolean(isLoggingInValue);
 
             var verifyResponse = await _authorService.VerifyEmailAsync(new()
             {
@@ -73,14 +85,18 @@ public partial class VerfyEmailPageModel : BasePageModel
             if (verifyResponse?.IsVerified == true)
             {
                 ClearError();
-                UserSetting.SetObject(StorageKey.IsFirstLogin, verifyResponse.UserId);
+                UserSetting.SetObject(StorageKey.IsLoggedIn, verifyResponse.IsVerified);
                 if (currentId == null)
                     UserSetting.SetObject(StorageKey.UserId, verifyResponse.UserId);
 
-                if (!verifyResponse.IsSetupedAccount)
-                    await NavigationService.PushToPageAsync<SetupNamePage>(isPushModal: false);
+                if (!verifyResponse.IsAccountSetup)
+                    //await NavigationService.PushToPageAsync<SetupNamePage>(isPushModal: false);
+                    await _navigationOtherShell.NavigateToAsync<SetupNamePage>(isPushModal: false);
+
                 else
-                    await NavigationService.PushToPageAsync<MainSwipePage>(param: verifyResponse.UserId, isPushModal: false);
+                    //await NavigationService.PushToPageAsync<MainSwipePage>(param: verifyResponse.UserId, isPushModal: false);
+                    await _navigationOtherShell.NavigateToAsync<MainSwipePage>(param: verifyResponse.UserId, isPushModal: false);
+
                 await Task.Delay(100);
             }
             else

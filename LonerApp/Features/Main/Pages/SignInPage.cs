@@ -2,18 +2,14 @@ namespace LonerApp.Features.Pages;
 
 public partial class SignInPage : BasePage
 {
-    private readonly MainPageModel _vm;
-    public SignInPage(MainPageModel vm)
+    public SignInPage()
     {
-        BindingContext = vm;
-        _vm = vm;
         InitializeComponent();
+        BindingContext = ServiceHelper.GetPageModelObservable<MainPageModel>();
     }
     protected override void OnAppearing()
     {
-        _vm.IsBusy = true;
         base.OnAppearing();
-        _vm.IsBusy = false;
     }
 
     public void Wellcome_SizeChanged(object sender, EventArgs e)
@@ -22,5 +18,15 @@ public partial class SignInPage : BasePage
         {
             label.WidthRequest = Constants.WidthDevice * 0.8;
         }
+    }
+
+    private async void Google_SignIn_Tapped(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new VerifyPhoneEmailAuthorPage());
+    }
+
+    private async void PhoneNumber_SignIn_Tapped(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new PhoneNumberAuthor());
     }
 }

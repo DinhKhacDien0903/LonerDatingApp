@@ -63,8 +63,12 @@ namespace LonerApp.PageModels
         private readonly VerifiedPhoneNumberValidator _verifiedPhoneNumber = new();
         private readonly LoginEmailValidator _emailNumberValidator = new();
         private readonly IAuthorService _authorService;
+        private readonly INavigationOtherShellService _navigationOtherShell;
 
-        public LoginPageModel(INavigationService navigationService, IAuthorService authorService)
+        public LoginPageModel(
+            INavigationService navigationService,
+            IAuthorService authorService,
+            INavigationOtherShellService navigationOtherShell)
             : base(navigationService, true)
         {
             Countries = new ObservableCollection<Country>
@@ -75,6 +79,7 @@ namespace LonerApp.PageModels
 
             SelectCountry = Countries[0].Name ?? string.Empty;
             _authorService = authorService;
+            _navigationOtherShell = navigationOtherShell;
         }
 
         public override async Task InitAsync(object? initData)
@@ -118,7 +123,8 @@ namespace LonerApp.PageModels
                     channel: "sms",
                     pathServiceSid: "VA197516f6d68a53f646a7274fd2f3cadd"
                 );
-                await NavigationService.PushToPageAsync<VerifyPhoneNumberAuthorPage>(param: $"{PhoneNumberValue} ", isPushModal: true);
+                //await NavigationService.PushToPageAsync<VerifyPhoneNumberAuthorPage>(param: $"{PhoneNumberValue} ", isPushModal: true);
+                await _navigationOtherShell.NavigateToAsync<VerifyPhoneNumberAuthorPage>(param: $"{PhoneNumberValue} ", isPushModal: true);
             }
             else
             {
@@ -188,7 +194,9 @@ namespace LonerApp.PageModels
                 if (sendMailResponse?.IsSuccess == true)
                 {
                     ClearError();
-                    await NavigationService.PushToPageAsync<VerifyPhoneEmailAuthorPage>(param: EmailValue, isPushModal: false);
+                    //await NavigationService.PushToPageAsync<VerifyPhoneEmailAuthorPage>(param: EmailValue, isPushModal: false);
+                    await _navigationOtherShell.NavigateToAsync<VerifyPhoneEmailAuthorPage>(param: EmailValue, isPushModal: false);
+
                     await Task.Delay(100);
                 }
                 else

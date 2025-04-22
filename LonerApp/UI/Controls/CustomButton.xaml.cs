@@ -27,6 +27,9 @@ public partial class CustomButton : ContentView
         get => (string)GetValue(IconProperty);
         set => SetValue(IconProperty, value);
     }
+
+    public event EventHandler<TappedEventArgs> Tapped;
+
     public CustomButton()
     {
         InitializeComponent();

@@ -26,6 +26,9 @@ namespace LonerApp.Helpers
         IsDealerPHDataInRealm,
         CurrentLocation,
         UserId,
+        IsLoggedIn,
+        IsLoggingIn,
+        IsAccountSetup,
         AccessToken,
         RefreshToken
     }

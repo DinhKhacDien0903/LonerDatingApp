@@ -1,8 +1,5 @@
-namespace LonerApp.Helpers;
-
-using System.Net.Http;
 using System.Text.Json;
-using System.Threading.Tasks;
+namespace LonerApp.Helpers;
 
 public static class ApiResponseHelper
 {
@@ -28,7 +25,7 @@ public static class ApiResponseHelper
             catch (JsonException)
             {
                 await AlertHelper.ShowErrorAlertAsync("Lỗi khi xử lý dữ liệu từ máy chủ.", "Lỗi");
-                return default(T);
+                return default;
             }
         }
         else
@@ -60,7 +57,7 @@ public static class ApiResponseHelper
                 await AlertHelper.ShowErrorAlertAsync($"Lỗi khi xử lý thông tin lỗi từ máy chủ: {errorContent}", "Lỗi");
             }
 
-            return default(T);
+            return default;
         }
     }
 }

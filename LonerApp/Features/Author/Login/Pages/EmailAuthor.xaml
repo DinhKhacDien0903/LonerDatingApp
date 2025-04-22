@@ -12,15 +12,17 @@
     Title="EmailAuthor"
     x:DataType="vm:LoginPageModel"
     BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
-    NavigationPage.HasNavigationBar="True"
-    Shell.NavBarIsVisible="True"
-    Shell.TabBarIsVisible="True">
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
     <Page.Behaviors>
         <toolkit:StatusBarBehavior StatusBarColor="White" StatusBarStyle="DarkContent" />
     </Page.Behaviors>
     <base:BasePage.Content>
         <controls:SignInOrCreateAccountControl
             Title="{i18n:Translate Label_Email_Author}"
+            Grid.Row="1"
+            Margin="0,20,0,0"
             ContinueCommand="{Binding EmailContinueCommand}"
             ErrorValue="{Binding ErrorTextValue}"
             IsEmail="True"
