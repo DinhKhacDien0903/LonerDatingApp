@@ -103,7 +103,7 @@ public class ApiService : IApiService
         }
     }
 
-    private string GetBaseUrl() => Environments.URl_SERVER_HTTPS_EMULATOR;
+    private string GetBaseUrl() => Environments.URl_SERVER_HTTPS_DEVICE_WIFI;
 }
 public class ApiException : Exception
 {
