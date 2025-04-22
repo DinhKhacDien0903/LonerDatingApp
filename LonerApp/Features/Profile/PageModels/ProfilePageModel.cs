@@ -46,12 +46,7 @@ namespace LonerApp.PageModels
             if (_previousPage != null)
                 _swipePageModel = _previousPage.BindingContext as SwipePageModel;
             IsCurrentOtherUser = _previousPage is MainSwipePage;
-            //if (initData is UserModel user)
-            //{
-            //    MyProfile = user;
-            //    await InitImages();
-            //}
-            if(initData is string userId)
+            if (initData is string userId)
             {
                 MyProfile.Id = userId;
             }
@@ -62,25 +57,36 @@ namespace LonerApp.PageModels
         public override async Task LoadDataAsync()
         {
             string queryParams = $"{EnvironmentsExtensions.QUERY_PARAMS_USER_ID}{MyProfile.Id}";
-            MyProfile = (await _profileService.GetProfileDetailAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILE_DETAIL, queryParams))?.UserDetail ?? new();
-            await InitImages();
+            try
+            {
+                IsBusy = true;
+                MyProfile = (await _profileService.GetProfileDetailAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILE_DETAIL, queryParams))?.UserDetail ?? new();
+                await Task.Delay(100);
+                await InitImages();
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine("Throw ex in ProfilePageModel: " + ex.Message);
+            }
+            finally
+            {
+                await Task.Delay(100);
+                IsBusy = false;
+            }
+
             await base.LoadDataAsync();
         }
         public async Task InitImages()
         {
-            IsBusy = true;
             await Task.Delay(1);
-            List<string> x = [ ..MyProfile?.Photos ?? []];
-            foreach(var item in x)
+            List<string> photos = [.. MyProfile?.Photos ?? []];
+            foreach (var item in photos)
             {
-                if(item is string k)
-                {
-                    Images.Add(k);
-                }
+                Images.Add(item);
             }
+
             await Task.Delay(100);
-            SelectedIndex = 0;
-            IsBusy = false;
+            _ = Task.Delay(150).ContinueWith(_ => SelectedIndex = 0);
         }
 
         [RelayCommand]
@@ -110,9 +116,9 @@ namespace LonerApp.PageModels
         async Task OnDislikePressedAsync(object param)
         {
             //TODO: Add adnimation when dislike pressed
-            if (DislikePressedCommand.IsRunning  || IsBusy)
+            if (DislikePressedCommand.IsRunning || IsBusy)
                 return;
-            if(_swipePageModel != null)
+            if (_swipePageModel != null)
             {
                 _swipePageModel.DislikePressedCommand.Execute(null);
             }
@@ -124,9 +130,9 @@ namespace LonerApp.PageModels
         async Task OnStarPressedAsync(object param)
         {
             //TODO: Add adnimation when superlike pressed
-            if (StarPressedCommand.IsRunning  || IsBusy)
+            if (StarPressedCommand.IsRunning || IsBusy)
                 return;
-            if(_swipePageModel != null)
+            if (_swipePageModel != null)
             {
                 _swipePageModel.StarPressedCommand.Execute(null);
             }
@@ -138,9 +144,9 @@ namespace LonerApp.PageModels
         async Task OnLikePressedAsync(object param)
         {
             //TODO: Add adnimation when like pressed
-            if (LikePressedCommand.IsRunning  || IsBusy)
+            if (LikePressedCommand.IsRunning || IsBusy)
                 return;
-            if(_swipePageModel != null)
+            if (_swipePageModel != null)
             {
                 _swipePageModel.LikePressedCommand.Execute(null);
             }

@@ -24,6 +24,8 @@
     </Page.Behaviors>
     <base:BasePage.Resources>
         <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="BoolRevertConverter" />
+            <toolkit:VariableMultiValueConverter x:Key="VariableMultiValueConverter" ConditionType="None" />
             <Style x:Key="ActiveIndicator" TargetType="Ellipse">
                 <Setter Property="Fill" Value="White" />
             </Style>
@@ -57,9 +59,12 @@
         <CarouselView
             x:Name="coverFlowImage"
             AutomationId="carouselMotorcycles"
+            HorizontalScrollBarVisibility="Never"
             IndicatorView="indicatorView"
+            IsScrollAnimated="False"
             ItemsSource="{Binding Images}"
-            Position="{Binding SelectedIndex, Mode=TwoWay}">
+            Loop="True"
+            Position="{Binding SelectedIndex}">
             <CarouselView.ItemTemplate>
                 <DataTemplate>
                     <ffimageloading:CachedImage
@@ -76,30 +81,22 @@
         <IndicatorView
             x:Name="indicatorView"
             Margin="0,0,0,4"
-            HeightRequest="10"
             HorizontalOptions="Center"
-            IndicatorColor="LightGray"
+            IndicatorColor="#66FFFFFF"
+            IndicatorSize="6"
             SelectedIndicatorColor="White"
+            VerticalOptions="End" />
+        <Button
+            Margin="0,0,10,-20"
+            Padding="0"
+            Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=CloseDetailProfileCommand}"
+            CornerRadius="50"
+            HeightRequest="50"
+            HorizontalOptions="End"
+            ImageSource="icon_profile_down.png"
+            MinimumWidthRequest="0"
             VerticalOptions="End"
-            ZIndex="1" />
-        <!--<cardViewControls:IndicatorsControl
-                Margin="0,0,0,4"
-                HeightRequest="10"
-                SelectedIndicatorStyle="{StaticResource ActiveIndicator}"
-                UnselectedIndicatorStyle="{StaticResource InactiveIndicator}"
-                VerticalOptions="End"
-                ZIndex="1">
-            <cardViewControls:IndicatorsControl.ItemTemplate>
-                <DataTemplate>
-                    <Ellipse
-                            HeightRequest="6"
-                            HorizontalOptions="Center"
-                            StrokeThickness="0"
-                            VerticalOptions="Center"
-                            WidthRequest="6" />
-                </DataTemplate>
-            </cardViewControls:IndicatorsControl.ItemTemplate>
-        </cardViewControls:IndicatorsControl>-->
+            WidthRequest="50"/>
         <Grid
             Grid.Row="1"
             Margin="0"
@@ -108,19 +105,7 @@
             BindingContext="{Binding MyProfile}"
             RowDefinitions="*,Auto"
             RowSpacing="5">
-            <Button
-                Margin="0,-30,10,0"
-                Padding="0"
-                Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=CloseDetailProfileCommand}"
-                CornerRadius="50"
-                HeightRequest="50"
-                HorizontalOptions="End"
-                ImageSource="icon_profile_down.png"
-                MinimumWidthRequest="0"
-                VerticalOptions="Start"
-                WidthRequest="50"
-                ZIndex="100" />
-            <ScrollView HorizontalScrollBarVisibility="Never">
+            <ScrollView HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never">
                 <Grid RowDefinitions="*,*,*">
                     <!--  description information  -->
                     <StackLayout Orientation="Vertical" Spacing="5">
