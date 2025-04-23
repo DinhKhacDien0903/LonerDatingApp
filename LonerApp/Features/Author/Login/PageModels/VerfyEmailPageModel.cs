@@ -94,7 +94,6 @@ public partial class VerfyEmailPageModel : BasePageModel
                     await _navigationOtherShell.NavigateToAsync<SetupNamePage>(isPushModal: false);
                 else
                     AppHelper.RefreshApp();
-                // await _navigationOtherShell.NavigateToAsync<MainSwipePage>(param: verifyResponse.UserId, isPushModal: false);
 
                 await Task.Delay(100);
             }

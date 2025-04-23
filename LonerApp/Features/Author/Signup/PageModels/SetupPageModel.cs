@@ -86,10 +86,13 @@ namespace LonerApp.PageModels
         private string _currentLocalImage;
         ContentPage? _previousPage;
         EditProfilePageModel? _editProfilePageModel;
+        private readonly INavigationOtherShellService _navigationOtherShell;
 
-        public SetupPageModel(INavigationService navigationService)
-        : base(navigationService, true)
+        public SetupPageModel(INavigationService navigationService,
+            INavigationOtherShellService navigationOtherShell)
+            : base(navigationService, true)
         {
+            _navigationOtherShell = navigationOtherShell;
         }
 
         public override async Task InitAsync(object? initData)
@@ -106,6 +109,8 @@ namespace LonerApp.PageModels
         {
             await base.LoadDataAsync();
             var currentPage = AppShell.Current?.CurrentPage;
+            if(currentPage == null)
+                currentPage = AppHelper.CurrentMainPage?.GetCurrentPage();
             if (currentPage is SetupGenderPage || currentPage is SetupShowGenderForMe)
             {
                 Gender = new ObservableCollection<Gender>
@@ -143,7 +148,8 @@ namespace LonerApp.PageModels
             if (validatorResult.IsValid)
             {
                 IsShowError = false;
-                await NavigationService.PushToPageAsync<SetupDateOfBirthPage>(isPushModal: false);
+                // await NavigationService.PushToPageAsync<SetupDateOfBirthPage>(isPushModal: false);
+                await _navigationOtherShell.NavigateToAsync<SetupDateOfBirthPage>();
             }
             else
             {
@@ -172,8 +178,8 @@ namespace LonerApp.PageModels
                 if (isAllValid)
                 {
                     IsShowError = false;
-                    //TODO: Set param date to API
-                    await NavigationService.PushToPageAsync<SetupGenderPage>(isPushModal: false);
+                    //await NavigationService.PushToPageAsync<SetupGenderPage>(isPushModal: false);
+                    await _navigationOtherShell.NavigateToAsync<SetupGenderPage>();
                 }
                 else
                 {
@@ -199,7 +205,7 @@ namespace LonerApp.PageModels
             try
             {
                 IsBusy = true;
-                if(_previousPage is EditProfilePage editPage)
+                if (_previousPage is EditProfilePage editPage)
                 {
                     var genderChoosed = Gender.Where(x => x.IsSelected).FirstOrDefault();
                     if (!string.IsNullOrEmpty(genderChoosed.Value))
@@ -207,7 +213,8 @@ namespace LonerApp.PageModels
                     await NavigationService.PopPageAsync(isPopModal: false);
                 }
                 else
-                    await NavigationService.PushToPageAsync<SetupShowGenderForMe>(isPushModal: false);
+                    // await NavigationService.PushToPageAsync<SetupShowGenderForMe>(isPushModal: false);
+                    await _navigationOtherShell.NavigateToAsync<SetupShowGenderForMe>();
             }
             catch (Exception ex)
             {
@@ -226,7 +233,8 @@ namespace LonerApp.PageModels
             try
             {
                 IsBusy = true;
-                await NavigationService.PushToPageAsync<SetupUniversityPage>(isPushModal: false);
+                //await NavigationService.PushToPageAsync<SetupUniversityPage>(isPushModal: false);
+                await _navigationOtherShell.NavigateToAsync<SetupUniversityPage>();
             }
             catch (Exception ex)
             {
@@ -252,7 +260,8 @@ namespace LonerApp.PageModels
                     await NavigationService.PopPageAsync(isPopModal: false);
                 }
                 else
-                    await NavigationService.PushToPageAsync<SetupInterestPage>(isPushModal: false);
+                    //await NavigationService.PushToPageAsync<SetupInterestPage>(isPushModal: false);
+                    await _navigationOtherShell.NavigateToAsync<SetupInterestPage>();
             }
             catch (Exception ex)
             {
@@ -279,7 +288,8 @@ namespace LonerApp.PageModels
                     await NavigationService.PopPageAsync(isPopModal: false);
                 }
                 else
-                    await NavigationService.PushToPageAsync<SetupPhotosPage>(isPushModal: false);
+                    //await NavigationService.PushToPageAsync<SetupPhotosPage>(isPushModal: false);
+                    await _navigationOtherShell.NavigateToAsync<SetupPhotosPage>();
             }
             catch (Exception ex)
             {
@@ -298,7 +308,8 @@ namespace LonerApp.PageModels
             try
             {
                 IsBusy = true;
-                await NavigationService.PushToPageAsync<SetupDateOfBirthPage>(isPushModal: false);
+                //await NavigationService.PushToPageAsync<SetupDateOfBirthPage>(isPushModal: false);
+                await _navigationOtherShell.NavigateToAsync<SetupDateOfBirthPage>(isPushModal: false);
             }
             catch (Exception ex)
             {
@@ -539,14 +550,15 @@ namespace LonerApp.PageModels
         async Task OnBackAsync(object param)
         {
             if (!IsBusy)
-                await NavigationService.PopPageAsync(isPopModal: false);
+                await _navigationOtherShell.GoBackAsync();
         }
 
         [RelayCommand]
         async Task OnSkipAsync(object param)
         {
             if (!IsBusy)
-                await NavigationService.PushToPageAsync<SetupPhotosPage>();
+                // await NavigationService.PushToPageAsync<SetupPhotosPage>();
+                await _navigationOtherShell.NavigateToAsync<SetupPhotosPage>();
         }
     }
 }
