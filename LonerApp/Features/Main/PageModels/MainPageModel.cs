@@ -9,29 +9,27 @@ namespace LonerApp.PageModels
             INavigationOtherShellService navigationOtherShell)
             : base(navigationService, true)
         {
-            var check = 1;
             _navigationOtherShell = navigationOtherShell;
         }
 
         [RelayCommand]
-        async Task OnSignIn()
+        async Task OnSignInAsync()
         {
             UserSetting.Set(StorageKey.IsLoggingIn, "true");
-            await NavigationService.PushToPageAsync<SignInPage>();
+            await Task.Delay(50);
+            await _navigationOtherShell.NavigateToAsync<SignInPage>(isPushModal: false);
         }
 
         [RelayCommand]
         async Task OnGoogleSignInAsync(object param)
         {
-            //await NavigationService.PushToPageAsync<EmailAuthor>(isPushModal: true);
             await _navigationOtherShell.NavigateToAsync<VerifyPhoneEmailAuthorPage>(param: "user1@test.com", isPushModal: false);
-            // await NavigationService.PushToPageAsync<MainSwipePage>(isPushModal: false);
         }
 
         [RelayCommand]
         async Task OnPhoneSignInAsync(object param)
         {
-            await NavigationService.PushToPageAsync<PhoneNumberAuthor>(isPushModal: true);
+            await _navigationOtherShell.NavigateToAsync<PhoneNumberAuthor>(isPushModal: true);
         }
     }
 }

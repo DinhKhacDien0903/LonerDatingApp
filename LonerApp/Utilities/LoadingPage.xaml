@@ -9,15 +9,15 @@
     xmlns:vm="clr-namespace:LonerApp.PageModels"
     Title="LoadingPage"
     x:DataType="vm:ChatPageModel"
-    BackgroundColor="Blue"
-    NavigationPage.HasNavigationBar="True"
+    BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+    NavigationPage.HasNavigationBar="False"
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False">
     <base:BasePage.Content>
         <Grid>
             <Grid.RowDefinitions>
                 <!--<RowDefinition Height="*" />-->
-                <RowDefinition Height="*" />
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <!--<Grid Grid.RowSpan="2">
@@ -37,15 +37,16 @@
                 </StackLayout>
             </Grid>-->
 
-            <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+            <StackLayout HorizontalOptions="Center"
+                    VerticalOptions="Center">
                 <Label
                     x:Name="LoadingText"
                     FontSize="20"
-                    TextColor="White" />
+                    TextColor="{toolkit:AppThemeResource PrimaryColor}"/>
                 <ActivityIndicator
                     x:Name="indicator"
                     IsRunning="False"
-                    Color="{toolkit:AppThemeResource PrimaryKey}" />
+                    Color="{toolkit:AppThemeResource PrimaryColor}"/>
             </StackLayout>
         </Grid>
     </base:BasePage.Content>

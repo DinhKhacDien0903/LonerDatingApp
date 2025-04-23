@@ -35,13 +35,13 @@ namespace LonerApp.PageModels
         {
             if (initData is string UserId)
                 _currentUserId = UserId.Trim();
-            await base.InitAsync(initData);
             IsNeedLoadUsersData = false;
+            await base.InitAsync(initData);
         }
 
         public override async Task LoadDataAsync()
         {
-            //TODO: Get userId in cache
+            _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
             string queryParams = $"{EnvironmentsExtensions.QUERY_PARAMS_PAGINATION_REQUEST}{_currentUserId}";
             var data = await _swipeService.GetProfilesAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILES, queryParams);
             Users = [.. data?.User?.Items ?? []];

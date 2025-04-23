@@ -15,7 +15,7 @@
     Title="MainSwipePage"
     x:DataType="vm:SwipePageModel"
     BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
-    NavigationPage.HasNavigationBar="True"
+    NavigationPage.HasNavigationBar="False"
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="True">
     <Page.Behaviors>
@@ -32,7 +32,7 @@
                 <Setter Property="FontSize" Value="13" />
                 <Setter Property="FontFamily" Value="GothamLight" />
                 <Setter Property="Shadow">
-                    <Setter.Value> 
+                    <Setter.Value>
                         <Shadow Opacity="0" />
                     </Setter.Value>
                 </Setter>

@@ -10,7 +10,7 @@
     <TabBar>
         <ShellContent
             Title=""
-            ContentTemplate="{DataTemplate pages:SignInPage}"
+            ContentTemplate="{DataTemplate pages:MainSwipePage}"
             Icon="{StaticResource IconHomePage}"
             Route="mainSwipePage" />
         <ShellContent

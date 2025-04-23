@@ -45,9 +45,13 @@ namespace LonerApp.Helpers
                 }
 #endif
 
-                app.Windows[0].Page = new NavigationPage(newPage);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                var check = newPage is AppShell;
+                app.Windows[0].Page = newPage is AppShell ? newPage : new NavigationPage(newPage);
+            });
             }
-            catch(Exception e)
+            catch
             {
                 throw;
             }

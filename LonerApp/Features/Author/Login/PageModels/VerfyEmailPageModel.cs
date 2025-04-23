@@ -68,7 +68,7 @@ public partial class VerfyEmailPageModel : BasePageModel
                 return;
             }
             //UserSetting.Remove("IsLoggedIn");
-            var isLoggingInValue = UserSetting.Get(StorageKey.IsLoggedIn);
+            var isLoggingInValue = UserSetting.Get(StorageKey.IsLoggingIn);
             bool isLoggingIn;
             if (string.IsNullOrEmpty(isLoggingInValue))
                 isLoggingIn = false;
@@ -79,23 +79,22 @@ public partial class VerfyEmailPageModel : BasePageModel
             {
                 Email = EmailValue,
                 Otp = VerifyEmailValue,
-                IsLoggingIn = true
+                IsLoggingIn = isLoggingIn
             });
 
             if (verifyResponse?.IsVerified == true)
             {
                 ClearError();
                 UserSetting.SetObject(StorageKey.IsLoggedIn, verifyResponse.IsVerified);
+                UserSetting.Set(StorageKey.IsAccountSetup, verifyResponse.IsAccountSetup.ToString());
                 if (currentId == null)
-                    UserSetting.SetObject(StorageKey.UserId, verifyResponse.UserId);
+                    UserSetting.Set(StorageKey.UserId, verifyResponse.UserId);
 
                 if (!verifyResponse.IsAccountSetup)
-                    //await NavigationService.PushToPageAsync<SetupNamePage>(isPushModal: false);
                     await _navigationOtherShell.NavigateToAsync<SetupNamePage>(isPushModal: false);
-
                 else
-                    //await NavigationService.PushToPageAsync<MainSwipePage>(param: verifyResponse.UserId, isPushModal: false);
-                    await _navigationOtherShell.NavigateToAsync<MainSwipePage>(param: verifyResponse.UserId, isPushModal: false);
+                    AppHelper.RefreshApp();
+                // await _navigationOtherShell.NavigateToAsync<MainSwipePage>(param: verifyResponse.UserId, isPushModal: false);
 
                 await Task.Delay(100);
             }

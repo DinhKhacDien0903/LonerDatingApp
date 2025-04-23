@@ -29,7 +29,6 @@ public partial class LoadingPage : BasePage
     {
         ServiceHelper.GetService<ISystemStyleManager>().SetStatusBarColor("#ffffff");
         base.OnAppearing();
-        //if (!_isLoggedIn)
         DoLogin();
     }
 
@@ -38,7 +37,7 @@ public partial class LoadingPage : BasePage
         //UserSetting.Remove("IsLoggedIn");
         var stopRestoreLastSession = false;
         var stopInitLoggedIn = false;
-        var isLoggedIn = UserSetting.Get(StorageKey.IsLoggedIn);
+        var isLoggedIn = UserSetting.GetObject<string>(StorageKey.IsLoggedIn);
 
         if (string.IsNullOrEmpty(isLoggedIn))
             _isLoggedIn = false;
@@ -48,11 +47,11 @@ public partial class LoadingPage : BasePage
         //RunProgreessBarAsync(new FakeProgressConfig(), () => stopRestoreLastSession).ConfigureAwait(false);
         Task.Run(async () =>
         {
-            //await MainThread.InvokeOnMainThreadAsync(() =>
-            //{
+            // await MainThread.InvokeOnMainThreadAsync(() =>
+            // {
             //    indicator.IsRunning = true;
             //    LoadingText.IsVisible = true;
-            //});
+            // });
 
             if (!_isLoggedIn)
             {
@@ -62,7 +61,7 @@ public partial class LoadingPage : BasePage
                     UpdateProgressLayout(0);
                 });
 
-                await Navigation.PushAsync(new MainPage());
+                AppHelper.SetMainPage(new MainPage());
                 indicator.IsRunning = false;
                 LoadingText.IsVisible = false;
             }
