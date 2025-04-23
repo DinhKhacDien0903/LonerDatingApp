@@ -66,8 +66,10 @@
                     Padding="8,0,0,0"
                     ItemsSource="{Binding Users}"
                     LoopCards="True"
+                    PropertyChanged="SwipeCardView_PropertyChanged"
                     SupportedSwipeDirections="Left, Right, Up, Down"
-                    Swiped="SwipeCardView_Swiped">
+                    Swiped="SwipeCardView_Swiped"
+                    TopItem="{Binding TopItem, Mode=TwoWay}">
                     <swipe:SwipeCardView.ItemTemplate>
                         <DataTemplate x:DataType="models:UserProfileResponse">
                             <Grid x:Name="profileUser">

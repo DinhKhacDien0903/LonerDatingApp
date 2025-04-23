@@ -2,6 +2,7 @@ namespace LonerApp.Features.Pages;
 
 using LonerApp.Features.Services;
 using Microsoft.Maui.Controls.Shapes;
+using Plugin.Maui.SwipeCardView;
 using Plugin.Maui.SwipeCardView.Core;
 
 public partial class MainSwipePage : BasePage
@@ -107,5 +108,16 @@ public partial class MainSwipePage : BasePage
 
         SwipeCardView.InvokeSwipe(SwipeCardDirection.Right);
         _vm.LikePressedCommand.Execute(button.BindingContext);
+    }
+
+    private void SwipeCardView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if(sender is not SwipeCardView swipeCardView)
+            return;
+
+        if(e.PropertyName != nameof(SwipeCardView.TopItem))
+            return;
+
+        _vm.OnTopItemPropertyChanged(swipeCardView.TopItem);
     }
 }
