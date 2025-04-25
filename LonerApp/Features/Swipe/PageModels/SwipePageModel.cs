@@ -31,6 +31,9 @@ namespace LonerApp.PageModels
         private ObservableCollection<UserProfileResponse> _users = new();
         private static string _currentUserId = string.Empty;
         private CancellationTokenSource cancellationToastToken = new CancellationTokenSource();
+        private int _currentPage = 1;
+        private int countUser = 0;
+        private bool _hasMoreUsers = true;
 
         public SwipePageModel(INavigationService navigationService, ISwipeService swipeService)
             : base(navigationService, true)
@@ -52,7 +55,9 @@ namespace LonerApp.PageModels
             _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
             string queryParams = $"{EnvironmentsExtensions.QUERY_PARAMS_PAGINATION_REQUEST}{_currentUserId}";
             var data = await _swipeService.GetProfilesAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILES, queryParams);
+            _hasMoreUsers = data?.User?.Items.Any() ?? false;
             Users = [.. data?.User?.Items ?? []];
+            countUser = Users.Count;
             _currentPage++;
             await base.LoadDataAsync();
         }
@@ -84,6 +89,9 @@ namespace LonerApp.PageModels
         {
             if (DislikePressedCommand.IsRunning || IsBusy)
                 return;
+            if (param is not UserProfileResponse user)
+                return;
+
             IsBusy = true;
             var swipeRequest = new SwipeRequest
             {
@@ -93,7 +101,16 @@ namespace LonerApp.PageModels
             };
 
             await _swipeService.SwipeAsyncAsync(swipeRequest);
+            Users.Remove(user);
 
+            if (Users.Count <= PrefetchThreshold && !_isLoading && _hasMoreUsers)
+            {
+                await PrefetchUsersAsync();
+            }
+            else if (Users.Count == 0 && !_hasMoreUsers)
+            {
+                await Shell.Current.DisplayAlert("Info", "No more users to swipe", "OK");
+            }
             IsBusy = false;
         }
 
@@ -112,6 +129,9 @@ namespace LonerApp.PageModels
         {
             if (LikePressedCommand.IsRunning || IsBusy)
                 return;
+            if (param is not UserProfileResponse user)
+                return;
+
             IsBusy = true;
             cancellationToastToken.TryReset();
             var swipeRequest = new SwipeRequest
@@ -128,6 +148,16 @@ namespace LonerApp.PageModels
                 await Task.Delay(1);
             }
 
+            Users.Remove(user);
+
+            if (Users.Count <= PrefetchThreshold && !_isLoading && _hasMoreUsers)
+            {
+                await PrefetchUsersAsync();
+            }
+            else if (Users.Count == 0 && !_hasMoreUsers)
+            {
+                await Shell.Current.DisplayAlert("Info", "No more users to swipe", "OK");
+            }
             IsBusy = false;
         }
 
@@ -156,20 +186,33 @@ namespace LonerApp.PageModels
 
         public void OnTopItemPropertyChanged(object newValue)
         {
-            if (newValue is not UserProfileResponse currentItem)
+            //if (countUser <= 0 || newValue is not UserProfileResponse currentItem)
+            //    return;
+
+            //var ci = (Users.IndexOf(currentItem));
+            //var temp = countUser - PrefetchThreshold;
+            //if ((Users.IndexOf(currentItem) < (countUser - PrefetchThreshold)) || !_hasMoreUsers)
+            //    return;
+
+            //_ = Task.Run(async () =>
+            //{
+            //    await PrefetchUsersAsync();
+            //    await Task.Delay(100);
+            //});
+            if (countUser <= 0 || newValue is not UserProfileResponse currentItem || !_hasMoreUsers)
                 return;
 
-            if (Users.IndexOf(currentItem) < PrefetchThreshold)
-                return;
-
-            _ = Task.Run(async () =>
+            // Prefetch khi còn 5 user hoặc ít hơn
+            if (countUser <= PrefetchThreshold)
             {
-                await PrefetchUsersAsync();
-                await Task.Delay(100);
-            });
+                _ = Task.Run(async () =>
+                {
+                    await PrefetchUsersAsync();
+                    await Task.Delay(100);
+                });
+            }
         }
 
-        private int _currentPage = 1;
         private bool _isLoading = false;
         private const int PageSize = 10;
         private const int PrefetchThreshold = 5;
@@ -187,7 +230,8 @@ namespace LonerApp.PageModels
                 {
                     Users.Add(user);
                 }
-                _currentPage++;
+                countUser = firstBatch?.Count() > 0 ? Users.Count : countUser;
+                _currentPage = firstBatch?.Count() > 0 ? _currentPage + 1 : _currentPage;
             }
             catch (Exception ex)
             {
@@ -205,7 +249,9 @@ namespace LonerApp.PageModels
             string queryParams = $"?PaginationRequest.PageNumber={pageNumber}&PaginationRequest.ValidPageSize={PageSize}&PaginationRequest.UserId={_currentUserId}";
             //string queryParams = $"{EnvironmentsExtensions.QUERY_PARAMS_PAGINATION_REQUEST}{_currentUserId}";
             var data = await _swipeService.GetProfilesAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILES, queryParams);
-            return data?.User?.Items ?? Enumerable.Empty<UserProfileResponse>();
+            _hasMoreUsers = data?.User?.Items.Any() ?? false;
+            countUser = Users.Count;
+            return data?.User?.Items ?? [];
         }
     }
 }

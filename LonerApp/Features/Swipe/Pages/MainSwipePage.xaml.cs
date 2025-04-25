@@ -1,6 +1,5 @@
 namespace LonerApp.Features.Pages;
 
-using LonerApp.Features.Services;
 using Microsoft.Maui.Controls.Shapes;
 using Plugin.Maui.SwipeCardView;
 using Plugin.Maui.SwipeCardView.Core;
@@ -8,11 +7,9 @@ using Plugin.Maui.SwipeCardView.Core;
 public partial class MainSwipePage : BasePage
 {
     private readonly SwipePageModel _vm;
-    private readonly ISwipeService _swipeService;
-    public MainSwipePage(SwipePageModel vm, ISwipeService swipeService)
+    public MainSwipePage(SwipePageModel vm)
     {
         BindingContext = _vm = vm;
-        _swipeService = swipeService;
         InitializeComponent();
     }
 
@@ -57,26 +54,6 @@ public partial class MainSwipePage : BasePage
         }
     }
 
-    private void SwipeCardView_Swiped(object sender, Plugin.Maui.SwipeCardView.Core.SwipedCardEventArgs e)
-    {
-        if (e.Direction == Plugin.Maui.SwipeCardView.Core.SwipeCardDirection.Right)
-        {
-            _vm.LikePressedCommand.Execute(e.Item);
-        }
-        else if (e.Direction == Plugin.Maui.SwipeCardView.Core.SwipeCardDirection.Up)
-        {
-            _vm.StarPressedCommand.Execute(e.Item);
-        }
-        else if (e.Direction == Plugin.Maui.SwipeCardView.Core.SwipeCardDirection.Left)
-        {
-            _vm.DislikePressedCommand.Execute(e.Item);
-        }
-        else if (e.Direction == Plugin.Maui.SwipeCardView.Core.SwipeCardDirection.Down)
-        {
-            _vm.OpenDetailProfileCommand.Execute(e.Item);
-        }
-    }
-
     private void OnDislikeClicked(object sender, EventArgs e)
     {
         if (sender is not Button button)
@@ -110,6 +87,29 @@ public partial class MainSwipePage : BasePage
         _vm.LikePressedCommand.Execute(button.BindingContext);
     }
 
+    private SwipeCardDirection? _lastSwipeDirection;
+    private void SwipeCardView_Swiped(object sender, SwipedCardEventArgs e)
+    {
+        if (e.Direction == SwipeCardDirection.Right)
+        {
+            _lastSwipeDirection = e.Direction;
+            _vm.LikePressedCommand.Execute(e.Item);
+        }
+        else if (e.Direction == SwipeCardDirection.Up)
+        {
+            _vm.StarPressedCommand.Execute(e.Item);
+        }
+        else if (e.Direction == SwipeCardDirection.Left)
+        {
+            _lastSwipeDirection = e.Direction;
+            _vm.DislikePressedCommand.Execute(e.Item);
+        }
+        else if (e.Direction == SwipeCardDirection.Down)
+        {
+            _vm.OpenDetailProfileCommand.Execute(e.Item);
+        }
+    }
+
     private void SwipeCardView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if(sender is not SwipeCardView swipeCardView)
@@ -121,3 +121,7 @@ public partial class MainSwipePage : BasePage
         _vm.OnTopItemPropertyChanged(swipeCardView.TopItem);
     }
 }
+
+        //if(e.PropertyName == nameof(SwipeCardView.TopItem)
+        //    && (_lastSwipeDirection == SwipeCardDirection.Right || _lastSwipeDirection == SwipeCardDirection.Left))
+        //    _vm.OnTopItemPropertyChanged(swipeCardView.TopItem);

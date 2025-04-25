@@ -11,7 +11,7 @@ public class Environments
     public const string URl_SERVER_HTTPS_EMULATOR = "https://10.0.2.2:7165/api/";
     public const string URl_SERVER_HTTP_EMULATOR = "http://10.0.2.2:5099/api/";
     public const string URl_SERVER_HTTPS_DEVICE_4G = "https://192.168.43.14:7165/api/";
-    public const string URl_SERVER_HTTPS_DEVICE_WIFI= "https://192.168.1.14:7165/api/";
+    public const string URl_SERVER_HTTPS_DEVICE_WIFI= "https://192.168.1.9:7165/api/";
     public const string URl_SERVER_HTTP_DEVICE = "https://192.168.43.14:5099/api/";
 }
 

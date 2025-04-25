@@ -65,7 +65,7 @@
                     x:Name="SwipeCardView"
                     Padding="8,0,0,0"
                     ItemsSource="{Binding Users}"
-                    LoopCards="True"
+                    LoopCards="False"
                     PropertyChanged="SwipeCardView_PropertyChanged"
                     SupportedSwipeDirections="Left, Right, Up, Down"
                     Swiped="SwipeCardView_Swiped"
