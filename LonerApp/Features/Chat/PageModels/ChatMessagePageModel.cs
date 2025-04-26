@@ -7,7 +7,6 @@ namespace LonerApp.PageModels
     {
         [ObservableProperty]
         ObservableCollection<MessageModel> _messages = new();
-
         [ObservableProperty]
         private bool _isVisibleNavigation;
         [ObservableProperty]
@@ -15,16 +14,28 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private string _messageEntryValue = string.Empty;
         private CollectionView _chatList;
-
-        public ChatMessagePageModel(INavigationService navigationService)
+        private readonly IChatService _chatService;
+        private static string _currentUserId = string.Empty;
+        private int _currentPage = 1;
+        private const int PageSize = 30;
+        private UserChatModel _currentUser;
+        public ChatMessagePageModel(
+            INavigationService navigationService,
+            IChatService chatService)
             : base(navigationService, true)
         {
+            _chatService = chatService;
             IsVisibleNavigation = true;
             HasBackButton = true;
         }
 
         public override async Task InitAsync(object? initData)
         {
+            if (initData is UserChatModel user)
+            {
+                _currentUser = user;
+            }
+
             await base.InitAsync(initData);
         }
 
@@ -43,40 +54,45 @@ namespace LonerApp.PageModels
         {
             IsBusy = true;
             await Task.Delay(1);
-            LoadSampleMessages();
             IsBusy = false;
         }
 
         public async override Task LoadDataAsync()
         {
+            // _currentPage = 0;
             await base.LoadDataAsync();
             IsBusy = true;
-            await InitDataAsync();
+            _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
+            string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_currentUser.MatchId}";
+            var data1 = await _chatService.GetMessagesAsync(EnvironmentsExtensions.ENDPOINT_GET_MESSAGES, queryParams);
+            Messages = [.. data1?.Messages?.Items ?? []];
+            _currentPage ++;
             IsBusy = false;
         }
 
+        private bool _isLoadingMoreMessages;
         [RelayCommand]
         async Task OnLoadMoreMessagesAsync(object obj)
         {
-            if (IsBusy)
+            if (IsBusy || _isLoadingMoreMessages)
                 return;
             IsBusy = true;
+            _isLoadingMoreMessages = true;
             await Task.Delay(100);
-            //var oldMessages = await GetMessagesAsync(_page);
-            //if (oldMessages.Count > 0)
-            //{
-            //    int prevCount = Messages.Count;
-            //    foreach (var message in oldMessages)
-            //    {
-            //        Messages.Insert(0, message);
-            //    }
 
-            //    // Giữ nguyên vị trí cuộn
-            //    await Task.Delay(100); // Tránh lag khi thêm tin nhắn
-            //    ChatList.ScrollTo(Messages[oldMessages.Count], position: ScrollToPosition.Start, animate: false);
+            _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
+            string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_currentUser.MatchId}";
+            var data1 = (await _chatService.GetMessagesAsync(EnvironmentsExtensions.ENDPOINT_GET_MESSAGES, queryParams))?.Messages?.Items ?? [];
+            foreach (var message in data1)
+            {
+                Messages.Insert(0, message);
+            }
 
-            //    _page++;
-            //}
+            _currentPage = data1.Any() ? _currentPage + 1 : _currentPage;
+            _ = Task.Delay(400).ContinueWith(t =>
+            {
+                _isLoadingMoreMessages = false;
+            });
 
             IsBusy = false;
         }
@@ -92,13 +108,11 @@ namespace LonerApp.PageModels
                 var message = new MessageModel
                 {
                     Id = Guid.NewGuid().ToString(),
-                    SenderId = "1",
-                    ReceiverId = "2",
                     Content = MessageEntryValue,
-                    Type = MessageType.Text,
-                    Timestamp = DateTime.Now,
-                    IsMine = true,
-                    IsRead = true
+                    IsCurrentUserSend = true,
+                    IsImage = false,
+                    SendTime = DateTime.Now,
+                    IsRead = false
                 };
 
                 Messages.Add(message);
@@ -130,7 +144,7 @@ namespace LonerApp.PageModels
                 var message = obj as MessageModel;
                 if (message != null)
                 {
-                    await NavigationService.PushToPageAsync<ImageViewerFullScreenPage>(param: message.ImageData, isPushModal: true);
+                    await NavigationService.PushToPageAsync<ImageViewerFullScreenPage>(param: message.Content, isPushModal: true);
                     await Task.Delay(100);
                 }
             }
@@ -161,13 +175,13 @@ namespace LonerApp.PageModels
                 var message = new MessageModel
                 {
                     Id = Guid.NewGuid().ToString(),
-                    SenderId = "1",
-                    ReceiverId = "2",
-                    Content = "",
-                    Type = MessageType.Image,
-                    Timestamp = DateTime.Now,
-                    ImageData = null,
-                    IsMine = true,
+                    // SenderId = "1",
+                    // ReceiverId = "2",
+                    // Content = "",
+                    // Type = MessageType.Image,
+                    // Timestamp = DateTime.Now,
+                    // ImageData = null,
+                    // IsMine = true,
                     IsRead = true
                 };
 
@@ -180,7 +194,7 @@ namespace LonerApp.PageModels
                     await OnExcuteChoosePhotoAsync(message);
                 }
 
-                if (message.ImageData != null)
+                if (!string.IsNullOrEmpty(message.Content))
                 {
                     Messages.Add(message);
                     await Task.Delay(100);
@@ -212,12 +226,12 @@ namespace LonerApp.PageModels
                     using (BinaryReader br = new BinaryReader(stream))
                     {
                         byte[] imageBytes = br.ReadBytes((int)stream.Length);
-                        message.ImageData = imageBytes;
+                        // message.ImageData = imageBytes;
                     }
                 }
                 else
                 {
-                    message.ImageData = GetDefaultImageBytes("mmm.jpeg");
+                    message.Content = "mmm.jpeg";
                 }
 
                 IsBusy = false;
@@ -245,6 +259,7 @@ namespace LonerApp.PageModels
 
         private async Task OnExcuteTakePhotoAsync(MessageModel message)
         {
+            //TODO: handle upload image in server
             IsBusy = true;
             if (await this.AllowTakePhotoAsync())
             {
@@ -257,12 +272,12 @@ namespace LonerApp.PageModels
                     using (BinaryReader br = new BinaryReader(stream))
                     {
                         byte[] imageBytes = br.ReadBytes((int)stream.Length);
-                        message.ImageData = imageBytes;
+                        // message.ImageData = imageBytes;
                     }
                 }
                 else
                 {
-                    message.ImageData = GetDefaultImageBytes("mmm.jpeg");
+                    message.Content = "mmm.jpeg";
                 }
             }
 
@@ -304,24 +319,6 @@ namespace LonerApp.PageModels
         {
             _chatList ??= Shell.Current.CurrentPage.FindByName<CollectionView>("ChatMessageList");
         }
-
-        private void LoadSampleMessages()
-        {
-            Messages.Add(new MessageModel { Id = "1", SenderId = "1", ReceiverId = "2", Content = "Chào bạn!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-10), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "2", SenderId = "2", ReceiverId = "1", Content = "Chào bạn! Bạn khỏe không?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-9), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "3", SenderId = "1", ReceiverId = "2", Content = "Mình khỏe, bạn thì sao?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-8), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "4", SenderId = "2", ReceiverId = "1", Content = "Mình cũng khỏe, cảm ơn!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-7), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "5", SenderId = "1", ReceiverId = "2", Content = "Dạo này bạn làm gì?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-6), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "6", SenderId = "2", ReceiverId = "1", Content = "Mình mới đi du lịch, đẹp lắm! 🌴", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-5), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "9", SenderId = "1", ReceiverId = "2", Content = "Ảnh đẹp quá!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-2), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "1", SenderId = "1", ReceiverId = "2", Content = "Chào bạn!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-10), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "2", SenderId = "2", ReceiverId = "1", Content = "Chào bạn! Bạn khỏe không?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-9), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "3", SenderId = "1", ReceiverId = "2", Content = "Mình khỏe, bạn thì sao?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-8), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "4", SenderId = "2", ReceiverId = "1", Content = "Mình cũng khỏe, cảm ơn!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-7), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "5", SenderId = "1", ReceiverId = "2", Content = "Dạo này bạn làm gì?", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-6), IsMine = true, IsRead = true });
-            Messages.Add(new MessageModel { Id = "6", SenderId = "2", ReceiverId = "1", Content = "Mình mới đi du lịch, đẹp lắm! 🌴", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-5), IsMine = false, IsRead = true });
-            Messages.Add(new MessageModel { Id = "9", SenderId = "1", ReceiverId = "2", Content = "Ảnh đẹp quá!", Type = MessageType.Text, Timestamp = DateTime.Now.AddMinutes(-2), IsMine = true, IsRead = true });
-        }
     }
 
     public class MessageChatItemDataTemplateSelector : DataTemplateSelector
@@ -338,16 +335,14 @@ namespace LonerApp.PageModels
             if (collectionView?.ItemsSource is not ObservableCollection<MessageModel> items || item is not MessageModel message)
                 return MineMessageTextItemTemplate;
 
-            if (message.Type == MessageType.Text)
+            if (!message.IsImage)
             {
-                return message.IsMine ? MineMessageTextItemTemplate : OtherMessageTextItemTemplate;
+                return message.IsCurrentUserSend ? MineMessageTextItemTemplate : OtherMessageTextItemTemplate;
             }
-            else if (message.Type == MessageType.Image)
+            else
             {
-                return message.IsMine ? MineMessageImageItemTemplate : OtherMessageImageItemTemplate;
+                return message.IsCurrentUserSend ? MineMessageImageItemTemplate : OtherMessageImageItemTemplate;
             }
-
-            return MineMessageTextItemTemplate;
         }
     }
 }

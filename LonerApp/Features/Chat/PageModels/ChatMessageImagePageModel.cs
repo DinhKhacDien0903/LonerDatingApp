@@ -9,7 +9,7 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private bool _hasBackButton;
         [ObservableProperty]
-        private byte[]? _imageData;
+        private string? _imageData;
 
         public ChatMessageImagePageModel(INavigationService navigationService)
             : base(navigationService, true)
@@ -21,7 +21,7 @@ namespace LonerApp.PageModels
         public override async Task InitAsync(object? initData)
         {
             await base.InitAsync(initData);
-            if (initData is byte[] data)
+            if (initData is string data)
             {
                 ImageData = data;
             }

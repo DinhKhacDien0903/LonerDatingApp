@@ -230,7 +230,7 @@ namespace LonerApp.PageModels
         async Task OnBackAsync(object param)
         {
             if (!IsBusy)
-                await NavigationService.PopPageAsync(isPopModal: true);
+                await _navigationOtherShell.GoBackAsync();
         }
     }
 }

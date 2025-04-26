@@ -17,12 +17,15 @@ public class Environments
 
 public static class EnvironmentsExtensions
 {
-    //Endpoints
+    //Endpoints Message/get-user-matched-active
     public const string ENDPOINT_GET_PROFILES = "Swipe/profiles";
     public const string ENDPOINT_GET_PROFILE_DETAIL = "User/profile-detail";
     public const string ENDPOINT_SEND_MAIL_OTP = "Auth/send-mail-otp";
     public const string ENDPOINT_VERIFY_AND_REGISTER_MAIL= "Auth/verify-mail-otp-and-register";
     public const string ENDPOINT_SWIPE_USER= "Swipe/swipe-user";
+    public const string ENDPOINT_GET__MESSAGE_MATCHED = "Message/get-user-matched-active";
+    public const string ENDPOINT_GET__USER_MESSAGES = "Message/get-user-message";
+    public const string ENDPOINT_GET_MESSAGES = "Message/get-messages";
 
     //Query Params
     public const string QUERY_PARAMS_PAGINATION_REQUEST = "?PaginationRequest.UserId=";

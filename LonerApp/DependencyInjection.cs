@@ -1,3 +1,4 @@
+using LonerApp.Features.Chat.Services;
 using LonerApp.Features.Services;
 using LonerApp.Platforms.Android.Services;
 using LonerApp.UI.GlobalPages;
@@ -21,6 +22,7 @@ public static class DependencyInjection
         services.AddSingleton<ISwipeService, SwipeService>();
         services.AddSingleton<IProfileService, ProfileService>();
         services.AddSingleton<IAuthorService, AuthorService>();
+        services.AddSingleton<IChatService, ChatService>();
 #endif
         return services;
     }

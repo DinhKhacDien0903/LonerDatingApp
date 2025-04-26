@@ -67,7 +67,7 @@
                             IsOpaque="True"
                             LoadingDelay="0"
                             LoadingPriority="Lowest"
-                            Source="{Binding ProfilePicture}"
+                            Source="{Binding AvatarUrl}"
                             WidthRequest="70">
                             <ffimageloading:CachedImage.Clip>
                                 <RoundRectangleGeometry CornerRadius="50" Rect="0,0,70,70" />
@@ -87,10 +87,12 @@
                                 TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
                                 VerticalTextAlignment="Center" />
                             <Label
+                                MaximumWidthRequest="250"
                                 FontFamily="GothamLight"
                                 FontSize="{StaticResource FontSizeM}"
                                 HorizontalTextAlignment="Start"
                                 Text="{Binding LastMessage}"
+                                LineBreakMode="TailTruncation"
                                 TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
                                 VerticalTextAlignment="Center" />
                         </StackLayout>
@@ -105,7 +107,7 @@
                 </ContentView>
             </sho:DraggableViewCell>
         </DataTemplate>
-        <DataTemplate x:Key="UserChatItemTemplate" x:DataType="models:UserChatModel">
+        <DataTemplate x:Key="UserChatItemTemplate" x:DataType="models:UserProfileResponse">
             <StackLayout Orientation="Vertical" Spacing="2">
                 <ffimageloading:CachedImage
                     Aspect="AspectFill"
@@ -114,18 +116,20 @@
                     IsOpaque="True"
                     LoadingDelay="0"
                     LoadingPriority="Lowest"
-                    Source="{Binding ProfilePicture}"
+                    Source="{Binding AvatarUrl}"
                     WidthRequest="100">
                     <ffimageloading:CachedImage.Clip>
                         <RoundRectangleGeometry CornerRadius="10" Rect="0,0,100,120" />
                     </ffimageloading:CachedImage.Clip>
                 </ffimageloading:CachedImage>
                 <Label
+                    MaximumWidthRequest="100"
                     FontFamily="GothamBold"
                     FontSize="{StaticResource FontSizeM}"
                     HorizontalOptions="Center"
+                    LineBreakMode="TailTruncation"
                     HorizontalTextAlignment="Center"
-                    Text="{Binding UserName}"
+                    Text="{Binding Username}"
                     TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
             </StackLayout>
         </DataTemplate>
@@ -197,7 +201,7 @@
                     Grid.Row="2"
                     HorizontalScrollBarVisibility="Never"
                     ItemTemplate="{StaticResource userChatTempateSelector}"
-                    ItemsSource="{Binding UserChats}">
+                    ItemsSource="{Binding Users}">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout ItemSpacing="20" Orientation="Horizontal" />
                     </CollectionView.ItemsLayout>

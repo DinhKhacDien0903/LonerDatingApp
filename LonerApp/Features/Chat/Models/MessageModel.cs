@@ -1,33 +1,33 @@
 ﻿namespace LonerApp.Models
 {
+    public class GetMessagesResponse
+    {
+        public PaginatedResponse<MessageModel>? Messages { get; set; }
+    }
     public partial class MessageModel : BaseModel
     {
         [ObservableProperty]
-        private string id;
+        private string? id;
 
-        [ObservableProperty]
-        private string? senderId;
+        // [ObservableProperty]
+        // private string? senderId;
 
-        [ObservableProperty]
-        private string? receiverId;
+        // [ObservableProperty]
+        // private string? receiverId;
 
         [ObservableProperty]
         private string? content;
 
         [ObservableProperty]
-        private MessageType type;
+        private DateTime sendTime;
 
         [ObservableProperty]
-        private DateTime timestamp;
-
-        [ObservableProperty]
-        private bool isMine;
+        private bool isCurrentUserSend;
 
         [ObservableProperty]
         private bool isRead;
-
         [ObservableProperty]
-        private byte[]? imageData;
+        private bool isImage;
     }
 
     public enum MessageType

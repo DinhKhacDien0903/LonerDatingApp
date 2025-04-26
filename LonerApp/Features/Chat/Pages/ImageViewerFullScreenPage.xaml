@@ -44,7 +44,7 @@
                 IsOpaque="True"
                 Loaded="CachedImage_Loaded"
                 LoadingPriority="Lowest"
-                Source="{Binding ImageData, Converter={StaticResource ImageContentConverter}}"
+                Source="{Binding ImageData}"
                 WidthRequest="350" />
         </Grid>
     </Grid>

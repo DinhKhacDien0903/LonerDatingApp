@@ -3,9 +3,6 @@ using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.Input;
 using LonerApp.Features.Services;
 using System.Collections.ObjectModel;
-using System.Linq;
-using static Android.Icu.Util.LocaleData;
-using System.Text.Json;
 
 namespace LonerApp.PageModels
 {
@@ -53,7 +50,7 @@ namespace LonerApp.PageModels
         public override async Task LoadDataAsync()
         {
             _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
-            string queryParams = $"{EnvironmentsExtensions.QUERY_PARAMS_PAGINATION_REQUEST}{_currentUserId}";
+            string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}";
             var data = await _swipeService.GetProfilesAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILES, queryParams);
             _hasMoreUsers = data?.User?.Items.Any() ?? false;
             Users = [.. data?.User?.Items ?? []];
@@ -101,16 +98,6 @@ namespace LonerApp.PageModels
             };
 
             await _swipeService.SwipeAsyncAsync(swipeRequest);
-            Users.Remove(user);
-
-            if (Users.Count <= PrefetchThreshold && !_isLoading && _hasMoreUsers)
-            {
-                await PrefetchUsersAsync();
-            }
-            else if (Users.Count == 0 && !_hasMoreUsers)
-            {
-                await Shell.Current.DisplayAlert("Info", "No more users to swipe", "OK");
-            }
             IsBusy = false;
         }
 
@@ -147,17 +134,6 @@ namespace LonerApp.PageModels
                 await ShowToast(response.Message);
                 await Task.Delay(1);
             }
-
-            Users.Remove(user);
-
-            if (Users.Count <= PrefetchThreshold && !_isLoading && _hasMoreUsers)
-            {
-                await PrefetchUsersAsync();
-            }
-            else if (Users.Count == 0 && !_hasMoreUsers)
-            {
-                await Shell.Current.DisplayAlert("Info", "No more users to swipe", "OK");
-            }
             IsBusy = false;
         }
 
@@ -186,35 +162,21 @@ namespace LonerApp.PageModels
 
         public void OnTopItemPropertyChanged(object newValue)
         {
-            //if (countUser <= 0 || newValue is not UserProfileResponse currentItem)
-            //    return;
+            if (countUser <= 0 || newValue is not UserProfileResponse currentItem)
+               return;
 
-            //var ci = (Users.IndexOf(currentItem));
-            //var temp = countUser - PrefetchThreshold;
-            //if ((Users.IndexOf(currentItem) < (countUser - PrefetchThreshold)) || !_hasMoreUsers)
-            //    return;
+            if (Users.IndexOf(currentItem) < (countUser - PrefetchThreshold))
+               return;
 
-            //_ = Task.Run(async () =>
-            //{
-            //    await PrefetchUsersAsync();
-            //    await Task.Delay(100);
-            //});
-            if (countUser <= 0 || newValue is not UserProfileResponse currentItem || !_hasMoreUsers)
-                return;
-
-            // Prefetch khi còn 5 user hoặc ít hơn
-            if (countUser <= PrefetchThreshold)
+            _ = Task.Run(async () =>
             {
-                _ = Task.Run(async () =>
-                {
-                    await PrefetchUsersAsync();
-                    await Task.Delay(100);
-                });
-            }
+               await PrefetchUsersAsync();
+               await Task.Delay(100);
+            });
         }
 
         private bool _isLoading = false;
-        private const int PageSize = 10;
+        private const int PageSize = 30;
         private const int PrefetchThreshold = 5;
         private const int PrefetchCount = 10;
 
@@ -226,6 +188,7 @@ namespace LonerApp.PageModels
             try
             {
                 var firstBatch = await FetchUsersAsync(_currentPage, PrefetchCount);
+
                 foreach (var user in firstBatch)
                 {
                     Users.Add(user);
@@ -245,9 +208,7 @@ namespace LonerApp.PageModels
 
         private async Task<IEnumerable<UserProfileResponse>> FetchUsersAsync(int pageNumber, int pageSize = PageSize)
         {
-            //https://localhost:7165/api/Swipe/profiles?PaginationRequest.PageNumber=2&PaginationRequest.ValidPageSize=10&PaginationRequest.UserId=8cb3f197-f8ff-44ef-a65a-daf0b6a506c8
-            string queryParams = $"?PaginationRequest.PageNumber={pageNumber}&PaginationRequest.ValidPageSize={PageSize}&PaginationRequest.UserId={_currentUserId}";
-            //string queryParams = $"{EnvironmentsExtensions.QUERY_PARAMS_PAGINATION_REQUEST}{_currentUserId}";
+            string queryParams = $"?PaginationRequest.PageNumber={pageNumber}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}";
             var data = await _swipeService.GetProfilesAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILES, queryParams);
             _hasMoreUsers = data?.User?.Items.Any() ?? false;
             countUser = Users.Count;

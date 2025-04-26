@@ -23,7 +23,7 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnGoogleSignInAsync(object param)
         {
-            await _navigationOtherShell.NavigateToAsync<VerifyPhoneEmailAuthorPage>(param: "user23@test.com", isPushModal: false);
+            await _navigationOtherShell.NavigateToAsync<VerifyPhoneEmailAuthorPage>(param: "user21@test.com", isPushModal: false);
         }
 
         [RelayCommand]

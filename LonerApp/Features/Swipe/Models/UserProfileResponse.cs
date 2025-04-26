@@ -1,5 +1,3 @@
-using LonerApp.Apis;
-
 namespace LonerApp.Models;
 
 public class GetProfilesResponse

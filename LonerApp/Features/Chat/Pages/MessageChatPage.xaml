@@ -69,7 +69,7 @@
                     HorizontalOptions="End"
                     IsOpaque="True"
                     LoadingPriority="Lowest"
-                    Source="{Binding ImageData, Converter={StaticResource ImageContentConverter}}"
+                    Source="{Binding Content}"
                     WidthRequest="{StaticResource SizeMessageImageItem}">
                     <ffimageloading:CachedImage.Clip>
                         <RoundRectangleGeometry CornerRadius="10" Rect="0,0,140,140" />
@@ -95,7 +95,7 @@
                     HorizontalOptions="End"
                     IsOpaque="True"
                     LoadingPriority="Lowest"
-                    Source="{Binding ImageData, Converter={StaticResource ImageContentConverter}}"
+                    Source="{Binding Content}"
                     WidthRequest="{StaticResource SizeMessageImageItem}">
                     <ffimageloading:CachedImage.Clip>
                         <RoundRectangleGeometry CornerRadius="10" Rect="0,0,140,140" />

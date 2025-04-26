@@ -67,7 +67,7 @@
                     ItemsSource="{Binding Users}"
                     LoopCards="False"
                     PropertyChanged="SwipeCardView_PropertyChanged"
-                    SupportedSwipeDirections="Left, Right, Up, Down"
+                    SupportedSwipeDirections="Left, Right, Down"
                     Swiped="SwipeCardView_Swiped"
                     TopItem="{Binding TopItem, Mode=TwoWay}">
                     <swipe:SwipeCardView.ItemTemplate>
