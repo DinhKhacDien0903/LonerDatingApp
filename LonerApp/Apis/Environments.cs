@@ -11,13 +11,16 @@ public class Environments
     public const string URl_SERVER_HTTPS_EMULATOR = "https://10.0.2.2:7165/api/";
     public const string URl_SERVER_HTTP_EMULATOR = "http://10.0.2.2:5099/api/";
     public const string URl_SERVER_HTTPS_DEVICE_4G = "https://192.168.43.14:7165/api/";
-    public const string URl_SERVER_HTTPS_DEVICE_WIFI= "https://192.168.1.9:7165/api/";
+    public const string URl_SERVER_HTTPS_DEVICE_WIFI= "https://192.168.25.103:7165/api/";
     public const string URl_SERVER_HTTP_DEVICE = "https://192.168.43.14:5099/api/";
+
+    //URL ChatHub Connection
+    public const string URl_SERVER_HTTPS_DEVICE_WIFI_CHAT_HUB = "https://192.168.25.103:7165/chat";
 }
 
 public static class EnvironmentsExtensions
 {
-    //Endpoints Message/get-user-matched-active
+    //Endpoints
     public const string ENDPOINT_GET_PROFILES = "Swipe/profiles";
     public const string ENDPOINT_GET_PROFILE_DETAIL = "User/profile-detail";
     public const string ENDPOINT_SEND_MAIL_OTP = "Auth/send-mail-otp";

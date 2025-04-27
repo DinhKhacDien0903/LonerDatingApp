@@ -10,12 +10,17 @@ public partial class MessageChatPage : BasePage
         InitializeComponent();
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         _vm.IsBusy = true;
         base.OnAppearing();
         ServiceHelper.GetService<IDeviceService>().SetResizeKeyboardInput();
         _vm.IsBusy = false;
+    }
+    protected override async void OnDisappearing()
+    {
+        base.OnDisappearing();
+        await _vm.DisconnectAsync();
     }
 
     private async void OnScrolled(object sender, ItemsViewScrolledEventArgs e)

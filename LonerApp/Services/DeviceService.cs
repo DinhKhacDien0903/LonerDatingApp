@@ -1,7 +1,9 @@
-﻿using Android.Content;
+﻿using Android.App;
+using Android.Content;
 using Android.Graphics;
 using Android.Media;
 using Android.Views.InputMethods;
+using AndroidX.Core.App;
 using AndroidX.Core.View;
 using Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;
 using Sharpnado.CollectionView.Droid.Helpers;
@@ -10,6 +12,7 @@ namespace LonerApp.Services
 {
     public class DeviceService : IDeviceService
     {
+        public static TaskCompletionSource<bool> RequestPermissionCompletionSource { get; set; }
         public System.IO.Stream GetRotatedImageStream(string path, bool isRotate = false, int maxDimension = 0)
         {
             if (File.Exists(path))
@@ -210,6 +213,39 @@ namespace LonerApp.Services
                 if (isKeyboardShow)
                     inputMethodManager.HideSoftInputFromWindow(activity.Window.DecorView.RootView.WindowToken, HideSoftInputFlags.None);
             }
+        }
+
+        public async Task<bool> RegisterForPushNotificationsAsync()
+        {
+            RequestPermissionCompletionSource = new TaskCompletionSource<bool>();
+            if (OperatingSystem.IsAndroidVersionAtLeast(33))
+            {
+                var requiredPermissions = new string[] { Android.Manifest.Permission.PostNotifications };
+                var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
+                try
+                {
+                    if (!ActivityCompat.ShouldShowRequestPermissionRationale(activity, Android.Manifest.Permission.PostNotifications))
+                    {
+                        ActivityCompat.RequestPermissions(activity, requiredPermissions, 1);
+                    }
+                    else
+                    {
+                        RequestPermissionCompletionSource.TrySetResult(false);
+                    }
+                }
+                catch (Exception)
+                {
+                    RequestPermissionCompletionSource.TrySetResult(false);
+                }
+            }
+
+            if (RequestPermissionCompletionSource != null && !RequestPermissionCompletionSource.Task.IsCompleted)
+            {
+                await RequestPermissionCompletionSource.Task;
+            }
+
+            var notificationManager = (NotificationManager)Android.App.Application.Context.GetSystemService(Context.NotificationService);
+            return notificationManager.AreNotificationsEnabled();
         }
     }
 }

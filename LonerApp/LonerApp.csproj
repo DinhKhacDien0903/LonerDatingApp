@@ -108,8 +108,10 @@
 		<PackageReference Include="Camera.MAUI" Version="1.5.1" />
 		<PackageReference Include="FFImageLoading.Maui" Version="1.2.7" />
 		<PackageReference Include="FluentValidation" Version="11.11.0" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.4" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Plugin.LocalNotification" Version="11.1.4" />
 		<PackageReference Include="Plugin.Maui.SwipeCardView" Version="1.0.0-preview1" />
 		<PackageReference Include="Sharpnado.CollectionView.Maui" Version="3.1.2" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />

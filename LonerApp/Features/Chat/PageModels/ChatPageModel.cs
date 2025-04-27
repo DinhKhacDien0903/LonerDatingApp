@@ -110,7 +110,6 @@ namespace LonerApp.PageModels
                 IsBusy = true;
                 try
                 {
-                    //await DataService.UpdateMasterAsync();
                     await LoadDataAsync();
                 }
                 finally

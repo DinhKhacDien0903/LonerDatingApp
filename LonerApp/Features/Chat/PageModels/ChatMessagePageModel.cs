@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using Microsoft.AspNetCore.SignalR.Client;
 using System.Collections.ObjectModel;
 
 namespace LonerApp.PageModels
@@ -18,7 +19,8 @@ namespace LonerApp.PageModels
         private static string _currentUserId = string.Empty;
         private int _currentPage = 1;
         private const int PageSize = 30;
-        private UserChatModel _currentUser;
+        private UserChatModel _partner;
+        private readonly HubConnection _connection;
         public ChatMessagePageModel(
             INavigationService navigationService,
             IChatService chatService)
@@ -27,13 +29,55 @@ namespace LonerApp.PageModels
             _chatService = chatService;
             IsVisibleNavigation = true;
             HasBackButton = true;
+            _connection = new HubConnectionBuilder()
+                .WithUrl(Environments.URl_SERVER_HTTPS_DEVICE_WIFI_CHAT_HUB, options =>
+                {
+                    options.HttpMessageHandlerFactory = _ => new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                    };
+
+                    options.AccessTokenProvider = async () => await JWTHelper.GetValidAccessToken();
+                })
+                .Build();
+
+            _connection.On<MessageModel>("ReceiveSpecificMessage", (message) =>
+            {
+                if(message != null)
+                    Messages.Add(message);
+                Console.WriteLine(" >>>>>>>>>>>>>>>> " + message.Content);
+            });
+
+            StartConnectionAsync();
+        }
+
+        private async void StartConnectionAsync()
+        {
+            try
+            {
+                await _connection.StartAsync();
+                Console.WriteLine(" >>>>>>>>>>>>>>>> SignalR connection started.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($" >>>>>>>>>>>>>>>> SignalR connection error: {ex.Message}");
+            }
+        }
+
+        public async Task DisconnectAsync()
+        {
+            if (_connection?.State != HubConnectionState.Disconnected)
+            {
+                await _connection.StopAsync();
+                Console.WriteLine(" >>>>>>>>>>>>>>>> SignalR connection stopped.");
+            }
         }
 
         public override async Task InitAsync(object? initData)
         {
             if (initData is UserChatModel user)
             {
-                _currentUser = user;
+                _partner = user;
             }
 
             await base.InitAsync(initData);
@@ -63,10 +107,10 @@ namespace LonerApp.PageModels
             await base.LoadDataAsync();
             IsBusy = true;
             _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
-            string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_currentUser.MatchId}";
+            string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_partner.MatchId}";
             var data1 = await _chatService.GetMessagesAsync(EnvironmentsExtensions.ENDPOINT_GET_MESSAGES, queryParams);
             Messages = [.. data1?.Messages?.Items ?? []];
-            _currentPage ++;
+            _currentPage++;
             IsBusy = false;
         }
 
@@ -81,7 +125,7 @@ namespace LonerApp.PageModels
             await Task.Delay(100);
 
             _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
-            string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_currentUser.MatchId}";
+            string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_partner.MatchId}";
             var data1 = (await _chatService.GetMessagesAsync(EnvironmentsExtensions.ENDPOINT_GET_MESSAGES, queryParams))?.Messages?.Items ?? [];
             foreach (var message in data1)
             {
@@ -108,7 +152,10 @@ namespace LonerApp.PageModels
                 var message = new MessageModel
                 {
                     Id = Guid.NewGuid().ToString(),
-                    Content = MessageEntryValue,
+                    SenderId = _currentUserId,
+                    MatchId = _partner.MatchId,
+                    ReceiverId = _partner.UserId,
+                    Content = MessageEntryValue.Trim(),
                     IsCurrentUserSend = true,
                     IsImage = false,
                     SendTime = DateTime.Now,
@@ -117,6 +164,7 @@ namespace LonerApp.PageModels
 
                 Messages.Add(message);
                 MessageEntryValue = string.Empty;
+                await _connection.InvokeAsync("SendMessageToPerson", message);
                 await Task.Delay(100);
                 _chatList.ScrollTo(Messages.Last(), position: ScrollToPosition.End);
             }
@@ -129,7 +177,6 @@ namespace LonerApp.PageModels
 
                 IsBusy = false;
             }
-
         }
 
         [RelayCommand]

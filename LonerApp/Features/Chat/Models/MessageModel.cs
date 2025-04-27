@@ -9,11 +9,11 @@
         [ObservableProperty]
         private string? id;
 
-        // [ObservableProperty]
-        // private string? senderId;
+        [ObservableProperty]
+        private string? senderId;
 
-        // [ObservableProperty]
-        // private string? receiverId;
+        [ObservableProperty]
+        private string? receiverId;
 
         [ObservableProperty]
         private string? content;
@@ -28,6 +28,7 @@
         private bool isRead;
         [ObservableProperty]
         private bool isImage;
+        public string? MatchId { get; set; }
     }
 
     public enum MessageType

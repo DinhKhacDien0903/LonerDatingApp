@@ -1,4 +1,3 @@
-
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -104,6 +103,13 @@ public class ApiService : IApiService
     }
 
     private string GetBaseUrl() => Environments.URl_SERVER_HTTPS_DEVICE_WIFI;
+
+    public async Task<T?> RefreshTokenAsync<T>(string refreshToken)
+    {
+        return await PostAsync<T>(
+            $"{Environments.URl_SERVER_HTTPS_DEVICE_WIFI}",
+            new {RefreshToken = refreshToken });
+    }
 }
 public class ApiException : Exception
 {

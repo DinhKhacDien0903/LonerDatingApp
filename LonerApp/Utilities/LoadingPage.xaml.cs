@@ -1,3 +1,6 @@
+using Plugin.LocalNotification;
+using System.Reflection.Metadata;
+
 namespace LonerApp.Utilities;
 
 public partial class LoadingPage : BasePage
@@ -25,11 +28,28 @@ public partial class LoadingPage : BasePage
         }
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         ServiceHelper.GetService<ISystemStyleManager>().SetStatusBarColor("#ffffff");
+        await SetupNotificationPermission();
         base.OnAppearing();
         DoLogin();
+    }
+
+    private async Task SetupNotificationPermission()
+    {
+        var isApplyPushNotification = await ServiceHelper.GetService<IDeviceService>().RegisterForPushNotificationsAsync();
+        var notificationService = ServiceHelper.GetService<ILocalNotificationService>();
+        if (!isApplyPushNotification)
+        {
+            var answer = await AlertHelper.ShowConfirmationAlertAsync(
+                I18nHelper.Get("LoadingPage_NotificationDialog_OpenSettingText"),
+                I18nHelper.Get("LoadingPage_NotificationDialog_OpenSettingTitle"));
+            if (answer)
+            {
+                notificationService.OpenNotificationSetting();
+            }
+        }
     }
 
     private void DoLogin()

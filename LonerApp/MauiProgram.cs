@@ -10,6 +10,7 @@ using PanCardView;
 using Mopups.Hosting;
 using Plugin.Maui.SwipeCardView;
 using LonerApp.Platforms.Android.CustomHandler;
+using Plugin.LocalNotification;
 
 namespace LonerApp
 {
@@ -30,6 +31,7 @@ namespace LonerApp
                 .UseCardsView()
                 .UseFFImageLoading()
                 .UseSharpnadoCollectionView(loggerEnable: false, debugLogEnable: false)
+                .UseLocalNotification()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("materialdesignicons-webfont.ttf", "MaterialFontFamily");
