@@ -10,6 +10,30 @@ public partial class MessageChatPage : BasePage
         InitializeComponent();
     }
 
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+
+        // Lấy matchId từ query string
+        if (Shell.Current.CurrentState.Location.OriginalString.Contains("matchId"))
+        {
+            var query = Shell.Current.CurrentState.Location.Query;
+            var matchId = System.Web.HttpUtility.ParseQueryString(query)["matchId"];
+            if (!string.IsNullOrEmpty(matchId))
+            {
+                // await _vm.LoadMessages(matchId);
+                // await _vm.JoinGroupAsync(matchId);
+            }
+            else
+            {
+                Console.WriteLine("Error: matchId is null or empty");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Error: No matchId in query string");
+        }
+    }
     protected override void OnAppearing()
     {
         _vm.IsBusy = true;

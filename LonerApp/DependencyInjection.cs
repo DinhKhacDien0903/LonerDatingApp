@@ -24,6 +24,7 @@ public static class DependencyInjection
         services.AddSingleton<IProfileService, ProfileService>();
         services.AddSingleton<IAuthorService, AuthorService>();
         services.AddSingleton<IChatService, ChatService>();
+        services.AddSingleton<INotificationService, NotificationService>();
 #endif
         return services;
     }

@@ -4,5 +4,6 @@
     {
         Task StartAsync();
         Task StopAsync();
+        Task CleanUpCachedImagesAsync();
     }
 }

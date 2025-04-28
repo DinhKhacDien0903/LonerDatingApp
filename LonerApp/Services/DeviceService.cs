@@ -239,10 +239,10 @@ namespace LonerApp.Services
                 }
             }
 
-            if (RequestPermissionCompletionSource != null && !RequestPermissionCompletionSource.Task.IsCompleted)
-            {
-                await RequestPermissionCompletionSource.Task;
-            }
+            // if (RequestPermissionCompletionSource != null && !RequestPermissionCompletionSource.Task.IsCompleted)
+            // {
+            //     await RequestPermissionCompletionSource.Task;
+            // }
 
             var notificationManager = (NotificationManager)Android.App.Application.Context.GetSystemService(Context.NotificationService);
             return notificationManager.AreNotificationsEnabled();

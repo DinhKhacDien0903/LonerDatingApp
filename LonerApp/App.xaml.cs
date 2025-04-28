@@ -1,4 +1,7 @@
-﻿using Android.OS;
+﻿using System.Text.Json;
+using Android.OS;
+using Plugin.LocalNotification;
+using Plugin.LocalNotification.EventArgs;
 
 namespace LonerApp
 {
@@ -25,6 +28,7 @@ namespace LonerApp
             {
                 InitializeComponent();
                 NavGraph.RegisterRoute();
+                LocalNotificationCenter.Current.NotificationActionTapped += OnNotificationTapped;
                 Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping(nameof(BoderlessEntry), (handler, view) =>
                 {
 #if ANDROID
@@ -47,7 +51,7 @@ namespace LonerApp
                 AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
                 {
                     //var exception = e.ExceptionObject as Exception;
-                    if(e.ExceptionObject is Exception exception && exception != null)
+                    if (e.ExceptionObject is Exception exception && exception != null)
                     {
                         System.Diagnostics.Debug.WriteLine($"[UnhandledException] {exception?.Message}");
                         throw exception;
@@ -94,6 +98,44 @@ namespace LonerApp
                 AppHelper.SetMainPage(new AppShell()); // REQUIRE RUN MAIN THREAD
                 //ServiceHelper.GetService<ISystemStyleManager>().SetStatusBarColor(ThemeUtil.GetBackgroundCoverColor());
             });
+        }
+
+        private async void OnNotificationTapped(NotificationActionEventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(e.Request.ReturningData))
+                {
+                    return;
+                }
+
+                var data = JsonSerializer.Deserialize<Dictionary<string, string>>(e.Request.ReturningData);
+                var type = data.GetValueOrDefault("Type");
+                var relatedId = data.GetValueOrDefault("RelatedId");
+                var navigationService = ServiceHelper.GetService<INavigationService>();
+
+                if (type == "2" && !string.IsNullOrEmpty(relatedId))
+                {
+                    await MainThread.InvokeOnMainThreadAsync(async () =>
+                    {
+                        // await Shell.Current.GoToAsync($"//chatPage?matchId={relatedId}");
+                        navigationService?.PushToPageAsync<MessageChatPage>();
+                    });
+                }
+                else
+                {
+                    await MainThread.InvokeOnMainThreadAsync(async () =>
+                    {
+                        await Shell.Current.GoToAsync("//NotificationsPage");
+                    });
+                }
+
+                await Task.Delay(1000);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error handling notification tap: {ex.Message}");
+            }
         }
     }
 }

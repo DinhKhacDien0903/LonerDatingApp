@@ -9,7 +9,6 @@ public partial class LoadingPage : BasePage
     private bool _isAccountSetup;
     private bool _loggedIn;
     public bool IsAppSleep = false;
-
     public LoadingPage()
     {
         InitializeComponent();
@@ -38,17 +37,24 @@ public partial class LoadingPage : BasePage
 
     private async Task SetupNotificationPermission()
     {
-        var isApplyPushNotification = await ServiceHelper.GetService<IDeviceService>().RegisterForPushNotificationsAsync();
-        var notificationService = ServiceHelper.GetService<ILocalNotificationService>();
-        if (!isApplyPushNotification)
+        try
         {
-            var answer = await AlertHelper.ShowConfirmationAlertAsync(
-                I18nHelper.Get("LoadingPage_NotificationDialog_OpenSettingText"),
-                I18nHelper.Get("LoadingPage_NotificationDialog_OpenSettingTitle"));
-            if (answer)
+            var isApplyPushNotification = await ServiceHelper.GetService<IDeviceService>().RegisterForPushNotificationsAsync();
+            var notificationService = ServiceHelper.GetService<ILocalNotificationService>();
+            if (!isApplyPushNotification)
             {
-                notificationService.OpenNotificationSetting();
+                var answer = await AlertHelper.ShowConfirmationAlertAsync(
+                    I18nHelper.Get("LoadingPage_NotificationDialog_OpenSettingText"),
+                    I18nHelper.Get("LoadingPage_NotificationDialog_OpenSettingTitle"));
+                if (answer)
+                {
+                    notificationService.OpenNotificationSetting();
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error setting up notification permission: {ex.Message}");
         }
     }
 

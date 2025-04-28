@@ -31,7 +31,6 @@ public partial class VerfyEmailPageModel : BasePageModel
     private readonly IAuthorService _authorService;
     private readonly INavigationOtherShellService _navigationOtherShell;
     private readonly VerifiedEmailValidator _emailNumberValidator = new();
-
     public VerfyEmailPageModel
         (INavigationService navigationService,
         IAuthorService authorService,

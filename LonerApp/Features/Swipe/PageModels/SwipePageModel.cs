@@ -31,12 +31,26 @@ namespace LonerApp.PageModels
         private int _currentPage = 1;
         private int countUser = 0;
         private bool _hasMoreUsers = true;
-
-        public SwipePageModel(INavigationService navigationService, ISwipeService swipeService)
+        private readonly Services.INotificationService _notificationService;
+        public SwipePageModel(INavigationService navigationService,
+         ISwipeService swipeService,
+         INotificationService notificationService)
             : base(navigationService, true)
         {
             IsVisibleNavigation = true;
             _swipeService = swipeService;
+            _notificationService = notificationService;
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await Task.Delay(100);
+                await _notificationService.StartAsync();
+                await _notificationService.CleanUpCachedImagesAsync();
+            });
+        }
+
+        public override async Task OnAppearingAsync()
+        {
+            await base.OnAppearingAsync();
         }
 
         public override async Task InitAsync(object? initData)
@@ -163,15 +177,15 @@ namespace LonerApp.PageModels
         public void OnTopItemPropertyChanged(object newValue)
         {
             if (countUser <= 0 || newValue is not UserProfileResponse currentItem)
-               return;
+                return;
 
             if (Users.IndexOf(currentItem) < (countUser - PrefetchThreshold))
-               return;
+                return;
 
             _ = Task.Run(async () =>
             {
-               await PrefetchUsersAsync();
-               await Task.Delay(100);
+                await PrefetchUsersAsync();
+                await Task.Delay(100);
             });
         }
 

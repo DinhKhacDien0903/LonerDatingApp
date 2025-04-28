@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using Plugin.LocalNotification;
 
 namespace LonerApp.PageModels
 {
@@ -11,7 +10,7 @@ namespace LonerApp.PageModels
             : base(navigationService, true)
         {
             _navigationOtherShell = navigationOtherShell;
-            LocalNotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;
+            // LocalNotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;
         }
 
         [RelayCommand]
@@ -37,23 +36,7 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnGoogleSignInAsync(object param)
         {
-            //await _navigationOtherShell.NavigateToAsync<EmailAuthor>(param: "user11@test.com", isPushModal: false);
-
-            var request = new NotificationRequest
-            {
-                NotificationId = 1337,
-                Title = "Subscribe to my channel",
-                Subtitle = "Hello",
-                Description = "It's me",
-                BadgeNumber = 42,
-                Schedule = new NotificationRequestSchedule
-                {
-                    NotifyTime = DateTime.Now.AddSeconds(5),
-                    NotifyRepeatInterval = TimeSpan.FromDays(1),
-                }
-            };
-
-            await LocalNotificationCenter.Current.Show(request);
+            await _navigationOtherShell.NavigateToAsync<EmailAuthor>(param: "user11@test.com", isPushModal: false);
         }
 
         [RelayCommand]

@@ -1,20 +1,17 @@
 ﻿
-using LonerApp.Apis;
 using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Logging;
+using Plugin.LocalNotification;
 
 namespace LonerApp.Services
 {
     public class NotificationService : INotificationService
     {
         private readonly HubConnection _connection;
-        private readonly IApiService _apiService;
-        public NotificationService(IApiService apiService)
+        private static int _notificationId = 0;
+        public NotificationService()
         {
-            _apiService = apiService;
-
             _connection = new HubConnectionBuilder()
-                .WithUrl(Environments.URl_SERVER_HTTPS_DEVICE_WIFI_CHAT_HUB, options =>
+                .WithUrl(Environments.URl_SERVER_HTTPS_EMULATOR_NOTIFICATION_HUB, options =>
                 {
                     options.HttpMessageHandlerFactory = _ => new HttpClientHandler
                     {
@@ -25,21 +22,138 @@ namespace LonerApp.Services
                 .WithAutomaticReconnect()
                 .Build();
 
-            // Lắng nghe sự kiện ReceiveNotification
-            _connection.On<NotificationModel>("ReceiveNotification", async (notification) =>
+            _connection.On<NotificationResponse>("ReceiveNotification", HandleNotificationAsync);
+
+            _connection.On<string, string>("UserNotConnected", async (method, message) =>
             {
-                await HandleNotificationAsync(notification);
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    await AlertHelper.ShowErrorAlertAsync(message);
+                    AppHelper.SetMainPage(new LoadingPage());
+                });
             });
         }
 
-        public Task StartAsync()
+        public async Task StartAsync()
         {
-            throw new NotImplementedException();
+            if (_connection.State == HubConnectionState.Disconnected)
+            {
+                try
+                {
+                    Console.WriteLine($"Connecting to {Environments.URl_SERVER_HTTPS_EMULATOR_NOTIFICATION_HUB}");
+                    await _connection.StartAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"SignalR connection error: {ex.Message}");
+                    await Task.Delay(5000);
+                    await StartAsync();
+                }
+            }
         }
 
-        public Task StopAsync()
+        public async Task StopAsync()
         {
-            throw new NotImplementedException();
+            if (_connection.State != HubConnectionState.Disconnected)
+            {
+                await _connection.StopAsync();
+                Console.WriteLine("SignalR Hub disconnected.");
+            }
+        }
+
+        private async Task HandleNotificationAsync(NotificationResponse notification)
+        {
+            try
+            {
+                var notificationData = new
+                {
+                    Type = notification.Type.ToString(),
+                    RelatedId = notification.RelatedId
+                };
+
+                var returningData = System.Text.Json.JsonSerializer.Serialize(notificationData);
+                //Todo: handle sendimage
+                var imagePath = await DownloadImageAsync(notification?.NotificationImage ?? "", notification?.Id ?? "");
+                var request = new NotificationRequest
+                {
+                    NotificationId = _notificationId,
+                    Title = notification.Type == 2 ? notification.Title : "Notification",
+                    Subtitle = notification.Subtitle,
+                    Description = notification.Messeage ?? "You have a new notification",
+                    BadgeNumber = 42,
+                    ReturningData = returningData,
+                    // Image = new NotificationImage
+                    // {
+                    //     FilePath = imagePath ?? ""
+                    // },
+                    Schedule = new NotificationRequestSchedule
+                    {
+                        NotifyTime = DateTime.Now.AddSeconds(1),
+                    }
+                };
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    await LocalNotificationCenter.Current.Show(request);
+                    _notificationId++;
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error showing notification: {ex.Message}");
+            }
+        }
+
+        private async Task<string> DownloadImageAsync(string imageUrl, string notificationId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(imageUrl))
+                {
+                    return null;
+                }
+                var fileName = $"avatar_{notificationId}.jpg";
+                var filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
+                if (File.Exists(filePath))
+                {
+                    return filePath;
+                }
+
+                var handler = new HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+                using var httpClient = new HttpClient(handler);
+                var imageBytes = await httpClient.GetByteArrayAsync(imageUrl);
+
+                await File.WriteAllBytesAsync(filePath, imageBytes);
+
+                return filePath;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error downloading image from {imageUrl}: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task CleanUpCachedImagesAsync()
+        {
+            try
+            {
+                var cacheDir = FileSystem.CacheDirectory;
+                var files = Directory.GetFiles(cacheDir, "avatar_*.jpg");
+                foreach (var file in files)
+                {
+                    var fileInfo = new FileInfo(file);
+                    if (fileInfo.LastWriteTime < DateTime.Now.AddDays(-7))
+                    {
+                        File.Delete(file);
+                    }
+                }
+                await Task.Delay(1000);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error cleaning up cached images: {ex.Message}");
+            }
         }
     }
 }
