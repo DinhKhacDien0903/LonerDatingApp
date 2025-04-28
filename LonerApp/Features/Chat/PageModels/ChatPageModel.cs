@@ -55,29 +55,12 @@ namespace LonerApp.PageModels
         {
             IsBusy = true;
             await Task.Delay(1);
-            // UserChats = new ObservableCollection<UserChatModel>
-            // {
-            //     new UserChatModel { UserId = 1, UserName = "Alice", ProfilePicture = "bbbb.jpeg", LastMessage = "Hello!", IsUnRead = true },
-            //     new UserChatModel { UserId = 2, UserName = "Bob", ProfilePicture = "lllll.jpeg", LastMessage = "How are you?", IsUnRead = false },
-            //     new UserChatModel { UserId = 3, UserName = "Charlie", ProfilePicture = "mmm.jpeg", LastMessage = "See you later!", IsUnRead = true },
-            //     new UserChatModel { UserId = 4, UserName = "David", ProfilePicture = "nnn.jpeg", LastMessage = "Good night!", IsUnRead = false },
-            //     new UserChatModel { UserId = 5, UserName = "Eve", ProfilePicture = "image_user_1.jpeg", LastMessage = "What's up?", IsUnRead = true },
-            //     new UserChatModel { UserId = 6, UserName = "Frank", ProfilePicture = "image_user_2.jpeg", LastMessage = "Talk soon!", IsUnRead = false },
-            //     new UserChatModel { UserId = 1, UserName = "Alice", ProfilePicture = "bbbb.jpeg", LastMessage = "Hello!", IsUnRead = true },
-            //     new UserChatModel { UserId = 2, UserName = "Bob", ProfilePicture = "lllll.jpeg", LastMessage = "How are you?", IsUnRead = false },
-            //     new UserChatModel { UserId = 3, UserName = "Charlie", ProfilePicture = "mmm.jpeg", LastMessage = "See you later!", IsUnRead = true },
-            //     new UserChatModel { UserId = 4, UserName = "David", ProfilePicture = "nnn.jpeg", LastMessage = "Good night!", IsUnRead = false },
-            //     new UserChatModel { UserId = 5, UserName = "Eve", ProfilePicture = "image_user_1.jpeg", LastMessage = "What's up?", IsUnRead = true },
-            //     new UserChatModel { UserId = 6, UserName = "Frank", ProfilePicture = "image_user_2.jpeg", LastMessage = "Talk soon!", IsUnRead = false },
-            //     new UserChatModel { UserId = 1, UserName = "Alice", ProfilePicture = "bbbb.jpeg", LastMessage = "Hello!", IsUnRead = true }
-            // };
             IsBusy = false;
         }
 
         public async override Task LoadDataAsync()
         {
             _currentPage = 0;
-            // https://localhost:7165/api/Message/get-user-matched-active?PaginationRequest.ValidPageSize=30&PaginationRequest.UserId=14f06ee5-c275-470a-b2cb-3c5aa4c3a6de
             await base.LoadDataAsync();
             ShouldLoadData = false;
             IsBusy = true;

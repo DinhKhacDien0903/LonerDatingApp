@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.AspNetCore.SignalR.Client;
 using System.Collections.ObjectModel;
 
@@ -21,6 +23,7 @@ namespace LonerApp.PageModels
         private const int PageSize = 30;
         private UserChatModel _partner;
         private readonly HubConnection _connection;
+        private Cloudinary _cloudDinary;
         public ChatMessagePageModel(
             INavigationService navigationService,
             IChatService chatService)
@@ -29,6 +32,8 @@ namespace LonerApp.PageModels
             _chatService = chatService;
             IsVisibleNavigation = true;
             HasBackButton = true;
+            _cloudDinary = new Cloudinary(Environments.CLOUDINARY_URL);
+            _cloudDinary.Api.Secure = true;
             _connection = new HubConnectionBuilder()
                 .WithUrl(Environments.URl_SERVER_HTTPS_DEVICE_WIFI_CHAT_HUB, options =>
                 {
@@ -212,7 +217,7 @@ namespace LonerApp.PageModels
             IsBusy = true;
             try
             {
-                //_chatList.ScrollTo(Messages.Last(), position: ScrollToPosition.End);
+                _chatList.ScrollTo(Messages.Last(), position: ScrollToPosition.End);
                 string takePhoto = I18nHelper.Get("SetupPhotoPage_ImageDialog_TakePhoto");
                 string choosePhoto = I18nHelper.Get("SetupPhotoPage_ImageDialog_ChoosePhoto");
                 string[] buttons = { takePhoto, choosePhoto };
@@ -222,14 +227,14 @@ namespace LonerApp.PageModels
                 var message = new MessageModel
                 {
                     Id = Guid.NewGuid().ToString(),
-                    // SenderId = "1",
-                    // ReceiverId = "2",
-                    // Content = "",
-                    // Type = MessageType.Image,
-                    // Timestamp = DateTime.Now,
-                    // ImageData = null,
-                    // IsMine = true,
-                    IsRead = true
+                    SenderId = _currentUserId,
+                    MatchId = _partner.MatchId,
+                    ReceiverId = _partner.UserId,
+                    Content = MessageEntryValue.Trim(),
+                    IsCurrentUserSend = true,
+                    IsImage = true,
+                    SendTime = DateTime.Now,
+                    IsRead = false
                 };
 
                 if (((string)choice).Equals(takePhoto))
@@ -244,6 +249,8 @@ namespace LonerApp.PageModels
                 if (!string.IsNullOrEmpty(message.Content))
                 {
                     Messages.Add(message);
+                    MessageEntryValue = string.Empty;
+                    await _connection.InvokeAsync("SendMessageToPerson", message);
                     await Task.Delay(100);
                     _chatList.ScrollTo(Messages.Last(), position: ScrollToPosition.End);
                 }
@@ -267,14 +274,10 @@ namespace LonerApp.PageModels
                 var _currentLocalImage = await CameraPluginExtensions.CancelableChoosePhotoAsync(filename);
                 IsBusy = true;
 
-                if (!string.IsNullOrEmpty(_currentLocalImage) && await UploadImageAsync(_currentLocalImage))
+                var urlImageResult = await UploadImageAsync(_currentLocalImage);
+                if (!string.IsNullOrEmpty(_currentLocalImage) && !string.IsNullOrEmpty(urlImageResult))
                 {
-                    using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
-                    using (BinaryReader br = new BinaryReader(stream))
-                    {
-                        byte[] imageBytes = br.ReadBytes((int)stream.Length);
-                        // message.ImageData = imageBytes;
-                    }
+                    message.Content = urlImageResult;
                 }
                 else
                 {
@@ -285,42 +288,17 @@ namespace LonerApp.PageModels
             }
         }
 
-        public byte[] GetDefaultImageBytes(string fileName)
-        {
-            try
-            {
-                using (Stream stream = FileSystem.OpenAppPackageFileAsync(fileName).Result)
-                {
-                    using (BinaryReader br = new BinaryReader(stream))
-                    {
-                        return br.ReadBytes((int)stream.Length);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error reading default image: {ex.Message}");
-                return null;
-            }
-        }
-
         private async Task OnExcuteTakePhotoAsync(MessageModel message)
         {
-            //TODO: handle upload image in server
             IsBusy = true;
             if (await this.AllowTakePhotoAsync())
             {
                 var filename = Path.GetRandomFileName() + ".png";
                 var _currentLocalImage = await CameraPluginExtensions.CancelableTakePhotoAsync(filename);
-
-                if (!string.IsNullOrEmpty(_currentLocalImage) && await UploadImageAsync(_currentLocalImage))
+                var urlImageResult = await UploadImageAsync(_currentLocalImage);
+                if (!string.IsNullOrEmpty(_currentLocalImage) && !string.IsNullOrEmpty(urlImageResult))
                 {
-                    using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
-                    using (BinaryReader br = new BinaryReader(stream))
-                    {
-                        byte[] imageBytes = br.ReadBytes((int)stream.Length);
-                        // message.ImageData = imageBytes;
-                    }
+                    message.Content = urlImageResult;
                 }
                 else
                 {
@@ -331,35 +309,23 @@ namespace LonerApp.PageModels
             IsBusy = false;
         }
 
-        private async Task<bool> UploadImageAsync(string imagePath)
+        private async Task<string> UploadImageAsync(string imagePath)
         {
-            var isUpLoadImage = true;
-
-            if (isUpLoadImage)
+            if (!string.IsNullOrEmpty(imagePath))
             {
-                //TODO: handle upload image in server
-
-                //_mailInquiry = await DataService.GetMailInquiryAsync();
-                //EncryptImageModel encrypt;
-                //imagePath = await ImageHelper.ImageToBase64Async(imagePath);
-                //while (!(encrypt = await DataService.EncryptImageAsync([imagePath], _mailInquiry.InquiryNo)).IsSuccess)
-                //{
-                //    if (!await AlertHelper.ShowConfirmationAlertAsync(new AlertConfigure()
-                //    {
-                //        Title = I18nHelper.Get("PhotoRegistrationPage_ReUploadDialog_Title"),
-                //        Message = I18nHelper.Get("PhotoRegistrationPage_ReUploadDialog_Message"),
-                //        OK = I18nHelper.Get("PhotoRegistrationPage_ReUploadDialog_ReUpload")
-                //    }))
-                //    {
-                //        return false;
-                //    }
-                //}
-
-                //_imageUrl = encrypt.ImageUrl;
-                return true;
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new CloudinaryDotNet.FileDescription(imagePath),
+                    UseFilename =true,
+                    UniqueFilename = true,
+                    Overwrite = true
+                };
+                var uploadResult = (await _cloudDinary.UploadAsync(uploadParams)).JsonObj;
+                Console.WriteLine(uploadResult);
+                return (uploadResult["secure_url"]?.ToString() ?? string.Empty);
             }
 
-            return false;
+            return string.Empty;
         }
 
         public void GetChatListCollectionView()

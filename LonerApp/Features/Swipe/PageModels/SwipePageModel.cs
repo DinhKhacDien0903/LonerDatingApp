@@ -44,7 +44,7 @@ namespace LonerApp.PageModels
             {
                 await Task.Delay(100);
                 await _notificationService.StartAsync();
-                await _notificationService.CleanUpCachedImagesAsync();
+                //await _notificationService.CleanUpCachedImagesAsync();
             });
         }
 

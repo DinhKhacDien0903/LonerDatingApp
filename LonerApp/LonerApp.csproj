@@ -106,6 +106,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Camera.MAUI" Version="1.5.1" />
+		<PackageReference Include="CloudinaryDotNet" Version="1.27.5" />
 		<PackageReference Include="FFImageLoading.Maui" Version="1.2.7" />
 		<PackageReference Include="FluentValidation" Version="11.11.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.4" />

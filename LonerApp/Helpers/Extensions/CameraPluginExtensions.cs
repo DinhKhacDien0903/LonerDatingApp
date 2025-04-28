@@ -1,5 +1,4 @@
-﻿
-using LonerApp.UI.GlobalPages;
+﻿using LonerApp.UI.GlobalPages;
 using Mopups.Interfaces;
 using SkiaSharp;
 

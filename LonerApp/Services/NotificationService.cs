@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.SignalR.Client;
+﻿using Microsoft.AspNetCore.SignalR.Client;
 using Plugin.LocalNotification;
 
 namespace LonerApp.Services
@@ -11,7 +10,7 @@ namespace LonerApp.Services
         public NotificationService()
         {
             _connection = new HubConnectionBuilder()
-                .WithUrl(Environments.URl_SERVER_HTTPS_EMULATOR_NOTIFICATION_HUB, options =>
+                .WithUrl(Environments.URl_SERVER_HTTPS_DEVICE_WIFI_NOTIFICATION_HUB, options =>
                 {
                     options.HttpMessageHandlerFactory = _ => new HttpClientHandler
                     {
@@ -40,7 +39,7 @@ namespace LonerApp.Services
             {
                 try
                 {
-                    Console.WriteLine($"Connecting to {Environments.URl_SERVER_HTTPS_EMULATOR_NOTIFICATION_HUB}");
+                    Console.WriteLine($"Connecting to {Environments.URl_SERVER_HTTPS_DEVICE_WIFI_NOTIFICATION_HUB}");
                     await _connection.StartAsync();
                 }
                 catch (Exception ex)
@@ -72,8 +71,6 @@ namespace LonerApp.Services
                 };
 
                 var returningData = System.Text.Json.JsonSerializer.Serialize(notificationData);
-                //Todo: handle sendimage
-                var imagePath = await DownloadImageAsync(notification?.NotificationImage ?? "", notification?.Id ?? "");
                 var request = new NotificationRequest
                 {
                     NotificationId = _notificationId,
@@ -82,10 +79,10 @@ namespace LonerApp.Services
                     Description = notification.Messeage ?? "You have a new notification",
                     BadgeNumber = 42,
                     ReturningData = returningData,
-                    // Image = new NotificationImage
-                    // {
-                    //     FilePath = imagePath ?? ""
-                    // },
+                    Image = new NotificationImage
+                    {
+                        FilePath = (notification?.Messeage ?? "").Contains("https://") ? notification.Messeage : null,
+                    },
                     Schedule = new NotificationRequestSchedule
                     {
                         NotifyTime = DateTime.Now.AddSeconds(1),
