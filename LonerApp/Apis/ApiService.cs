@@ -102,12 +102,12 @@ public class ApiService : IApiService
         }
     }
 
-    private string GetBaseUrl() => Environments.URl_SERVER_HTTPS_DEVICE_WIFI;
+    private string GetBaseUrl() => Environments.URl_SERVER_HTTPS_EMULATOR;
 
     public async Task<T?> RefreshTokenAsync<T>(string refreshToken)
     {
         return await PostAsync<T>(
-            $"{Environments.URl_SERVER_HTTPS_DEVICE_WIFI}",
+            $"{Environments.URl_SERVER_HTTPS_EMULATOR}",
             new {RefreshToken = refreshToken });
     }
 }

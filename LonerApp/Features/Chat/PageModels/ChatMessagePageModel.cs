@@ -22,6 +22,8 @@ namespace LonerApp.PageModels
         private int _currentPage = 1;
         private const int PageSize = 30;
         private UserChatModel _partner;
+        [ObservableProperty]
+        private string _partnerName;
         private readonly HubConnection _connection;
         private Cloudinary _cloudDinary;
         public ChatMessagePageModel(
@@ -35,7 +37,7 @@ namespace LonerApp.PageModels
             _cloudDinary = new Cloudinary(Environments.CLOUDINARY_URL);
             _cloudDinary.Api.Secure = true;
             _connection = new HubConnectionBuilder()
-                .WithUrl(Environments.URl_SERVER_HTTPS_DEVICE_WIFI_CHAT_HUB, options =>
+                .WithUrl(Environments.URl_SERVER_HTTPS_EMULATOR_CHAT_HUB, options =>
                 {
                     options.HttpMessageHandlerFactory = _ => new HttpClientHandler
                     {
@@ -48,7 +50,7 @@ namespace LonerApp.PageModels
 
             _connection.On<MessageModel>("ReceiveSpecificMessage", (message) =>
             {
-                if(message != null)
+                if (message != null)
                     Messages.Add(message);
                 Console.WriteLine(" >>>>>>>>>>>>>>>> " + message.Content);
             });
@@ -83,6 +85,7 @@ namespace LonerApp.PageModels
             if (initData is UserChatModel user)
             {
                 _partner = user;
+                PartnerName = user.UserName;
             }
 
             await base.InitAsync(initData);
@@ -316,12 +319,11 @@ namespace LonerApp.PageModels
                 var uploadParams = new ImageUploadParams
                 {
                     File = new CloudinaryDotNet.FileDescription(imagePath),
-                    UseFilename =true,
+                    UseFilename = true,
                     UniqueFilename = true,
                     Overwrite = true
                 };
                 var uploadResult = (await _cloudDinary.UploadAsync(uploadParams)).JsonObj;
-                Console.WriteLine(uploadResult);
                 return (uploadResult["secure_url"]?.ToString() ?? string.Empty);
             }
 

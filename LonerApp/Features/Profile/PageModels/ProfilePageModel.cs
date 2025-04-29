@@ -118,9 +118,17 @@ namespace LonerApp.PageModels
             //TODO: Add adnimation when dislike pressed
             if (DislikePressedCommand.IsRunning || IsBusy)
                 return;
+
+            if (param is not UserProfileDetailResponse user)
+                return;
+
+            var data = new UserProfileResponse
+            {
+                Id = user?.Id ?? ""
+            };
             if (_swipePageModel != null)
             {
-                _swipePageModel.DislikePressedCommand.Execute(null);
+                _swipePageModel.DislikePressedCommand.Execute(data);
             }
 
             await OnCloseDetailProfileAsync(null);
@@ -146,9 +154,17 @@ namespace LonerApp.PageModels
             //TODO: Add adnimation when like pressed
             if (LikePressedCommand.IsRunning || IsBusy)
                 return;
+
+            if (param is not UserProfileDetailResponse user)
+                return;
+
+            var data = new UserProfileResponse
+            {
+                Id = user?.Id ?? ""
+            };
             if (_swipePageModel != null)
             {
-                _swipePageModel.LikePressedCommand.Execute(null);
+                _swipePageModel.LikePressedCommand.Execute(data);
             }
 
             await OnCloseDetailProfileAsync(null);

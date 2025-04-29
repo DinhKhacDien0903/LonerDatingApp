@@ -6,6 +6,7 @@ using Plugin.Maui.SwipeCardView.Core;
 
 public partial class MainSwipePage : BasePage
 {
+    private bool _isSwiped;
     private readonly SwipePageModel _vm;
     public MainSwipePage(SwipePageModel vm)
     {
@@ -56,13 +57,14 @@ public partial class MainSwipePage : BasePage
 
     private void OnDislikeClicked(object sender, EventArgs e)
     {
-        if (sender is not Button button)
+        if (sender is not Button button || _isSwiped)
         {
             return;
         }
 
         SwipeCardView.InvokeSwipe(SwipeCardDirection.Left);
         _vm.LikePressedCommand.Execute(button.BindingContext);
+        _isSwiped = true;
     }
 
     private void OnSuperLikeClicked(object sender, EventArgs e)
@@ -78,19 +80,20 @@ public partial class MainSwipePage : BasePage
 
     private void OnLikeClicked(object sender, EventArgs e)
     {
-        if (sender is not Button button)
+        if (sender is not Button button || _isSwiped)
         {
             return;
         }
 
         SwipeCardView.InvokeSwipe(SwipeCardDirection.Right);
         _vm.LikePressedCommand.Execute(button.BindingContext);
+        _isSwiped = true;
     }
 
     private SwipeCardDirection? _lastSwipeDirection;
     private void SwipeCardView_Swiped(object sender, SwipedCardEventArgs e)
     {
-        if (e.Direction == SwipeCardDirection.Right)
+        if (e.Direction == SwipeCardDirection.Right && !_isSwiped)
         {
             _lastSwipeDirection = e.Direction;
             _vm.LikePressedCommand.Execute(e.Item);
@@ -99,7 +102,7 @@ public partial class MainSwipePage : BasePage
         {
             _vm.StarPressedCommand.Execute(e.Item);
         }
-        else if (e.Direction == SwipeCardDirection.Left)
+        else if (e.Direction == SwipeCardDirection.Left && !_isSwiped)
         {
             _lastSwipeDirection = e.Direction;
             _vm.DislikePressedCommand.Execute(e.Item);
@@ -108,6 +111,9 @@ public partial class MainSwipePage : BasePage
         {
             _vm.OpenDetailProfileCommand.Execute(e.Item);
         }
+
+        //reset
+        _isSwiped = false;
     }
 
     private void SwipeCardView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -121,7 +127,3 @@ public partial class MainSwipePage : BasePage
         _vm.OnTopItemPropertyChanged(swipeCardView.TopItem);
     }
 }
-
-        //if(e.PropertyName == nameof(SwipeCardView.TopItem)
-        //    && (_lastSwipeDirection == SwipeCardDirection.Right || _lastSwipeDirection == SwipeCardDirection.Left))
-        //    _vm.OnTopItemPropertyChanged(swipeCardView.TopItem);

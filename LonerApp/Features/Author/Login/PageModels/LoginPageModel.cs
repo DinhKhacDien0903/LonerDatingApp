@@ -160,7 +160,7 @@ namespace LonerApp.PageModels
             if (validatorResult.IsValid)
             {
                 IsShowError = false;
-                await NavigationService.PushToPageAsync<SetupNamePage>(isPushModal: false);
+                await _navigationOtherShell.GoBackAsync();
             }
             else
             {

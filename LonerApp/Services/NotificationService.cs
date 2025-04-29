@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.SignalR.Client;
 using Plugin.LocalNotification;
 
 namespace LonerApp.Services
@@ -10,7 +11,7 @@ namespace LonerApp.Services
         public NotificationService()
         {
             _connection = new HubConnectionBuilder()
-                .WithUrl(Environments.URl_SERVER_HTTPS_DEVICE_WIFI_NOTIFICATION_HUB, options =>
+                .WithUrl(Environments.URl_SERVER_HTTPS_EMULATOR_NOTIFICATION_HUB, options =>
                 {
                     options.HttpMessageHandlerFactory = _ => new HttpClientHandler
                     {
@@ -39,7 +40,7 @@ namespace LonerApp.Services
             {
                 try
                 {
-                    Console.WriteLine($"Connecting to {Environments.URl_SERVER_HTTPS_DEVICE_WIFI_NOTIFICATION_HUB}");
+                    Console.WriteLine($"Connecting to {Environments.URl_SERVER_HTTPS_EMULATOR_NOTIFICATION_HUB}");
                     await _connection.StartAsync();
                 }
                 catch (Exception ex)
@@ -67,7 +68,8 @@ namespace LonerApp.Services
                 var notificationData = new
                 {
                     Type = notification.Type.ToString(),
-                    RelatedId = notification.RelatedId
+                    RelatedId = notification.RelatedId,
+                    UserId = notification.SenderId,
                 };
 
                 var returningData = System.Text.Json.JsonSerializer.Serialize(notificationData);
@@ -76,12 +78,12 @@ namespace LonerApp.Services
                     NotificationId = _notificationId,
                     Title = notification.Type == 2 ? notification.Title : "Notification",
                     Subtitle = notification.Subtitle,
-                    Description = notification.Messeage ?? "You have a new notification",
+                    Description = (notification?.Messeage ?? "").Contains("https://") ? "Hình ảnh" : notification?.Messeage ?? "You have a new notification",
                     BadgeNumber = 42,
                     ReturningData = returningData,
                     Image = new NotificationImage
                     {
-                        FilePath = (notification?.Messeage ?? "").Contains("https://") ? notification.Messeage : null,
+                        FilePath = (notification?.Messeage ?? "").Contains("https://") ? await DownloadImageAsync(notification?.Messeage ?? "", notification?.Id ?? "") : null,
                     },
                     Schedule = new NotificationRequestSchedule
                     {

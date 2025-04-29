@@ -34,7 +34,7 @@ namespace LonerApp.PageModels
         private readonly Services.INotificationService _notificationService;
         public SwipePageModel(INavigationService navigationService,
          ISwipeService swipeService,
-         INotificationService notificationService)
+         Services.INotificationService notificationService)
             : base(navigationService, true)
         {
             IsVisibleNavigation = true;
@@ -57,6 +57,8 @@ namespace LonerApp.PageModels
         {
             if (initData is string UserId)
                 _currentUserId = UserId.Trim();
+            else if (initData is bool)
+                HasBackButton = (bool)initData;
             IsNeedLoadUsersData = false;
             await base.InitAsync(initData);
         }
@@ -169,7 +171,7 @@ namespace LonerApp.PageModels
             IsBusy = true;
             cancellationToastToken.TryReset();
             IsNeedLoadUsersData = false;
-            await NavigationService.PushToPageAsync<DetailProfilePage>(param: (param as UserProfileResponse)?.Id, isPushModal: true);
+            await NavigationService.PushToPageAsync<DetailProfilePage>(param: (param as UserProfileResponse)?.Id);
             await Task.Delay(100);
             IsBusy = false;
         }

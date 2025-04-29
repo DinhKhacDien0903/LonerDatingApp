@@ -88,7 +88,7 @@
         <DataTemplate x:Key="OtherMessageImageItemTemplate" x:DataType="{x:Type models:MessageModel}">
             <Grid Padding="20,10" ColumnDefinitions="Auto,*">
                 <ffimageloading:CachedImage
-                    Aspect="AspectFit"
+                    Aspect="AspectFill"
                     DownsampleToViewSize="True"
                     ErrorPlaceholder="bbbb.jpeg"
                     HeightRequest="{StaticResource SizeMessageImageItem}"
@@ -123,7 +123,7 @@
             BackButtonCommand="{Binding BackCommand}"
             HasBackButton="{Binding HasBackButton}"
             IsVisible="{Binding IsVisibleNavigation}"
-            TitlePage="Lina" />
+            TitlePage="{Binding PartnerName}" />
         <CollectionView
             x:Name="ChatMessageList"
             Grid.Row="1"

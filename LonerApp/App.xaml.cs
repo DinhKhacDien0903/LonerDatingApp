@@ -63,7 +63,50 @@ namespace LonerApp
                 throw e;
             }
         }
+        private async void OnNotificationTapped(NotificationActionEventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(e.Request.ReturningData))
+                {
+                    return;
+                }
 
+                var data = JsonSerializer.Deserialize<Dictionary<string, string>>(e.Request.ReturningData);
+                if (data == null)
+                    return;
+
+                var navigationService = ServiceHelper.GetService<INavigationService>();
+                var type = data.GetValueOrDefault("Type");
+                var relatedId = data.GetValueOrDefault("RelatedId");
+                var UserId = data.GetValueOrDefault("UserId");
+                var param = new UserChatModel()
+                {
+                    UserId = UserId ?? "",
+                    MatchId = relatedId ?? ""
+                };
+                if (type == "2" && !string.IsNullOrEmpty(relatedId))
+                {
+                    await MainThread.InvokeOnMainThreadAsync(async () =>
+                    {
+                        await navigationService.PushToPageAsync<MessageChatPage>(param: param);
+                    });
+                }
+                else
+                {
+                    await MainThread.InvokeOnMainThreadAsync(async () =>
+                    {
+                        await Shell.Current.GoToAsync("//NotificationsPage");
+                    });
+                }
+
+                await Task.Delay(1000);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error handling notification tap: {ex.Message}");
+            }
+        }
         protected override Window CreateWindow(IActivationState? activationState)
         {
             if (Window != null)
@@ -98,44 +141,6 @@ namespace LonerApp
                 AppHelper.SetMainPage(new AppShell()); // REQUIRE RUN MAIN THREAD
                 //ServiceHelper.GetService<ISystemStyleManager>().SetStatusBarColor(ThemeUtil.GetBackgroundCoverColor());
             });
-        }
-
-        private async void OnNotificationTapped(NotificationActionEventArgs e)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(e.Request.ReturningData))
-                {
-                    return;
-                }
-
-                var data = JsonSerializer.Deserialize<Dictionary<string, string>>(e.Request.ReturningData);
-                var type = data.GetValueOrDefault("Type");
-                var relatedId = data.GetValueOrDefault("RelatedId");
-                var navigationService = ServiceHelper.GetService<INavigationService>();
-
-                if (type == "2" && !string.IsNullOrEmpty(relatedId))
-                {
-                    await MainThread.InvokeOnMainThreadAsync(async () =>
-                    {
-                        // await Shell.Current.GoToAsync($"//chatPage?matchId={relatedId}");
-                        navigationService?.PushToPageAsync<MessageChatPage>();
-                    });
-                }
-                else
-                {
-                    await MainThread.InvokeOnMainThreadAsync(async () =>
-                    {
-                        await Shell.Current.GoToAsync("//NotificationsPage");
-                    });
-                }
-
-                await Task.Delay(1000);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error handling notification tap: {ex.Message}");
-            }
         }
     }
 }

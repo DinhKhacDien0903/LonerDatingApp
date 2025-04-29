@@ -68,7 +68,12 @@ namespace LonerApp.PageModels
             string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}";
             var data1 = await _chatService.GetMatchedActiveUserAsync(EnvironmentsExtensions.ENDPOINT_GET__MESSAGE_MATCHED, queryParams);
             var data2 = await _chatService.GetUserMessageAsync(EnvironmentsExtensions.ENDPOINT_GET__USER_MESSAGES, queryParams);
-            Users = [.. data1?.User?.Items ?? []];
+            var temp = new List<UserProfileResponse>
+            {
+                new UserProfileResponse()
+            };
+            temp.AddRange([.. data1?.User?.Items ?? []]);
+            Users = new ObservableCollection<UserProfileResponse>(temp);
             UserChats = [.. data2?.UserMessages?.Items ?? []];
             _currentPage++;
             IsBusy = false;
@@ -102,13 +107,25 @@ namespace LonerApp.PageModels
             }
         }
 
+
         [RelayCommand]
-        async Task OnUserChatItemClickedAsync(UserChatModel user)
+        async Task OnUserChatItemClickedAsync(object user)
         {
             if (UserChatItemClickedCommand.IsRunning || user == null || IsBusy)
                 return;
+            UserChatModel param = user as UserChatModel ?? null;
+            if(param == null)
+            {
+                var userProfile = user as UserProfileResponse;
+                param = new UserChatModel
+                {
+                    UserId = userProfile?.Id ?? "",
+                    MatchId = userProfile?.MatchId ?? "",
+                    UserName = userProfile?.Username ?? "",
+                };
+            }
             IsBusy = true;
-            await ServiceHelper.GetService<INavigationService>().PushToPageAsync<MessageChatPage>(param: user);
+            await ServiceHelper.GetService<INavigationService>().PushToPageAsync<MessageChatPage>(param: param);
             IsBusy = false;
         }
 
