@@ -1,4 +1,5 @@
 using LonerApp.Features.Chat.Services;
+using LonerApp.Features.Filter.Services;
 using LonerApp.Features.Services;
 using LonerApp.Platforms.Android.Services;
 using LonerApp.UI.GlobalPages;
@@ -25,6 +26,7 @@ public static class DependencyInjection
         services.AddSingleton<IAuthorService, AuthorService>();
         services.AddSingleton<IChatService, ChatService>();
         services.AddSingleton<INotificationService, NotificationService>();
+        services.AddSingleton<IFilterService, FilterService>();
 #endif
         return services;
     }

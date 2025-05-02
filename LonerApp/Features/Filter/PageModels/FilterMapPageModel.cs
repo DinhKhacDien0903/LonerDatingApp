@@ -1,12 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using LonerApp.Features.Filter.Services;
 using Microsoft.Maui.Controls.Maps;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System.Collections.ObjectModel;
 
 namespace LonerApp.PageModels
 {
     public partial class FilterMapPageModel : BasePageModel
     {
+        public bool IsNeedLoadUsersData = true;
         [ObservableProperty]
         private bool _isVisibleNavigation;
         [ObservableProperty]
@@ -27,33 +30,84 @@ namespace LonerApp.PageModels
         private ObservableCollection<DistrictLocationModel> _districts = new();
         private ObservableCollection<DistrictLocationModel> _currentDistrinct;
         private static bool isFirstLoad = true;
-        private UserPinModel? currentLocationPin;
-        //TODO: Handel get data in server
-        private static ObservableCollection<UserPinModel> _cachePins;
+        private IFilterService _filterService;
         public Location currentLocation;
-        public FilterMapPageModel(INavigationService navigationService)
+        private string _currentUserId = string.Empty;
+        ContentPage? _previousPage;
+        SwipePageModel? _swipePageModel;
+        public FilterMapPageModel(
+            INavigationService navigationService,
+            IFilterService filterService)
             : base(navigationService, true)
         {
             IsVisibleNavigation = true;
             HasBackButton = true;
+            _filterService = filterService;
         }
 
         public override async Task InitAsync(object? initData)
         {
+            IsNeedLoadUsersData = false;
+            _previousPage = AppShell.Current?.CurrentPage as ContentPage;
+            if (_previousPage != null)
+                _swipePageModel = _previousPage.BindingContext as SwipePageModel;
+            if (initData is string userId)
+                _currentUserId = userId;
             await base.InitAsync(initData);
         }
 
+        public async Task HandleLikeAsync(object param)
+        {
+            if (_swipePageModel != null)
+            {
+                await _swipePageModel.LikePressedCommand.ExecuteAsync(param);
+            }
+        }
+
+        public async Task HandleDisLikeAsync(object param)
+        {
+            if (_swipePageModel != null)
+            {
+                await _swipePageModel.DislikePressedCommand.ExecuteAsync(param);
+            }
+        }
         public override async Task LoadDataAsync()
         {
             await base.LoadDataAsync();
             IsBusy = true;
-            await MainThread.InvokeOnMainThreadAsync(async() =>
+            await MainThread.InvokeOnMainThreadAsync(async () =>
             {
                 currentLocation = await GetCurrentLocationAsync();
+                currentLocation.Longitude = Math.Round(currentLocation.Longitude, 2);
+                currentLocation.Latitude = Math.Round(currentLocation.Latitude, 2);
                 await Task.Delay(10);
             });
-            await LoadPins();
-            //_cachePins = new ObservableCollection<UserPinModel>(Pins);
+            var resultLocationUpdate = await _filterService.UpdateLocationAsync(
+                new UpdateLocationRequest
+                {
+                    UserId = _currentUserId,
+                    Latitude = currentLocation.Latitude.ToString(),
+                    Longitude = currentLocation.Longitude.ToString()
+                });
+            if (resultLocationUpdate.IsSuccess)
+            {
+                var request = new GetMemberByLocationAndRadiusRequest
+                {
+                    UserId = _currentUserId,
+                    Longitude = currentLocation.Longitude.ToString(),
+                    Latitude = currentLocation.Latitude.ToString(),
+                    Radius = CurrentRadius
+                };
+                var data = (await _filterService.GetMemberByLocationAndRadiusAsync(request)).Users;
+                var pins = await LoadPinAsync(request);
+                Pins = new ObservableCollection<UserPinModel>(pins);
+                IsNeedLoadUsersData = true;
+            }
+            //await LoadPins();
+            else
+            {
+                await AlertHelper.ShowErrorAlertAsync($"Lỗi khi cập nhật vị trí ", "Lỗi");
+            }
             IsBusy = false;
             ShouldLoadData = false;
         }
@@ -65,180 +119,6 @@ namespace LonerApp.PageModels
                 I18nHelper.Get("Dealer_CheckPermission_AlertTitle"));
             if (alert)
                 ServiceHelper.GetService<IOpenSetting>().OpenSettingScreen();
-        }
-
-        private async Task LoadPins()
-        {
-            _cachePins = new ObservableCollection<UserPinModel>
-            {
-                new UserPinModel
-                {
-                    ImageSource = "nnn.jpeg",
-                    Label = "Nguyễn Văn A",
-                    Address = "123 Đường ABC, Quận 1, TP.HCM",
-                    Type = PinType.Place,
-                    Location = new Location(10.7725, 106.6970)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "nnn.jpeg",
-                    Label = "Trần Thị B",
-                    Address = "456 Đường XYZ, Quận 3, TP.HCM",
-                    Type = PinType.Place,
-                    Location = new Location(10.7818, 106.6826)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "lllll.jpeg",
-                    Label = "Lê Hoàng C",
-                    Address = "789 Đường MNP, Quận 5, TP.HCM",
-                    Type = PinType.Place,
-                    Location = new Location(10.7589, 106.6718)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "lllll.jpeg",
-                    Label = "Phạm Thu D",
-                    Address = "101 Đường QRS, Quận 7, TP.HCM",
-                    Type = PinType.Place,
-                    Location = new Location(10.7317, 106.7214)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "lllll.jpeg",
-                    Label = "Võ Minh E",
-                    Address = "112 Đường TUV, Quận Bình Thạnh, TP.HCM",
-                    Type = PinType.Place,
-                    Location = new Location(10.8123, 106.7025)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "lllll.jpeg",
-                    Label = "Đặng Thị F",
-                    Address = "131 Đường WXY, Quận Hải Châu, Đà Nẵng",
-                    Type = PinType.Place,
-                    Location = new Location(16.0678, 108.2207)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "lllll.jpeg",
-                    Label = "Hồ Văn G",
-                    Address = "141 Đường ZAB, Quận Thanh Khê, Đà Nẵng",
-                    Type = PinType.Place,
-                    Location = new Location(16.0712, 108.1982)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "mmm.jpeg",
-                    Label = "Cao Thị H",
-                    Address = "151 Đường CDE, Quận Sơn Trà, Đà Nẵng",
-                    Type = PinType.Place,
-                    Location = new Location(16.0889, 108.2435)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "mmm.jpeg",
-                    Label = "Bùi Thanh I",
-                    Address = "161 Đường FGH, Quận Liên Chiểu, Đà Nẵng",
-                    Type = PinType.Place,
-                    Location = new Location(16.0967, 108.1752)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "mmm.jpeg",
-                    Label = "Đỗ Ngọc K",
-                    Address = "171 Đường IJK, Quận Ngũ Hành Sơn, Đà Nẵng",
-                    Type = PinType.Place,
-                    Location = new Location(16.0385, 108.2514)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "bbbb.jpeg",
-                    Label = "Linh",
-                    Address = "Dai hoc Bach Khoa Ha Noi",
-                    Type = PinType.Place,
-                    Location = new Location(21.0043, 105.8410)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "bbbb.jpeg",
-                    Label = "Trang",
-                    Address = "Dai hoc Kinh Te Quoc Dan",
-                    Type = PinType.Place,
-                    Location = new Location(21.0026, 105.8460)
-                },
-                new UserPinModel
-                {
-                    Label = "Huong",
-                    Address = "Dai hoc Ngoai Thuong Ha Noi",
-                    Type = PinType.Place,
-                    Location = new Location(21.0245, 105.8069)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "bbbb.jpeg",
-                    Label = "Thu",
-                    Address = "Dai hoc Quoc Gia Ha Noi",
-                    Type = PinType.Place,
-                    Location = new Location(21.0371, 105.7835)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "nnn.jpeg",
-                    Label = "Nga",
-                    Address = "Dai hoc Su Pham Ha Noi",
-                    Type = PinType.SearchResult,
-                    Location = new Location(21.0370, 105.7878)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "bbbb.jpeg",
-                    Label = "Mai",
-                    Address = "Dai hoc Giao Thong Van Tai",
-                    Type = PinType.SearchResult,
-                    Location = new Location(21.0227, 105.8010)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "nnn.jpeg",
-                    Label = "Hanh",
-                    Address = "Dai hoc Y Ha Noi",
-                    Type = PinType.SearchResult,
-                    Location = new Location(21.0029, 105.8327)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "bbbb.jpeg",
-                    Label = "Van",
-                    Address = "Hoc vien Bao Chi va Tuyen Truyen",
-                    Type = PinType.Place ,
-                    Location = new Location(21.0284, 105.8028)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "bbbb.jpeg",
-                    Label = "Diep",
-                    Address = "Dai hoc Xay Dung Ha Noi",
-                    Type = PinType.Place,
-                    Location = new Location(21.0015, 105.8502)
-                },
-                new UserPinModel
-                {
-                    ImageSource = "bbbb.jpeg",
-                    Label = "Lan",
-                    Address = "Dai hoc Thuong Mai Ha Noi",
-                    Type = PinType.Place,
-                    Location = new Location(21.0326, 105.7902)
-                }
-            };
-
-            foreach (var pin in _cachePins)
-            {
-                pin.Address = $"{pin.Address} - {GetDistance(await GetCurrentLocationAsync(), pin.Location)} km";
-            }
-            var temp = GetPinsInRadius(_cachePins, CurrentRadius, currentLocation);
-            //Pins = null;
-            Pins = new ObservableCollection<UserPinModel>(temp);
         }
 
         public async Task LoadDistrictLocationAsync()
@@ -274,10 +154,7 @@ namespace LonerApp.PageModels
                 IsBusy = false;
             }
         }
-        private double GetDistance(Location fromLocation, Location destinationLocation)
-        {
-            return Math.Round(Location.CalculateDistance(fromLocation, destinationLocation, DistanceUnits.Kilometers), 2);
-        }
+
         public async Task<Location> GetCurrentLocationAsync()
         {
             try
@@ -319,21 +196,6 @@ namespace LonerApp.PageModels
             return new Location(21.0285, 105.8542);
         }
 
-        private ObservableCollection<UserPinModel> GetPinsInRadius(ObservableCollection<UserPinModel> allPins, double radius, Location curentLocation)
-        {
-            var result = new ObservableCollection<UserPinModel>();
-            foreach (var pin in allPins)
-            {
-                double distance = Math.Round(Location.CalculateDistance(curentLocation, pin.Location, DistanceUnits.Kilometers), 2);
-                if (distance <= radius)
-                {
-                    result.Add(pin);
-                }
-            }
-
-            return result;
-        }
-
         [RelayCommand]
         async Task OnSearchPressedAsync(object param)
         {
@@ -343,7 +205,6 @@ namespace LonerApp.PageModels
             IsVisibleFilterContainer = !IsVisibleFilterContainer;
             IsShowRadiusSearchBar = false;
             IsVisibleDistrictCollection = false;
-            //await NavigationService.PushToPageAsync<SearchPage>(isPushModal: true);
             await Task.Delay(100);
             IsBusy = false;
         }
@@ -360,9 +221,18 @@ namespace LonerApp.PageModels
             IsShowRadiusSearchBar = !IsShowRadiusSearchBar;
             IsVisibleFilterContainer = !IsVisibleFilterContainer;
             IsVisibleDistrictCollection = false;
-            ObservableCollection<UserPinModel> result = GetPinsInRadius(_cachePins, radius, currentLocation);
+            //ObservableCollection<UserPinModel> result = GetPinsInRadius(_cachePins, radius, currentLocation);
+            var request = new GetMemberByLocationAndRadiusRequest
+            {
+                UserId = _currentUserId,
+                Longitude = currentLocation.Longitude.ToString(),
+                Latitude = currentLocation.Latitude.ToString(),
+                Radius = CurrentRadius
+            };
+            var data = (await _filterService.GetMemberByLocationAndRadiusAsync(request)).Users;
+            var pins = await LoadPinAsync(request);
             Pins.Clear();
-            foreach (var pin in result)
+            foreach (var pin in pins)
             {
                 Pins.Add(pin);
                 await Task.Delay(10);
@@ -382,20 +252,23 @@ namespace LonerApp.PageModels
             IsBusy = true;
             if (Pins.Any())
                 Pins.Clear();
-            Pins = FindUsersInCity(_cachePins, district.Location, CurrentRadius);
+            var request = new GetMemberByLocationAndRadiusRequest
+            {
+                UserId = _currentUserId,
+                Longitude = district.Location.Longitude.ToString(),
+                Latitude = district.Location.Latitude.ToString(),
+                Radius = CurrentRadius
+            };
+            var data = (await _filterService.GetMemberByLocationAndRadiusAsync(request)).Users;
+            var pins = await LoadPinAsync(request);
+            //Pins = FindUsersInCity(_cachePins, district.Location, CurrentRadius);
+            foreach (var pin in pins)
+            {
+                Pins.Add(pin);
+                await Task.Delay(10);
+            }
             await Task.Delay(100);
             IsBusy = false;
-        }
-
-        public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
-        {
-            var dLat = DegreesToRadians(lat2 - lat1);
-            var dLon = DegreesToRadians(lon2 - lon1);
-            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                    Math.Cos(DegreesToRadians(lat1)) * Math.Cos(DegreesToRadians(lat2)) *
-                    Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
-            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-            return 6371 * c;
         }
 
         public static double DegreesToRadians(double degrees)
@@ -403,29 +276,58 @@ namespace LonerApp.PageModels
             return degrees * Math.PI / 180;
         }
 
-        public void ResetData()
+        public async Task ResetData()
         {
-            _cachePins = null;
             Pins.Clear();
+            CurrentRadius = 10;
+            var request = new GetMemberByLocationAndRadiusRequest
+            {
+                UserId = _currentUserId,
+                Longitude = currentLocation.Longitude.ToString(),
+                Latitude = currentLocation.Latitude.ToString(),
+                Radius = CurrentRadius
+            };
+            var data = (await _filterService.GetMemberByLocationAndRadiusAsync(request)).Users;
+            var pins = await LoadPinAsync(request);
+            foreach (var pin in pins)
+            {
+                Pins.Add(pin);
+                await Task.Delay(10);
+            }
+            await Task.Delay(100);
         }
 
-        public ObservableCollection<UserPinModel> FindUsersInCity(ObservableCollection<UserPinModel> userPins, Location district, double radius)
+        private async Task<List<UserPinModel>> LoadPinAsync(GetMemberByLocationAndRadiusRequest request)
         {
-            var usersPinInCity = new ObservableCollection<UserPinModel>();
-            foreach (var user in userPins)
+            try
             {
-                var distance = CalculateDistance(district.Latitude, district.Longitude, user.Location.Latitude, user.Location.Longitude);
-                if (distance <= radius)
+                var data = (await _filterService.GetMemberByLocationAndRadiusAsync(request)).Users;
+                List<UserPinModel> temp = [];
+                foreach (var item in data)
                 {
-                    usersPinInCity.Add(user);
-                }
-            }
+                    var pin = new UserPinModel
+                    {
+                        UserId = item.UserId,
+                        ImageSource = item.AvatarUrl ?? "",
+                        Label = item.UserName,
+                        Address = item.Description,
+                        Type = PinType.Place,
+                        Location = new Location(double.Parse(item.Latitude), double.Parse(item.Longitude))
+                    };
 
-            return usersPinInCity;
+                    temp.Add(pin);
+                }
+
+                return temp;
+            }
+            catch (Exception e)
+            {
+                await AlertHelper.ShowErrorAlertAsync(e.Message, "Lỗi");
+                return [];
+            }
         }
 
         [RelayCommand]
-
         async Task OnBackAsync(object param)
         {
             if (!IsBusy)
@@ -441,11 +343,11 @@ namespace LonerApp.PageModels
         async Task OnShowProfileUserAsync(object param)
         {
             if (ShowProfileUserCommand.IsRunning)
-            {
                 return;
-            }
-            //Todo: get userId for detailProfile
-            await NavigationService.PushToPageAsync<DetailProfilePage>(isPushModal: true);
+            if (param is not UserPinModel user)
+                return;
+
+            await NavigationService.PushToPageAsync<DetailProfilePage>(param: user.UserId, isPushModal: true);
             await Task.Delay(100);
         }
     }

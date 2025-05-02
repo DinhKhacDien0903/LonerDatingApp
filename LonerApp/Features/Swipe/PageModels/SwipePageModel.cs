@@ -93,7 +93,7 @@ namespace LonerApp.PageModels
                 return;
             IsBusy = true;
             IsNeedLoadUsersData = false;
-            await NavigationService.PushToPageAsync<FilterMapPage>();
+            await NavigationService.PushToPageAsync<FilterMapPage>(param: _currentUserId);
             IsBusy = false;
         }
 

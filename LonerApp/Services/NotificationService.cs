@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.SignalR.Client;
+﻿using Microsoft.AspNetCore.SignalR.Client;
 using Plugin.LocalNotification;
 
 namespace LonerApp.Services
@@ -11,7 +10,7 @@ namespace LonerApp.Services
         public NotificationService()
         {
             _connection = new HubConnectionBuilder()
-                .WithUrl(Environments.URl_SERVER_HTTPS_EMULATOR_NOTIFICATION_HUB, options =>
+                .WithUrl(Environments.URl_SERVER_HTTPS_DEVICE_WIFI_NOTIFICATION_HUB, options =>
                 {
                     options.HttpMessageHandlerFactory = _ => new HttpClientHandler
                     {
@@ -40,7 +39,6 @@ namespace LonerApp.Services
             {
                 try
                 {
-                    Console.WriteLine($"Connecting to {Environments.URl_SERVER_HTTPS_EMULATOR_NOTIFICATION_HUB}");
                     await _connection.StartAsync();
                 }
                 catch (Exception ex)

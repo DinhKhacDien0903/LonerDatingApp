@@ -11,12 +11,12 @@ public class Environments
     public const string URl_SERVER_HTTPS_EMULATOR = "https://10.0.2.2:7165/api/";
     public const string URl_SERVER_HTTP_EMULATOR = "http://10.0.2.2:5099/api/";
     public const string URl_SERVER_HTTPS_DEVICE_4G = "https://192.168.43.14:7165/api/";
-    public const string URl_SERVER_HTTPS_DEVICE_WIFI = "https://192.168.1.7:7165/api/";
+    public const string URl_SERVER_HTTPS_DEVICE_WIFI = "https://192.168.43.14:7165/api/";
     public const string URl_SERVER_HTTP_DEVICE = "https://192.168.43.14:5099/api/";
 
     //URL ChatHub Connection
-    public const string URl_SERVER_HTTPS_DEVICE_WIFI_CHAT_HUB = "https://192.168.1.7:7165/chat";
-    public const string URl_SERVER_HTTPS_DEVICE_WIFI_NOTIFICATION_HUB = "https://192.168.1.7:7165/notification";
+    public const string URl_SERVER_HTTPS_DEVICE_WIFI_CHAT_HUB = "https://192.168.43.14:7165/chat";
+    public const string URl_SERVER_HTTPS_DEVICE_WIFI_NOTIFICATION_HUB = "https://192.168.43.14:7165/notification";
     public const string URl_SERVER_HTTPS_EMULATOR_CHAT_HUB = "https://10.0.2.2:7165/chat";
     public const string URl_SERVER_HTTPS_EMULATOR_NOTIFICATION_HUB = "https://10.0.2.2:7165/notification";
 
@@ -38,6 +38,8 @@ public static class EnvironmentsExtensions
     public const string ENDPOINT_GET__MESSAGE_MATCHED = "Message/get-user-matched-active";
     public const string ENDPOINT_GET__USER_MESSAGES = "Message/get-user-message";
     public const string ENDPOINT_GET_MESSAGES = "Message/get-messages";
+    public const string ENDPOINT_UPDATE_LOCATION = "User/update-Location";
+    public const string ENDPOINT_GET_BY_LOCATION_RADIUS = "User/get-by-location-radius";
 
     //Query Params
     public const string QUERY_PARAMS_PAGINATION_REQUEST = "?PaginationRequest.UserId=";

@@ -25,6 +25,16 @@ public partial class FilterMapPage : BasePage
         base.OnAppearing();
     }
 
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        //TODO fix bug when back from profile detail page
+        //if (_vm.IsNeedLoadUsersData)
+        //{
+        //    await _vm.LoadDataAsync();
+        //}
+    }
+
     private void Grid_Loaded(object sender, EventArgs e)
     {
         if (sender is not Grid grid)
@@ -224,5 +234,3 @@ public partial class FilterMapPage : BasePage
         });
     }
 }
-
-//TODO: Reset => _currentLocation or Reload PageMap

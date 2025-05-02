@@ -48,7 +48,7 @@
                     HorizontalOptions="Center"
                     IsOpaque="True"
                     LoadingPriority="Lowest"
-                    Source="bbbb.jpeg"
+                    Source="{Binding ImageProfile}"
                     WidthRequest="{StaticResource SizeMessageImageItem}">
                     <ffimageloading:CachedImage.Clip>
                         <RoundRectangleGeometry CornerRadius="140" Rect="0,0,280,280" />
@@ -59,7 +59,7 @@
                     FontFamily="GothamBold"
                     FontSize="28"
                     HorizontalOptions="Center"
-                    Text="John, 26"
+                    Text="{Binding Description}"
                     TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
                     VerticalOptions="Start"
                     VerticalTextAlignment="Start" />

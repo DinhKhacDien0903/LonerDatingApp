@@ -14,5 +14,6 @@ namespace LonerApp.Models
         Location? _location;
         [ObservableProperty]
         string _imageSource = string.Empty;
+        public string UserId { get; set; } = string.Empty;
     }
 }

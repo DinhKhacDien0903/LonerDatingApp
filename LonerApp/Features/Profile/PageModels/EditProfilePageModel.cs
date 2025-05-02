@@ -28,7 +28,8 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private string _workEditorValue;
         [ObservableProperty]
-        private UserModel _myProfile;
+        //private UserModel _myProfile;
+        private UserProfileDetailResponse _myProfile = new();
         public EditProfilePageModel(INavigationService navigationService)
             : base(navigationService, true)
         {

@@ -31,6 +31,7 @@ namespace LonerApp.PageModels
         private UserProfileDetailResponse _myProfile = new();
         ContentPage? _previousPage;
         SwipePageModel? _swipePageModel;
+        FilterMapPageModel? _filterPageModel;
         private readonly IProfileService _profileService;
         public ProfilePageModel(INavigationService navigationService, IProfileService profileService)
             : base(navigationService, true)
@@ -44,8 +45,12 @@ namespace LonerApp.PageModels
             //TODO: Handle when user click on profile
             _previousPage = AppShell.Current?.CurrentPage as ContentPage;
             if (_previousPage != null)
+            {
                 _swipePageModel = _previousPage.BindingContext as SwipePageModel;
-            IsCurrentOtherUser = _previousPage is MainSwipePage;
+                if (_swipePageModel == null)
+                    _filterPageModel = _previousPage.BindingContext as FilterMapPageModel;
+            }
+            IsCurrentOtherUser = _previousPage is MainSwipePage || _previousPage is FilterMapPage;
             if (initData is string userId)
             {
                 MyProfile.Id = userId;
@@ -130,6 +135,8 @@ namespace LonerApp.PageModels
             {
                 _swipePageModel.DislikePressedCommand.Execute(data);
             }
+            else if (_filterPageModel != null)
+                await _filterPageModel.HandleDisLikeAsync(data);
 
             await OnCloseDetailProfileAsync(null);
         }
@@ -166,7 +173,8 @@ namespace LonerApp.PageModels
             {
                 _swipePageModel.LikePressedCommand.Execute(data);
             }
-
+            else if (_filterPageModel != null)
+                await _filterPageModel.HandleLikeAsync(data);
             await OnCloseDetailProfileAsync(null);
         }
     }
