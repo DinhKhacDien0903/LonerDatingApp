@@ -96,7 +96,7 @@
             ImageSource="icon_profile_down.png"
             MinimumWidthRequest="0"
             VerticalOptions="End"
-            WidthRequest="50"/>
+            WidthRequest="50" />
         <Grid
             Grid.Row="1"
             Margin="0"
@@ -195,6 +195,7 @@
                                 VerticalTextAlignment="Center" />
                         </StackLayout>
                         <StackLayout
+                            IsVisible="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=IsCurrentOtherUser}"
                             Orientation="Horizontal"
                             Spacing="10"
                             VerticalOptions="Center">

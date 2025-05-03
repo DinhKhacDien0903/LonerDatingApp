@@ -55,6 +55,10 @@ namespace LonerApp.PageModels
             {
                 MyProfile.Id = userId;
             }
+            else if (initData is UserProfileDetailResponse user)
+            {
+                MyProfile = user;
+            }
 
             await base.InitAsync(initData);
         }
@@ -65,7 +69,8 @@ namespace LonerApp.PageModels
             try
             {
                 IsBusy = true;
-                MyProfile = (await _profileService.GetProfileDetailAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILE_DETAIL, queryParams))?.UserDetail ?? new();
+                bool isPreviousPageEditProfile = _previousPage is EditProfilePage;
+                MyProfile = isPreviousPageEditProfile ? MyProfile : (await _profileService.GetProfileDetailAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILE_DETAIL, queryParams))?.UserDetail ?? new();
                 await Task.Delay(100);
                 await InitImages();
             }

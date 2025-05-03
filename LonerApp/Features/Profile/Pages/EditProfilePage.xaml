@@ -398,12 +398,12 @@
                         Stroke="Transparent" />
                     <Grid
                         x:Name="profileUser"
-                        x:DataType="{x:Type models:UserModel}"
-                        BindingContext="{Binding MyProfile}">
+                        x:DataType="{x:Type models:UserProfileDetailResponse}"
+                        BindingContext="{Binding PreviewProfile}">
                         <ffimageloading:CachedImage
                             Aspect="AspectFill"
                             HeightRequest="550"
-                            Source="{Binding Image}"
+                            Source="{Binding AvatarUrl}"
                             WidthRequest="350">
                             <ffimageloading:CachedImage.Clip>
                                 <RoundRectangleGeometry CornerRadius="20" Rect="0,0,350,550" />
@@ -427,7 +427,7 @@
                                     HorizontalOptions="Start"
                                     LineBreakMode="TailTruncation"
                                     MaximumWidthRequest="200"
-                                    Text="{Binding Name}"
+                                    Text="{Binding UserName}"
                                     TextColor="White"
                                     VerticalOptions="Center" />
                                 <Label

@@ -115,9 +115,9 @@ namespace LonerApp.PageModels
             {
                 Gender = new ObservableCollection<Gender>
                 {
-                    new () { ID = 0, Value = "Woman" },
-                    new () { ID = 1, Value = "Man" },
-                    new () { ID = 2, Value = "Other" }
+                    new () { ID = 0, Value = "Nam" },
+                    new () { ID = 1, Value = "Nữ" },
+                    new () { ID = 2, Value = "Khác" }
                 };
             }
             else if (currentPage is SetupInterestPage)
@@ -358,7 +358,7 @@ namespace LonerApp.PageModels
                 return;
             }
 
-            ImageSource oldImagePath = itemSelected.ImagePath;
+            string oldImagePath = itemSelected.ImagePath;
             string takePhoto = I18nHelper.Get("SetupPhotoPage_ImageDialog_TakePhoto");
             string choosePhoto = I18nHelper.Get("SetupPhotoPage_ImageDialog_ChoosePhoto");
             string[] buttons = { takePhoto, choosePhoto };
@@ -402,7 +402,7 @@ namespace LonerApp.PageModels
                     I18nHelper.Get("SetupPhotoPage_ImageDialog_Title"), I18nHelper.Get("Common_Cancel"), null, choices);
                 if ((string)choiceEdit == removePhoto)
                 {
-                    item.ImagePath = ImageSource.FromFile("blank_image.png");
+                    item.ImagePath = "blank_image.png";
                     item.IconPath = "\uf417";
                     return true;
                 }
@@ -447,7 +447,7 @@ namespace LonerApp.PageModels
                 using (BinaryReader br = new BinaryReader(stream))
                 {
                     byte[] imageBytes = br.ReadBytes((int)stream.Length);
-                    itemSelected.ImagePath = ImageSource.FromStream(() => new MemoryStream(imageBytes));
+                    //itemSelected.ImagePath = ImageSource.FromStream(() => new MemoryStream(imageBytes));
                 }
             }
             else
@@ -481,12 +481,12 @@ namespace LonerApp.PageModels
                     using (BinaryReader br = new BinaryReader(stream))
                     {
                         byte[] imageBytes = br.ReadBytes((int)stream.Length);
-                        itemSelected.ImagePath = ImageSource.FromStream(() => new MemoryStream(imageBytes));
+                        //itemSelected.ImagePath = ImageSource.FromStream(() => new MemoryStream(imageBytes));
                     }
                 }
                 else
                 {
-                    itemSelected.ImagePath = olderLocalImagePath;
+                    //itemSelected.ImagePath = olderLocalImagePath;
                 }
             }
 

@@ -1,5 +1,12 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Input;
+using LonerApp.Features.Services;
+using LonerApp.Models;
 using System.Collections.ObjectModel;
+using System.Text;
 
 namespace LonerApp.PageModels
 {
@@ -10,9 +17,9 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private bool _isVisibleNavigation;
         [ObservableProperty]
-        private bool _hasBackButton;        
+        private bool _hasBackButton;
         [ObservableProperty]
-        private bool _isPreviewVisible;        
+        private bool _isPreviewVisible;
         [ObservableProperty]
         private bool _isEditVisible;
         [ObservableProperty]
@@ -28,20 +35,51 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private string _workEditorValue;
         [ObservableProperty]
-        //private UserModel _myProfile;
         private UserProfileDetailResponse _myProfile = new();
-        public EditProfilePageModel(INavigationService navigationService)
+        [ObservableProperty]
+        private UserProfileDetailResponse _previewProfile = new();
+        private IProfileService _profileService;
+        private Cloudinary _cloudDinary;
+        private CancellationTokenSource cancellationToastToken = new CancellationTokenSource();
+        public EditProfilePageModel(
+            INavigationService navigationService,
+            IProfileService profileService)
             : base(navigationService, true)
         {
             IsVisibleNavigation = true;
+            _profileService = profileService;
+            _cloudDinary = new Cloudinary(Environments.CLOUDINARY_URL);
+            _cloudDinary.Api.Secure = true; ;
         }
 
         public override async Task InitAsync(object? initData)
         {
+            if (initData is UserProfileDetailResponse user)
+                MyProfile = user;
             IsEditVisible = true;
             IsPreviewVisible = false;
             AddPhotos = new ObservableCollection<AddPhotoModel>(
-                Enumerable.Range(1, 6).Select(_ => new AddPhotoModel()).ToList());
+                Enumerable.Range(1, 7).Select(_ => new AddPhotoModel()).ToList());
+
+            if (MyProfile != null)
+            {
+                AboutMeEditorValue = MyProfile?.About ?? "";
+                MyGender = MyProfile.Gender ? "Nam" : "Nữ";
+                MyUniversity = MyProfile?.University ?? "";
+                WorkEditorValue = MyProfile?.Work ?? "";
+                StringBuilder result = new();
+                foreach (var item in MyProfile.Interests)
+                {
+                    result.Append($"{item}, ");
+                }
+                MyInterest = result.ToString();
+                //AddPhotos = new ObservableCollection<AddPhotoModel>((MyProfile.Photos ?? []).Select(x => new AddPhotoModel { ImagePath = x }).ToList());
+                int length = MyProfile.Photos?.Count() ?? 0;
+                for (int i = 0; i < length; i++)
+                {
+                    AddPhotos[i].ImagePath = MyProfile.Photos.ElementAt(i);
+                }
+            }
             await base.InitAsync(initData);
         }
 
@@ -56,11 +94,51 @@ namespace LonerApp.PageModels
             if (DonePressedCommand.IsRunning || IsBusy)
                 return;
             IsBusy = true;
-            var x = AboutMeEditorValue.Trim();
-            //await NavigationService.PushToPageAsync<SettingPage>();
-            await Task.Delay(100);
-            IsBusy = false;
-        }        
+            try
+            {
+                var interest = MyInterest.Split(',').Select(s => s.Trim()).ToList();
+                if (MyInterest.Contains(""))
+                {
+                    var lastIndex = interest.Count - 1;
+                    interest.RemoveAt(lastIndex);
+                }
+                var editProfile = new EditInforRequest
+                {
+                    UserId = MyProfile?.Id ?? "",
+                    About = AboutMeEditorValue.Trim(),
+                    University = MyUniversity.Trim(),
+                    Work = WorkEditorValue.Trim(),
+                    Gender = MyGender.Equals("Nam"),
+                    Interests = interest,
+                    Photos = [.. AddPhotos.Where(x => !x.IsDefaultImage).Select(x => x.ImagePath)]
+                };
+
+                var updateResult = await _profileService.UpdateUserInforAsync(new UpdateUserInforRequest
+                {
+                    EditRequest = editProfile
+                });
+
+                if (updateResult?.IsSuccess ?? false)
+                    await ShowToast("Cập nhật thành công!");
+                else
+                    await ShowToast("Cập nhật thất bại!");
+                await NavigationService.PopPageAsync();
+                await Task.Delay(100);
+            }
+            catch (Exception e)
+            {
+                System.Console.WriteLine(e.Message);
+                await AlertHelper.ShowErrorAlertAsync(new AlertConfigure
+                {
+                    Title = "Lỗi",
+                    Message = "Có lỗi xảy ra trong quá trình cập nhật! Vui lòng thực hiện lại.",
+                });
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
 
         [RelayCommand]
         async Task OnGotoSetupInterestAsync(object param)
@@ -100,28 +178,40 @@ namespace LonerApp.PageModels
             if (GotoDetailProfileCommand.IsRunning || IsBusy)
                 return;
             IsBusy = true;
-            await NavigationService.PushToPageAsync<DetailProfilePage>(param: MyProfile, isPushModal: true);
+            await NavigationService.PushToPageAsync<DetailProfilePage>(param: PreviewProfile, isPushModal: true);
             await Task.Delay(100);
             IsBusy = false;
+        }
+
+        private async Task ShowToast(string content)
+        {
+            ToastDuration duration = ToastDuration.Short;
+            double fontSize = 14;
+
+            var toast = Toast.Make(content, duration, fontSize);
+
+            await toast.Show(cancellationToastToken.Token);
         }
 
         public void ShowPreviewProfile()
         {
             if (MyInterest == null || AddPhotos == null || !MyInterest.Any() || !AddPhotos.Any())
                 return;
+
             var interest = MyInterest.Split(',').Select(s => s.Trim()).ToList();
-            MyProfile = new UserModel
+            var lastIndex = interest.Count - 1;
+            interest.RemoveAt(lastIndex);
+            PreviewProfile = new UserProfileDetailResponse
             {
-                Name = "John Doe 1",
-                Age = 25,
-                Status = "Single",
-                ListImage = AddPhotos,
-                Image = AddPhotos.FirstOrDefault(x => !x.IsDefaultImage).ImagePath,
+                UserName = MyProfile.UserName,
+                Age = MyProfile.Age,
+                Photos = AddPhotos.Where(x => !x.IsDefaultImage).Select(x => x.ImagePath),
+                AvatarUrl = MyProfile.AvatarUrl,
                 Interests = new ObservableCollection<string>(interest),
                 University = MyUniversity,
                 About = AboutMeEditorValue,
-                Address = "Ha noi, Viet Nam",
-                Gender = MyGender,
+                Address = MyProfile.Address,
+                Gender = MyProfile.Gender,
                 Work = WorkEditorValue
             };
         }
@@ -158,7 +248,7 @@ namespace LonerApp.PageModels
                     await OnExcuteChoosePhotoAsync(itemSelected);
                 }
 
-                if (itemSelected.ImagePath != null && itemSelected.ImagePath != oldImagePath)
+                //if (itemSelected.ImagePath != null && itemSelected.ImagePath != oldImagePath)
                 {
                     itemSelected.IconPath = "\uf6fe";
                 }
@@ -180,7 +270,7 @@ namespace LonerApp.PageModels
                     I18nHelper.Get("SetupPhotoPage_ImageDialog_Title"), I18nHelper.Get("Common_Cancel"), null, choices);
                 if ((string)choiceEdit == removePhoto)
                 {
-                    item.ImagePath = ImageSource.FromFile("blank_image.png");
+                    item.ImagePath = "blank_image.png";
                     item.IconPath = "\uf417";
                     return false;
                 }
@@ -194,7 +284,7 @@ namespace LonerApp.PageModels
 
             return true;
         }
-        
+
         private async Task OnExcuteChoosePhotoAsync(AddPhotoModel itemSelected)
         {
             string olderLocalImagePath = itemSelected.ImagePath.ToString();
@@ -202,43 +292,47 @@ namespace LonerApp.PageModels
             if (await this.AllowTakePhotoAsync())
             {
                 var _currentLocalImage = await CameraPluginExtensions.CancelableChoosePhotoAsync(filename);
-                if (_currentLocalImage != null)
+                IsBusy = true;
+
+                var urlImageResult = await UploadImageAsync(_currentLocalImage);
+                if (!string.IsNullOrEmpty(_currentLocalImage) && !string.IsNullOrEmpty(urlImageResult))
                 {
-                    _currentLocalImage = await ProcessSelectedImageAsync(_currentLocalImage, itemSelected);
+                    itemSelected.ImagePath = urlImageResult;
+                }
+                else
+                {
+                    itemSelected.ImagePath = "blank_image.png";
                 }
 
-                if (string.IsNullOrEmpty(_currentLocalImage))
-                {
-                    _currentLocalImage = olderLocalImagePath;
-                }
+                IsBusy = false;
             }
         }
 
-        private async Task<string> ProcessSelectedImageAsync(string _currentLocalImage, AddPhotoModel itemSelected)
-        {
-            IsBusy = true;
-            using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
-            {
-                _currentLocalImage = await CameraPluginExtensions.TrimImageAsync(stream, _currentLocalImage);
-            }
+        //private async Task<string> ProcessSelectedImageAsync(string _currentLocalImage, AddPhotoModel itemSelected)
+        //{
+        //    IsBusy = true;
+        //    using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
+        //    {
+        //        _currentLocalImage = await CameraPluginExtensions.TrimImageAsync(stream, _currentLocalImage);
+        //    }
 
-            if (!string.IsNullOrEmpty(_currentLocalImage) && await UploadImageAsync(_currentLocalImage))
-            {
-                using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
-                using (BinaryReader br = new BinaryReader(stream))
-                {
-                    byte[] imageBytes = br.ReadBytes((int)stream.Length);
-                    itemSelected.ImagePath = ImageSource.FromStream(() => new MemoryStream(imageBytes));
-                }
-            }
-            else
-            {
-                _currentLocalImage = string.Empty;
-            }
+        //    if (!string.IsNullOrEmpty(_currentLocalImage) && await UploadImageAsync(_currentLocalImage))
+        //    {
+        //        using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
+        //        using (BinaryReader br = new BinaryReader(stream))
+        //        {
+        //            byte[] imageBytes = br.ReadBytes((int)stream.Length);
+        //            //itemSelected.ImagePath = ImageSource.FromStream(() => new MemoryStream(imageBytes));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        _currentLocalImage = string.Empty;
+        //    }
 
-            IsBusy = false;
-            return _currentLocalImage;
-        }
+        //    IsBusy = false;
+        //    return _currentLocalImage;
+        //}
 
         private async Task OnExcuteTakePhotoAsync(AddPhotoModel itemSelected)
         {
@@ -248,66 +342,36 @@ namespace LonerApp.PageModels
             {
                 var filename = Path.GetRandomFileName() + ".png";
                 var _currentLocalImage = await CameraPluginExtensions.CancelableTakePhotoAsync(filename);
-                if (!string.IsNullOrEmpty(_currentLocalImage))
+                var urlImageResult = await UploadImageAsync(_currentLocalImage);
+                if (!string.IsNullOrEmpty(_currentLocalImage) && !string.IsNullOrEmpty(urlImageResult))
                 {
-                    using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
-                    {
-                        _currentLocalImage = await CameraPluginExtensions.TrimImageAsync(stream, _currentLocalImage);
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(_currentLocalImage) && await UploadImageAsync(_currentLocalImage))
-                {
-                    using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
-                    using (BinaryReader br = new BinaryReader(stream))
-                    {
-                        byte[] imageBytes = br.ReadBytes((int)stream.Length);
-                        itemSelected.ImagePath = ImageSource.FromStream(() => new MemoryStream(imageBytes));
-                        itemSelected.ImagePath = _currentLocalImage;
-                    }
+                    itemSelected.ImagePath = urlImageResult;
                 }
                 else
                 {
-                    itemSelected.ImagePath = olderLocalImagePath;
+                    itemSelected.ImagePath = "blank_image.png";
                 }
             }
 
             IsBusy = false;
         }
 
-        private async Task<bool> UploadImageAsync(string imagePath)
+        private async Task<string> UploadImageAsync(string imagePath)
         {
-            var isUpLoadImage = await AlertHelper.ShowConfirmationAlertAsync(new AlertConfigure
+            if (!string.IsNullOrEmpty(imagePath))
             {
-                Title = I18nHelper.Get("SetupPhotoPage_SubmitPicture_Title"),
-                Message = I18nHelper.Get("SetupPhotoPage_SubmitPicture_Message")
-            });
-
-            if (isUpLoadImage)
-            {
-                //TODO: handle upload image in server
-
-                //_mailInquiry = await DataService.GetMailInquiryAsync();
-                //EncryptImageModel encrypt;
-                //imagePath = await ImageHelper.ImageToBase64Async(imagePath);
-                //while (!(encrypt = await DataService.EncryptImageAsync([imagePath], _mailInquiry.InquiryNo)).IsSuccess)
-                //{
-                //    if (!await AlertHelper.ShowConfirmationAlertAsync(new AlertConfigure()
-                //    {
-                //        Title = I18nHelper.Get("PhotoRegistrationPage_ReUploadDialog_Title"),
-                //        Message = I18nHelper.Get("PhotoRegistrationPage_ReUploadDialog_Message"),
-                //        OK = I18nHelper.Get("PhotoRegistrationPage_ReUploadDialog_ReUpload")
-                //    }))
-                //    {
-                //        return false;
-                //    }
-                //}
-
-                //_imageUrl = encrypt.ImageUrl;
-                return true;
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new CloudinaryDotNet.FileDescription(imagePath),
+                    UseFilename = true,
+                    UniqueFilename = true,
+                    Overwrite = true
+                };
+                var uploadResult = (await _cloudDinary.UploadAsync(uploadParams)).JsonObj;
+                return (uploadResult["secure_url"]?.ToString() ?? string.Empty);
             }
 
-            return false;
+            return string.Empty;
         }
         #endregion
 

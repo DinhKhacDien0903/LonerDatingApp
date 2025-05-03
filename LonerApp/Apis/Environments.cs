@@ -39,6 +39,7 @@ public static class EnvironmentsExtensions
     public const string ENDPOINT_GET__USER_MESSAGES = "Message/get-user-message";
     public const string ENDPOINT_GET_MESSAGES = "Message/get-messages";
     public const string ENDPOINT_UPDATE_LOCATION = "User/update-Location";
+    public const string ENDPOINT_UPDATE_USER_PROFILE = "User/update-profile";
     public const string ENDPOINT_GET_BY_LOCATION_RADIUS = "User/get-by-location-radius";
 
     //Query Params

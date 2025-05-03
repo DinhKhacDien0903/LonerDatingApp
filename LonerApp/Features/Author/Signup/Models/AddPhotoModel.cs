@@ -2,23 +2,23 @@
 {
     public partial class AddPhotoModel : BaseModel
     {
-        //[ObservableProperty]
-        //ImageSource _imagePath = ImageSource.FromFile("blank_image.png"); 
         [ObservableProperty]
-        ImageSource _imagePath = ImageSource.FromFile("blank_image.png");
+        string _imagePath = "blank_image.png";
         [ObservableProperty]
-        string _iconPath = "\uf417";
+        string _iconPath;
         public bool IsDefaultImage { get; private set; } = true;
 
-        partial void OnImagePathChanged(ImageSource oldValue, ImageSource newValue)
+        partial void OnImagePathChanged(string oldValue, string newValue)
         {
-            if (newValue is FileImageSource file && file.File == "blank_image.png")
+            if (newValue is string file && file == "blank_image.png")
             {
                 IsDefaultImage = true;
+                IconPath = "\uf417";
             }
             else
             {
                 IsDefaultImage = false;
+                IconPath = "\uf6fe";
             }
         }
     }

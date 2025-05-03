@@ -4,6 +4,7 @@
     {
         public int ID { get; set; }
         public string Value { get; set; } = string.Empty;
+        public bool ValueToBoolean { get; set; }
         [ObservableProperty]
         bool _isSelected;
     }
