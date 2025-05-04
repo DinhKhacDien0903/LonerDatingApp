@@ -4,7 +4,6 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.Input;
 using LonerApp.Features.Services;
-using LonerApp.Models;
 using System.Collections.ObjectModel;
 using System.Text;
 

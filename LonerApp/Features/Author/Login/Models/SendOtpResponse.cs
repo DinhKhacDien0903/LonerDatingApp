@@ -1,4 +1,4 @@
-namespace LonerApp.Features.Author.Login.Models;
+namespace LonerApp.Models;
 
 public class SendOtpResponse
 {

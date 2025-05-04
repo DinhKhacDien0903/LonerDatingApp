@@ -34,6 +34,7 @@ public static class EnvironmentsExtensions
     public const string ENDPOINT_GET_PROFILE_DETAIL = "User/profile-detail";
     public const string ENDPOINT_SEND_MAIL_OTP = "Auth/send-mail-otp";
     public const string ENDPOINT_VERIFY_AND_REGISTER_MAIL = "Auth/verify-mail-otp-and-register";
+    public const string ENDPOINT_LOGOUT = "Auth/logout";
     public const string ENDPOINT_SWIPE_USER = "Swipe/swipe-user";
     public const string ENDPOINT_GET__MESSAGE_MATCHED = "Message/get-user-matched-active";
     public const string ENDPOINT_GET__USER_MESSAGES = "Message/get-user-message";

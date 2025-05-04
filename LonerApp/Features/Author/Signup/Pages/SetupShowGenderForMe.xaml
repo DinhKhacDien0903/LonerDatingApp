@@ -10,7 +10,7 @@
     Title="SetupShowGenderForMe"
     x:DataType="vm:SetupPageModel"
     BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
-    NavigationPage.HasNavigationBar="True"
+    NavigationPage.HasNavigationBar="False"
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False">
     <Page.Behaviors>

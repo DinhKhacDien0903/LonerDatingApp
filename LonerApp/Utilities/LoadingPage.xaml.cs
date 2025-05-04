@@ -70,22 +70,15 @@ public partial class LoadingPage : BasePage
         else
             _isLoggedIn = Convert.ToBoolean(isLoggedIn);
 
-        //RunProgreessBarAsync(new FakeProgressConfig(), () => stopRestoreLastSession).ConfigureAwait(false);
         Task.Run(async () =>
         {
-            // await MainThread.InvokeOnMainThreadAsync(() =>
-            // {
-            //    indicator.IsRunning = true;
-            //    LoadingText.IsVisible = true;
-            // });
-
             if (!_isLoggedIn)
             {
                 stopRestoreLastSession = true;
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    UpdateProgressLayout(0);
-                });
+                //MainThread.BeginInvokeOnMainThread(() =>
+                //{
+                //    UpdateProgressLayout(0);
+                //});
 
                 AppHelper.SetMainPage(new MainPage());
                 indicator.IsRunning = false;

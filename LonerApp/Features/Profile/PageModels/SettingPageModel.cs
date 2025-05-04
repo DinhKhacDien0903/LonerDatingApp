@@ -1,4 +1,8 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using Android.Hardware.Usb;
+using CommunityToolkit.Mvvm.Input;
+using LonerApp.Features.Services;
+using LonerApp.Helpers;
+using System.Runtime.Caching.Hosting;
 
 namespace LonerApp.PageModels
 {
@@ -10,16 +14,22 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private bool _hasBackButton;
         [ObservableProperty]
-        private string _locationEditorValue;  
+        private string _locationEditorValue;
         [ObservableProperty]
-        private string _toAgeEditorValue;  
+        private string _toAgeEditorValue;
         [ObservableProperty]
         private string _fromAgeEditorValue;
-
-        public SettingPageModel(INavigationService navigationService)
+        private IProfileService _profileService;
+        private IAuthorService _authorService;
+        public SettingPageModel(
+            INavigationService navigationService,
+            IProfileService profileService,
+            IAuthorService authorService)
             : base(navigationService, true)
         {
             IsVisibleNavigation = true;
+            _profileService = profileService;
+            _authorService = authorService;
         }
 
         public override async Task InitAsync(object? initData)
@@ -72,17 +82,46 @@ namespace LonerApp.PageModels
             await Task.Delay(100);
             IsBusy = false;
         }
-        
+
         [RelayCommand]
         async Task OnLogoutPressedAsync(object param)
         {
             if (LogoutPressedCommand.IsRunning || IsBusy)
                 return;
             IsBusy = true;
-            //await NavigationService.PushToPageAsync<SettingPage>();
-            await Task.Delay(100);
-            IsBusy = false;
-        }        
+            try
+            {
+                if (await AlertHelper.ShowConfirmationAlertAsync("Bạn có chắc chắn muốn đăng xuất?","Xác nhận."))
+                {
+                    var request = new LogoutRequest
+                    {
+                        UserId = UserSetting.Get(StorageKey.UserId) ?? "",
+                        RefreshToken = UserSetting.Get(StorageKey.RefreshToken) ?? ""
+                    };
+
+                    var response = await _authorService.LogoutAsync(request);
+                    if (response.IsSuccess)
+                    {
+                        UserSetting.Remove("UserId");
+                        UserSetting.Remove("RefreshToken");
+                        UserSetting.Remove("IsLoggedIn");
+                        await (Shell.Current as AppShell)?.RemoveRootAsync();
+                        await Task.Delay(100);
+                        AppHelper.SetMainPage(new MainPage());
+                    }
+                }
+
+                await Task.Delay(100);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Logout error: {e.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
 
         [RelayCommand]
         async Task OnDeleteAccountPressedAsync(object param)

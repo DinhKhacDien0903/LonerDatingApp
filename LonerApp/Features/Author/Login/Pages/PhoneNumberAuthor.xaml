@@ -12,9 +12,9 @@
     Title="PhoneNumberAuthor"
     x:DataType="vm:LoginPageModel"
     BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
-    NavigationPage.HasNavigationBar="True"
-    Shell.NavBarIsVisible="True"
-    Shell.TabBarIsVisible="True">
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
     <Page.Behaviors>
         <toolkit:StatusBarBehavior StatusBarColor="White" StatusBarStyle="DarkContent" />
     </Page.Behaviors>
