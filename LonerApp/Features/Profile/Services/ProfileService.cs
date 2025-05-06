@@ -24,6 +24,20 @@ public class ProfileService : IProfileService
         }
     }
 
+    public async Task<GetSettingAccountResponse?> GetSettingAccountAsync(string UserId)
+    {
+        try
+        {
+            var response = await _apiService.GetAsync<GetSettingAccountResponse>(EnvironmentsExtensions.ENDPOINT_GET_BY_SETTING_ACCOUNT, $"?UserId={UserId}");
+            return response;
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Error during swipe operation: {ex.Message}", ex);
+            return null;
+        }
+    }
+
     public async Task<UpdateUserInforResponse?> UpdateUserInforAsync(UpdateUserInforRequest request)
     {
         try

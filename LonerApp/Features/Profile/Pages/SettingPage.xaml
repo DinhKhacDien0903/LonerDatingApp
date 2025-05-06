@@ -106,7 +106,7 @@
                                     FontFamily="GothamBold"
                                     FontSize="13"
                                     HorizontalTextAlignment="End"
-                                    Text="0777712640"
+                                    Text="{Binding PhoneNumberValue}"
                                     TextColor="#939393"
                                     VerticalTextAlignment="Center" />
                                 <Label
@@ -141,7 +141,7 @@
                                     FontFamily="GothamBold"
                                     FontSize="13"
                                     HorizontalTextAlignment="End"
-                                    Text="loremipsum@gmail.com"
+                                    Text="{Binding EmailValue}"
                                     TextColor="#939393"
                                     VerticalTextAlignment="Center" />
                                 <Label
