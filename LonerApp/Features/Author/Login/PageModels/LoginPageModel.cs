@@ -64,6 +64,8 @@ namespace LonerApp.PageModels
         private readonly LoginEmailValidator _emailNumberValidator = new();
         private readonly IAuthorService _authorService;
         private readonly INavigationOtherShellService _navigationOtherShell;
+        ContentPage? _previousPage;
+        SettingPageModel? _settingPageModel;
 
         public LoginPageModel(
             INavigationService navigationService,
@@ -84,13 +86,16 @@ namespace LonerApp.PageModels
 
         public override async Task InitAsync(object? initData)
         {
-            await base.InitAsync(initData);
+            _previousPage = AppShell.Current?.CurrentPage as ContentPage;
+            if (_previousPage != null)
+                _settingPageModel = _previousPage.BindingContext as SettingPageModel;
             if (initData is string data)
                 PhoneNumberValue = data;
             else
                 PhoneNumberValue = "";
             HasBackButton = true;
             IsVisibleNavigation = true;
+            await base.InitAsync(initData);
         }
 
         [RelayCommand]
@@ -110,6 +115,10 @@ namespace LonerApp.PageModels
             IsBusy = true;
             PhoneNumberValue = PhoneNumberValue.Trim();
             var validatorResult = _phoneNumberValidator.Validate(this);
+            if (_previousPage is SettingPage editPage)
+            {
+
+            }
             if (validatorResult.IsValid)
             {
                 IsShowError = false;

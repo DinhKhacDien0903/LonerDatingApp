@@ -18,9 +18,15 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private string _toAgeEditorValue;
         [ObservableProperty]
+        private string _phoneNumberValue;
+        [ObservableProperty]
+        private string _emailValue;
+        [ObservableProperty]
         private string _fromAgeEditorValue;
+        private SettingAccountResponse _settingAccount = new();
         private IProfileService _profileService;
         private IAuthorService _authorService;
+        private string _currentUserId = string.Empty;
         public SettingPageModel(
             INavigationService navigationService,
             IProfileService profileService,
@@ -37,9 +43,21 @@ namespace LonerApp.PageModels
             await base.InitAsync(initData);
         }
 
-        public override Task LoadDataAsync()
+        public override async Task LoadDataAsync()
         {
-            return base.LoadDataAsync();
+            _currentUserId = UserSetting.Get(StorageKey.UserId);
+            var response = await _profileService.GetSettingAccountAsync(_currentUserId);
+            _settingAccount = response?.SettingAccount ?? new();
+            if (_settingAccount != null)
+            {
+                PhoneNumberValue = _settingAccount.PhoneNumber ?? string.Empty;
+                EmailValue = _settingAccount.Email ?? string.Empty;
+                LocationEditorValue = _settingAccount.Address ?? string.Empty;
+                FromAgeEditorValue = _settingAccount.MinAge.ToString();
+                ToAgeEditorValue = _settingAccount.MaxAge.ToString();
+            }
+
+            await base.LoadDataAsync();
         }
 
         [RelayCommand]
@@ -91,7 +109,7 @@ namespace LonerApp.PageModels
             IsBusy = true;
             try
             {
-                if (await AlertHelper.ShowConfirmationAlertAsync("Bạn có chắc chắn muốn đăng xuất?","Xác nhận."))
+                if (await AlertHelper.ShowConfirmationAlertAsync("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận."))
                 {
                     var request = new LogoutRequest
                     {
