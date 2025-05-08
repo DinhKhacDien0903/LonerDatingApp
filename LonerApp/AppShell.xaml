@@ -8,16 +8,16 @@
     Title="LonerApp"
     Shell.FlyoutBehavior="Disabled">
     <TabBar>
-        <!--<ShellContent
+        <ShellContent
             Title=""
-            ContentTemplate="{DataTemplate pages:MainSwipePage}"
+            ContentTemplate="{DataTemplate pages:NotificationPage}"
             Icon="{StaticResource IconHomePage}"
             Route="mainSwipePage" />
-        <ShellContent
+        <!-- <ShellContent
             Title=""
             ContentTemplate="{DataTemplate pages:ChatPage}"
             Icon="{StaticResource IconChatPage}"
-            Route="chatPage" />-->
+            Route="chatPage" /> -->
         <ShellContent
             Title=""
             ContentTemplate="{DataTemplate pages:MyProfilePage}"

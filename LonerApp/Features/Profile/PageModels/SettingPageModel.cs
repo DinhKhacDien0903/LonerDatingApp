@@ -1,8 +1,8 @@
-﻿using Android.Hardware.Usb;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.Input;
 using LonerApp.Features.Services;
 using LonerApp.Helpers;
-using System.Runtime.Caching.Hosting;
 
 namespace LonerApp.PageModels
 {
@@ -22,11 +22,14 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private string _emailValue;
         [ObservableProperty]
+        private string _showGenderValue;
+        [ObservableProperty]
         private string _fromAgeEditorValue;
         private SettingAccountResponse _settingAccount = new();
         private IProfileService _profileService;
         private IAuthorService _authorService;
         private string _currentUserId = string.Empty;
+        private CancellationTokenSource cancellationToastToken = new CancellationTokenSource();
         public SettingPageModel(
             INavigationService navigationService,
             IProfileService profileService,
@@ -40,11 +43,6 @@ namespace LonerApp.PageModels
 
         public override async Task InitAsync(object? initData)
         {
-            await base.InitAsync(initData);
-        }
-
-        public override async Task LoadDataAsync()
-        {
             _currentUserId = UserSetting.Get(StorageKey.UserId);
             var response = await _profileService.GetSettingAccountAsync(_currentUserId);
             _settingAccount = response?.SettingAccount ?? new();
@@ -57,6 +55,11 @@ namespace LonerApp.PageModels
                 ToAgeEditorValue = _settingAccount.MaxAge.ToString();
             }
 
+            await base.InitAsync(initData);
+        }
+
+        public override async Task LoadDataAsync()
+        {
             await base.LoadDataAsync();
         }
 
@@ -96,9 +99,40 @@ namespace LonerApp.PageModels
             if (DonePressedCommand.IsRunning || IsBusy)
                 return;
             IsBusy = true;
-            //await NavigationService.PushToPageAsync<SettingPage>();
+            bool isUpdateSuccess = (await _profileService.UpdateUserSettingAsync(new UpdateUserSettingRequest
+            {
+                EditRequest = new EditSettingAccountRequest
+                {
+                    UserId = _currentUserId,
+                    PhoneNumber = PhoneNumberValue,
+                    Email = EmailValue,
+                    Address = LocationEditorValue,
+                    MinAge = int.Parse(FromAgeEditorValue),
+                    MaxAge = int.Parse(ToAgeEditorValue),
+                    ShowGender = ShowGenderValue == "Nam"
+                }
+            }))?.IsSuccess ?? false;
+            if (isUpdateSuccess)
+            {
+                await ShowToast("Cập nhật thành công");
+            }
+            else
+            {
+                await ShowToast("Cập nhật thất bại");
+            }
             await Task.Delay(100);
+            await NavigationService.PopPageAsync();
             IsBusy = false;
+        }
+
+        private async Task ShowToast(string content)
+        {
+            ToastDuration duration = ToastDuration.Short;
+            double fontSize = 14;
+
+            var toast = Toast.Make(content, duration, fontSize);
+
+            await toast.Show(cancellationToastToken.Token);
         }
 
         [RelayCommand]

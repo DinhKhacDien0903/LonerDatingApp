@@ -115,12 +115,14 @@ namespace LonerApp.PageModels
             IsBusy = true;
             PhoneNumberValue = PhoneNumberValue.Trim();
             var validatorResult = _phoneNumberValidator.Validate(this);
-            if (_previousPage is SettingPage editPage)
-            {
-
-            }
             if (validatorResult.IsValid)
             {
+                if (_settingPageModel != null)
+                {
+                    _settingPageModel.PhoneNumberValue = PhoneNumberValue;
+                    await NavigationService.PopPageAsync();
+                    return;
+                }
                 IsShowError = false;
                 //TODO: Handle OTP.
                 var accountSid = "AC42be1218f22e662224f57255a40e61db";
@@ -132,7 +134,6 @@ namespace LonerApp.PageModels
                     channel: "sms",
                     pathServiceSid: "VA197516f6d68a53f646a7274fd2f3cadd"
                 );
-                //await NavigationService.PushToPageAsync<VerifyPhoneNumberAuthorPage>(param: $"{PhoneNumberValue} ", isPushModal: true);
                 await _navigationOtherShell.NavigateToAsync<VerifyPhoneNumberAuthorPage>(param: $"{PhoneNumberValue} ", isPushModal: true);
             }
             else
@@ -149,25 +150,25 @@ namespace LonerApp.PageModels
             IsBusy = true;
             VerifyPhoneNumberValue = VerifyPhoneNumberValue.Trim();
             //TODO: Check confirm code to database
-            var accountSid = "AC42be1218f22e662224f57255a40e61db";
-            var authToken = "cae95aa66aa256c7c192200f3d2232ec";
-            TwilioClient.Init(accountSid, authToken);
-
-            var verification = VerificationCheckResource.Create(
-                to: "+84777712640",
-                code: VerifyPhoneNumberValue,
-                pathServiceSid: "VA197516f6d68a53f646a7274fd2f3cadd"
-            );
-
-            if (verification.Status == "approved")
-            {
-                ErrorTextValue = "Nhập đúng";
-            }
-            else
-                ErrorTextValue = "Nhập sai";
             var validatorResult = _verifiedPhoneNumber.Validate(this);
             if (validatorResult.IsValid)
             {
+                var accountSid = "AC42be1218f22e662224f57255a40e61db";
+                var authToken = "cae95aa66aa256c7c192200f3d2232ec";
+                TwilioClient.Init(accountSid, authToken);
+
+                var verification = VerificationCheckResource.Create(
+                    to: "+84777712640",
+                    code: VerifyPhoneNumberValue,
+                    pathServiceSid: "VA197516f6d68a53f646a7274fd2f3cadd"
+                );
+
+                if (verification.Status == "approved")
+                {
+                    ErrorTextValue = "Nhập đúng";
+                }
+                else
+                    ErrorTextValue = "Nhập sai";
                 IsShowError = false;
                 await _navigationOtherShell.GoBackAsync();
             }
@@ -194,18 +195,21 @@ namespace LonerApp.PageModels
                     DisplayError(validationResult.Errors.FirstOrDefault()?.ErrorMessage ?? "Invalid email");
                     return;
                 }
+                if (_settingPageModel != null)
+                {
+                    _settingPageModel.EmailValue = EmailValue;
+                    await NavigationService.PopPageAsync();
+                    return;
+                }
 
                 var sendMailResponse = await _authorService.SendMailOtpAsync(new()
                 {
                     Email = EmailValue
                 });
-
                 if (sendMailResponse?.IsSuccess == true)
                 {
                     ClearError();
-                    //await NavigationService.PushToPageAsync<VerifyPhoneEmailAuthorPage>(param: EmailValue, isPushModal: false);
                     await _navigationOtherShell.NavigateToAsync<VerifyPhoneEmailAuthorPage>(param: EmailValue, isPushModal: false);
-
                     await Task.Delay(100);
                 }
                 else
@@ -239,7 +243,12 @@ namespace LonerApp.PageModels
         async Task OnBackAsync(object param)
         {
             if (!IsBusy)
-                await _navigationOtherShell.GoBackAsync();
+            {
+                if(NavigationService != null)
+                    await NavigationService.PopPageAsync(isPopModal: false);
+                else
+                    await _navigationOtherShell.GoBackAsync();
+            }
         }
     }
 }

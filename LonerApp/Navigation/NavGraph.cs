@@ -25,5 +25,9 @@ namespace LonerApp.Navigation;
             Routing.RegisterRoute(nameof(FilterMapPage), typeof(FilterMapPage));
             Routing.RegisterRoute(nameof(ChatPage), typeof(ChatPage));
             Routing.RegisterRoute(nameof(MessageChatPage), typeof(MessageChatPage));
+            Routing.RegisterRoute(nameof(SettingPage), typeof(SettingPage));
+            Routing.RegisterRoute(nameof(EditProfilePage), typeof(EditProfilePage));
+            Routing.RegisterRoute(nameof(MyProfilePage), typeof(MyProfilePage));
+            Routing.RegisterRoute(nameof(NotificationPage), typeof(NotificationPage));
         }
     }

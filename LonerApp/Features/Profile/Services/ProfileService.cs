@@ -51,4 +51,18 @@ public class ProfileService : IProfileService
             return null;
         }
     }
+
+    public async Task<UpdateUserSettingResponse?> UpdateUserSettingAsync(UpdateUserSettingRequest request)
+    {
+        try
+        {
+            var response = await _apiService.PostAsync<UpdateUserSettingResponse>(EnvironmentsExtensions.ENDPOINT_UPDATE_USER_SETTING_ACCOUNT, request);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Error during swipe operation: {ex.Message}", ex);
+            return null;
+        }
+    }
 }
