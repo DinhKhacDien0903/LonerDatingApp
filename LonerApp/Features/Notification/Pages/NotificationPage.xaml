@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage
+    x:Class="LonerApp.Features.Pages.NotificationPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    Title="NotificationPage"
+    x:DataType="vm:NotificationPageModel"
+    BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
+    <base:BasePage.Resources>
+        <x:Double x:Key="SizeMessageImageItem">80</x:Double>
+        <DataTemplate x:Key="NotificationItemTemplate" x:DataType="{x:Type models:NotificationResponse}">
+            <SwipeView
+                Grid.RowSpan="2"
+                Grid.Column="1"
+                Margin="-1,0,0,0"
+                IsEnabled="{Binding CanSwipe}">
+                <SwipeView.RightItems>
+                    <SwipeItems>
+                        <SwipeItem
+                            BackgroundColor="LightGreen"
+                            IconImageSource="mmm.jpeg"
+                            Text="Favorite" />
+                        <SwipeItem
+                            BackgroundColor="LightPink"
+                            IconImageSource="nnn.jpeg"
+                            Text="Delete" />
+                    </SwipeItems>
+                </SwipeView.RightItems>
+                <Grid
+                    Margin="0,5"
+                    ColumnDefinitions="10,*,10"
+                    HeightRequest="100">
+                    <Border
+                        Grid.Column="1"
+                        Margin="0,0,0,0"
+                        Padding="5"
+                        Background="#edc2d0"
+                        StrokeShape="RoundRectangle 20"
+                        StrokeThickness="0">
+                        <Grid
+                            Padding="10,0,0,0"
+                            ColumnDefinitions="Auto, *"
+                            ColumnSpacing="10"
+                            HorizontalOptions="Start"
+                            RowDefinitions="Auto,Auto"
+                            VerticalOptions="Center">
+                            <ffimageloading:CachedImage
+                                Grid.RowSpan="2"
+                                Aspect="AspectFit"
+                                DownsampleToViewSize="True"
+                                HeightRequest="{StaticResource SizeMessageImageItem}"
+                                HorizontalOptions="Start"
+                                IsOpaque="True"
+                                LoadingPriority="Lowest"
+                                Source="{Binding NotificationImage}"
+                                WidthRequest="{StaticResource SizeMessageImageItem}">
+                                <ffimageloading:CachedImage.Clip>
+                                    <RoundRectangleGeometry CornerRadius="50" Rect="0,0,80,80" />
+                                </ffimageloading:CachedImage.Clip>
+                            </ffimageloading:CachedImage>
+                            <Label
+                                Grid.Column="1"
+                                FontFamily="GothamBold"
+                                FontSize="16"
+                                HorizontalOptions="Start"
+                                Text="{Binding Title}"
+                                VerticalOptions="Center" />
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                FontFamily="GothamLight"
+                                FontSize="16"
+                                HorizontalOptions="Center"
+                                LineBreakMode="TailTruncation"
+                                Text="{Binding Messeage}"
+                                VerticalOptions="Start"
+                                VerticalTextAlignment="Start" />
+                        </Grid>
+                    </Border>
+                </Grid>
+            </SwipeView>
+        </DataTemplate>
+    </base:BasePage.Resources>
+    <Grid
+        Margin="0"
+        Padding="0"
+        RowDefinitions="Auto,*,Auto">
+        <controls:CustomNavigationBar
+            BackButtonCommand="{Binding BackCommand}"
+            HasBackButton="{Binding HasBackButton}"
+            IsVisible="{Binding IsVisibleNavigation}"
+            TitlePage="Notification" />
+        <CollectionView
+            x:Name="NotificationCollectionView"
+            Grid.Row="1"
+            ItemTemplate="{StaticResource NotificationItemTemplate}"
+            ItemsSource="{Binding Notifications}"
+            ItemsUpdatingScrollMode="KeepLastItemInView"
+            VerticalScrollBarVisibility="Always" />
+    </Grid>
+</base:BasePage>

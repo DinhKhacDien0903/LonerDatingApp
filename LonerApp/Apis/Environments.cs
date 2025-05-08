@@ -41,7 +41,10 @@ public static class EnvironmentsExtensions
     public const string ENDPOINT_GET_MESSAGES = "Message/get-messages";
     public const string ENDPOINT_UPDATE_LOCATION = "User/update-Location";
     public const string ENDPOINT_UPDATE_USER_PROFILE = "User/update-profile";
+    public const string ENDPOINT_UPDATE_USER_SETTING_ACCOUNT = "User/update-setting-account";
     public const string ENDPOINT_GET_BY_LOCATION_RADIUS = "User/get-by-location-radius";
+    public const string ENDPOINT_GET_BY_SETTING_ACCOUNT = "User/get-setting-account";
+    public const string ENDPOINT_GET_NOTIFICATIONS = "Notification/get-notifications";
 
     //Query Params
     public const string QUERY_PARAMS_PAGINATION_REQUEST = "?PaginationRequest.UserId=";

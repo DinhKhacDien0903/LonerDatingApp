@@ -27,6 +27,7 @@ public static class DependencyInjection
         services.AddSingleton<IChatService, ChatService>();
         services.AddSingleton<INotificationService, NotificationService>();
         services.AddSingleton<IFilterService, FilterService>();
+        services.AddSingleton<INotificationManagerService, NotificationManagerService>();
 #endif
         return services;
     }
@@ -46,6 +47,7 @@ public static class DependencyInjection
         services.AddTransient<ChatMessageImagePageModel>();
         services.AddTransient<FilterMapPageModel>();
         services.AddTransient<SettingPageModel>();
+        services.AddTransient<NotificationPageModel>();
         return services;
     }
 
@@ -74,6 +76,7 @@ public static class DependencyInjection
         services.AddTransient<MyProfilePage>();
         services.AddTransient<EditProfilePage>();
         services.AddTransient<SettingPage>();
+        services.AddTransient<NotificationPage>();
         return services;
     }
 }

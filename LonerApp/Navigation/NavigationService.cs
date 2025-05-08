@@ -47,9 +47,29 @@ namespace LonerApp.Navigation
             throw new NotImplementedException();
         }
 
-        public Task PopToRootAsync(bool isAnimation = true)
+        public async Task PopToRootAsync(bool isAnimation = true)
         {
-            throw new NotImplementedException();
+            if (IsProcessing)
+                return;
+            try
+            {
+                IsProcessing = true;
+                if (Navigation.NavigationStack.Count > 0)
+                {
+                    await Navigation.PopToRootAsync(animated: isAnimation);
+                }
+                else
+                {
+                    this.Log("No pages to navigate back to!");
+                }
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                IsProcessing = false;
+            }
         }
 
         public async Task PushToPageAsync<T>(object? param = null, bool isPushModal = false, bool isAnimation = true)

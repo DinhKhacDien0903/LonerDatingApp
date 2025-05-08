@@ -248,7 +248,7 @@
                                 FontFamily="GothamBold"
                                 FontSize="13"
                                 HorizontalTextAlignment="End"
-                                Text="Women"
+                                Text="{Binding ShowGenderValue}"
                                 TextColor="#939393"
                                 VerticalTextAlignment="Center" />
                             <Label

@@ -84,9 +84,10 @@ namespace LonerApp.PageModels
         private MonthValidator _monthValidator = new();
         private YearValidator _yearValidator = new();
         private string _currentLocalImage;
-        ContentPage? _previousPage;
         EditProfilePageModel? _editProfilePageModel;
         private readonly INavigationOtherShellService _navigationOtherShell;
+        ContentPage? _previousPage;
+        SettingPageModel? _settingPageModel;
 
         public SetupPageModel(INavigationService navigationService,
             INavigationOtherShellService navigationOtherShell)
@@ -99,7 +100,10 @@ namespace LonerApp.PageModels
         {
             _previousPage = AppShell.Current?.CurrentPage as ContentPage;
             if (_previousPage != null)
+            {
                 _editProfilePageModel = _previousPage.BindingContext as EditProfilePageModel;
+                _settingPageModel = _previousPage.BindingContext as SettingPageModel;
+            }
             HasBackButton = true;
             IsVisibleNavigation = true;
             await base.InitAsync(initData);
@@ -109,7 +113,7 @@ namespace LonerApp.PageModels
         {
             await base.LoadDataAsync();
             var currentPage = AppShell.Current?.CurrentPage;
-            if(currentPage == null)
+            if (currentPage == null)
                 currentPage = AppHelper.CurrentMainPage?.GetCurrentPage();
             if (currentPage is SetupGenderPage || currentPage is SetupShowGenderForMe)
             {
@@ -233,7 +237,13 @@ namespace LonerApp.PageModels
             try
             {
                 IsBusy = true;
-                //await NavigationService.PushToPageAsync<SetupUniversityPage>(isPushModal: false);
+                if (_settingPageModel != null)
+                {
+                    _settingPageModel.ShowGenderValue = Gender.Where(x => x.IsSelected).FirstOrDefault()?.Value ?? "Nam";
+                    await NavigationService.PopPageAsync();
+                    return;
+                }
+
                 await _navigationOtherShell.NavigateToAsync<SetupUniversityPage>();
             }
             catch (Exception ex)
@@ -260,7 +270,6 @@ namespace LonerApp.PageModels
                     await NavigationService.PopPageAsync(isPopModal: false);
                 }
                 else
-                    //await NavigationService.PushToPageAsync<SetupInterestPage>(isPushModal: false);
                     await _navigationOtherShell.NavigateToAsync<SetupInterestPage>();
             }
             catch (Exception ex)
@@ -550,7 +559,12 @@ namespace LonerApp.PageModels
         async Task OnBackAsync(object param)
         {
             if (!IsBusy)
-                await _navigationOtherShell.GoBackAsync();
+            {
+                if (NavigationService != null)
+                    await NavigationService.PopPageAsync(isPopModal: false);
+                else
+                    await _navigationOtherShell.GoBackAsync();
+            }
         }
 
         [RelayCommand]

@@ -2,7 +2,6 @@
 using LonerApp.Features.Filter.Services;
 using Microsoft.Maui.Controls.Maps;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System.Collections.ObjectModel;
 
 namespace LonerApp.PageModels
