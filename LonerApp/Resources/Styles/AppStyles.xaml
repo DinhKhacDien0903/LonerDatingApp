@@ -29,8 +29,7 @@
     <OnIdiom
         x:Key="IconSize"
         x:TypeArguments="x:Double"
-        Default="30">
-    </OnIdiom>
+        Default="30" />
 
     <OnIdiom
         x:Key="IconSizeSmall"
@@ -73,6 +72,13 @@
         x:Key="IconChatPage"
         FontFamily="{x:Static f:FluentUI.FontFamily}"
         Glyph="{x:Static f:FluentUI.chat_multiple_heart_32_regular}"
+        Size="{StaticResource IconSize}"
+        Color="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
+                                Dark={StaticResource LightOnDarkBackground}}" />
+    <FontImageSource
+        x:Key="IconNotification"
+        FontFamily="{x:Static f:FluentUI.FontFamily}"
+        Glyph="{x:Static f:FluentUI.alert_32_regular}"
         Size="{StaticResource IconSize}"
         Color="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
                                 Dark={StaticResource LightOnDarkBackground}}" />

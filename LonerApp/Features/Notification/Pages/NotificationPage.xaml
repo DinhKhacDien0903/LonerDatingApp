@@ -19,7 +19,9 @@
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False">
     <base:BasePage.Resources>
+        <ResourceDictionary />
         <x:Double x:Key="SizeMessageImageItem">80</x:Double>
+        <toolkit:InvertedBoolConverter x:Key="BoolRevertConverter" />
         <DataTemplate x:Key="NotificationItemTemplate" x:DataType="{x:Type models:NotificationResponse}">
             <SwipeView
                 Grid.RowSpan="2"
@@ -29,26 +31,63 @@
                 <SwipeView.RightItems>
                     <SwipeItems>
                         <SwipeItem
-                            BackgroundColor="LightGreen"
-                            IconImageSource="mmm.jpeg"
-                            Text="Favorite" />
+                            BackgroundColor="#f2cac9"
+                            Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:NotificationPageModel}}, x:DataType={x:Type vm:NotificationPageModel}, Path=RemoveNotificationCommand}"
+                            CommandParameter="{Binding .}"
+                            Text="Xoá">
+                            <SwipeItem.IconImageSource>
+                                <FontImageSource
+                                    FontFamily="MaterialFontFamily"
+                                    Glyph="&#xf1c0;"
+                                    Size="10"
+                                    Color="White" />
+                            </SwipeItem.IconImageSource>
+                        </SwipeItem>
                         <SwipeItem
-                            BackgroundColor="LightPink"
-                            IconImageSource="nnn.jpeg"
-                            Text="Delete" />
+                            BackgroundColor="#e5f7d0"
+                            Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:NotificationPageModel}}, x:DataType={x:Type vm:NotificationPageModel}, Path=ReadNotificationCommand}"
+                            CommandParameter="{Binding .}"
+                            IsVisible="{Binding IsRead, Converter={StaticResource BoolRevertConverter}}"
+                            Text="Đã xem">
+                            <SwipeItem.IconImageSource>
+                                <FontImageSource
+                                    FontFamily="MaterialFontFamily"
+                                    Glyph="&#xf134;"
+                                    Size="10"
+                                    Color="White" />
+                            </SwipeItem.IconImageSource>
+                        </SwipeItem>
                     </SwipeItems>
                 </SwipeView.RightItems>
                 <Grid
                     Margin="0,5"
                     ColumnDefinitions="10,*,10"
                     HeightRequest="100">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:NotificationPageModel}}, x:DataType={x:Type vm:NotificationPageModel}, Path=NotificationItemClickedCommand}"
+                            CommandParameter="{Binding .}" />
+                    </Grid.GestureRecognizers>
                     <Border
                         Grid.Column="1"
                         Margin="0,0,0,0"
                         Padding="5"
-                        Background="#edc2d0"
                         StrokeShape="RoundRectangle 20"
                         StrokeThickness="0">
+                        <Border.Triggers>
+                            <DataTrigger
+                                Binding="{Binding IsRead}"
+                                TargetType="Border"
+                                Value="True">
+                                <Setter Property="Background" Value="#e0e0e0" />
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding IsRead}"
+                                TargetType="Border"
+                                Value="False">
+                                <Setter Property="Background" Value="#edc2d0" />
+                            </DataTrigger>
+                        </Border.Triggers>
                         <Grid
                             Padding="10,0,0,0"
                             ColumnDefinitions="Auto, *"
@@ -101,8 +140,11 @@
             BackButtonCommand="{Binding BackCommand}"
             HasBackButton="{Binding HasBackButton}"
             IsVisible="{Binding IsVisibleNavigation}"
+            OptionButtonCommand="{Binding ClearNotificationsCommand}"
+            OptionPage="&#xf6cb;"
             TitlePage="Notification" />
         <CollectionView
+            Loaded="NotificationCollectionView_Loaded"
             x:Name="NotificationCollectionView"
             Grid.Row="1"
             ItemTemplate="{StaticResource NotificationItemTemplate}"
