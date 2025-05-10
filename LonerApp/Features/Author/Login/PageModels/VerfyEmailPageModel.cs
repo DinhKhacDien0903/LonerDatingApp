@@ -88,8 +88,8 @@ public partial class VerfyEmailPageModel : BasePageModel
                 UserSetting.Set(StorageKey.IsAccountSetup, verifyResponse.IsAccountSetup.ToString());
                 UserSetting.Set(StorageKey.AccessToken, verifyResponse.AccessToken);
                 UserSetting.Set(StorageKey.RefreshToken, verifyResponse.RefreshToken);
-                if (currentId == null)
-                    UserSetting.Set(StorageKey.UserId, verifyResponse.UserId);
+                UserSetting.Remove("UserId");
+                UserSetting.Set(StorageKey.UserId, verifyResponse.UserId);
 
                 if (!verifyResponse.IsAccountSetup)
                     await _navigationOtherShell.NavigateToAsync<SetupNamePage>(isPushModal: false);

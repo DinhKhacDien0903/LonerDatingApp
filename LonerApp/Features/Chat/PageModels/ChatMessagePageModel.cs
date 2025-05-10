@@ -112,6 +112,9 @@ namespace LonerApp.PageModels
         public async override Task LoadDataAsync()
         {
             // _currentPage = 0;
+            try
+            {
+                IsBusy = true;
             await base.LoadDataAsync();
             IsBusy = true;
             _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
@@ -120,6 +123,11 @@ namespace LonerApp.PageModels
             Messages = [.. data1?.Messages?.Items ?? []];
             _currentPage++;
             IsBusy = false;
+        }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private bool _isLoadingMoreMessages;

@@ -25,19 +25,26 @@ public partial class NotificationPageModel : BasePageModel
         : base(navigationService, true)
     {
         IsVisibleNavigation = true;
-        HasBackButton = true;
+        HasBackButton = false;
         _notificationService = notificationService;
     }
 
     public override async Task LoadDataAsync()
     {
-        _currentUserId = UserSetting.Get(StorageKey.UserId);
-        _currentUserId = "00bc5583-430e-455b-95b5-90ea51c14342";
-        if (string.IsNullOrEmpty(_currentUserId))
-            return;
-        var response = await _notificationService.GetNotificationAsync(_currentPage, PageSize, _currentUserId);
-        Notifications = [.. response?.Notifications?.Items ?? []];
-        await base.LoadDataAsync();
+        try
+        {
+            IsBusy = true;
+            _currentUserId = UserSetting.Get(StorageKey.UserId);
+            if (string.IsNullOrEmpty(_currentUserId))
+                return;
+            var response = await _notificationService.GetNotificationAsync(_currentPage, PageSize, _currentUserId);
+            Notifications = [.. response?.Notifications?.Items ?? []];
+            await base.LoadDataAsync();
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     [RelayCommand]
@@ -45,6 +52,7 @@ public partial class NotificationPageModel : BasePageModel
     {
         if (RemoveNotificationCommand.IsRunning || IsBusy)
             return;
+        IsBusy = true;
         if (param is not NotificationResponse notification)
             return;
 
@@ -60,6 +68,7 @@ public partial class NotificationPageModel : BasePageModel
             await ShowToast("Failed to remove notification");
         // ScrollToTop();
         await Task.Delay(100);
+        IsBusy = false;
     }
 
     [RelayCommand]
@@ -70,6 +79,7 @@ public partial class NotificationPageModel : BasePageModel
         if (param is not NotificationResponse notification)
             return;
 
+        IsBusy = true;
         notification.IsRead = true;
         await ResortNotifications();
         var response = await _notificationService.ReadNotification(new ReadNotificationRequest
@@ -82,6 +92,7 @@ public partial class NotificationPageModel : BasePageModel
             await ShowToast("Failed to read notification");
         ScrollToTop();
         await Task.Delay(100);
+        IsBusy = false;
     }
 
     private async Task ResortNotifications()
@@ -116,16 +127,21 @@ public partial class NotificationPageModel : BasePageModel
         if (Notifications.Count() < 1 || ClearNotificationsCommand.IsRunning || IsBusy)
             return;
 
+        IsBusy = true;
         if (await AlertHelper.ShowConfirmationAlertAsync("Bạn có chắc chắn muốn clear thông báo?", "Xác nhận."))
         {
-            Notifications.Clear();
             var response = await _notificationService.ClearNotifications(_currentUserId);
             if (response.IsSuccess)
+            {
+                Notifications.Clear();
                 await ShowToast(response?.Message ?? "Notification clear successfully");
+            }
             else
                 await ShowToast("Failed to clear notification");
             await Task.Delay(100);
         }
+
+        IsBusy = false;
     }
 
     [RelayCommand]
@@ -136,6 +152,7 @@ public partial class NotificationPageModel : BasePageModel
         if (param is not NotificationResponse notification)
             return;
 
+        IsBusy = true;
         var request = new UserChatModel()
         {
             UserId = notification.SenderId ?? "",
@@ -148,6 +165,8 @@ public partial class NotificationPageModel : BasePageModel
                 await NavigationService.PushToPageAsync<MessageChatPage>(param: request);
             });
         }
+
+        IsBusy = false;
     }
 
     [RelayCommand]

@@ -65,14 +65,23 @@ namespace LonerApp.PageModels
 
         public override async Task LoadDataAsync()
         {
-            _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
-            string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}";
-            var data = await _swipeService.GetProfilesAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILES, queryParams);
-            _hasMoreUsers = data?.User?.Items.Any() ?? false;
-            Users = [.. data?.User?.Items ?? []];
-            countUser = Users.Count;
-            _currentPage++;
-            await base.LoadDataAsync();
+            try
+            {
+                IsBusy = true;
+                _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
+                string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}";
+                var data = await _swipeService.GetProfilesAsync(EnvironmentsExtensions.ENDPOINT_GET_PROFILES, queryParams);
+                _hasMoreUsers = data?.User?.Items.Any() ?? false;
+                Users = [.. data?.User?.Items ?? []];
+                countUser = Users.Count;
+                _currentPage++;
+                await base.LoadDataAsync();
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+
         }
 
         [RelayCommand]

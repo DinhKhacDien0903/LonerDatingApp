@@ -29,11 +29,11 @@ public partial class LoadingPage : BasePage
 
     protected override async void OnAppearing()
     {
-        App.RefreshApp();
-        // ServiceHelper.GetService<ISystemStyleManager>().SetStatusBarColor("#ffffff");
-        // await SetupNotificationPermission();
+        //App.RefreshApp();
+        ServiceHelper.GetService<ISystemStyleManager>().SetStatusBarColor("#ffffff");
+        await SetupNotificationPermission();
         base.OnAppearing();
-        // DoLogin();
+        DoLogin();
     }
 
     private async Task SetupNotificationPermission()
