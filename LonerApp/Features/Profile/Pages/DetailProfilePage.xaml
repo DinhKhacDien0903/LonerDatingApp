@@ -106,7 +106,7 @@
             RowDefinitions="*,Auto"
             RowSpacing="5">
             <ScrollView HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never">
-                <Grid RowDefinitions="*,*,*">
+                <Grid RowDefinitions="*,*,*,*">
                     <!--  description information  -->
                     <StackLayout Orientation="Vertical" Spacing="5">
                         <StackLayout Orientation="Horizontal" Spacing="10">
@@ -266,6 +266,33 @@
                                 <LinearItemsLayout ItemSpacing="10" Orientation="Horizontal" />
                             </CollectionView.ItemsLayout>
                         </CollectionView>
+                        <BoxView
+                            BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            HeightRequest="1"
+                            HorizontalOptions="Fill"
+                            Opacity="0.3" />
+                    </StackLayout>
+                    <StackLayout
+                        Grid.Row="3"
+                        Orientation="Vertical"
+                        Spacing="5">
+                        <Label
+                            FontFamily="GothamBold"
+                            FontSize="{StaticResource FontSizeS}"
+                            Text="Report"
+                            TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
+                        <Button
+                            BackgroundColor="{StaticResource White}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Text="Chặn"
+                            TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                            WidthRequest="250" />
+                        <Button
+                            BackgroundColor="{StaticResource White}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Text="Báo cáo người dùng"
+                            TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                            WidthRequest="250" />
                         <BoxView
                             BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
                             HeightRequest="1"

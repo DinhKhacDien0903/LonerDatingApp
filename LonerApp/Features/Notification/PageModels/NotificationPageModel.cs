@@ -165,6 +165,13 @@ public partial class NotificationPageModel : BasePageModel
                 await NavigationService.PushToPageAsync<MessageChatPage>(param: request);
             });
         }
+        else if (!string.IsNullOrEmpty(notification.RelatedId))
+        {
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                await NavigationService.PushToPageAsync<DetailProfilePage>(param: notification.RelatedId);
+            });
+        }
 
         IsBusy = false;
     }
