@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Input;
 using LonerApp.Features.Services;
 using System.Collections.ObjectModel;
 
@@ -33,6 +35,7 @@ namespace LonerApp.PageModels
         SwipePageModel? _swipePageModel;
         FilterMapPageModel? _filterPageModel;
         private readonly IProfileService _profileService;
+        private CancellationTokenSource cancellationToastToken = new CancellationTokenSource();
         public ProfilePageModel(INavigationService navigationService, IProfileService profileService)
             : base(navigationService, true)
         {
@@ -181,6 +184,76 @@ namespace LonerApp.PageModels
             else if (_filterPageModel != null)
                 await _filterPageModel.HandleLikeAsync(data);
             await OnCloseDetailProfileAsync(null);
+        }
+
+        [RelayCommand]
+        async Task OnBlockPressedAsync(object param)
+        {
+            if (BlockPressedCommand.IsRunning || IsBusy)
+                return;
+
+            if (param is not UserProfileDetailResponse user)
+                return;
+
+            try
+            {
+                IsBusy = true;
+                var isAgree = await AlertHelper.ShowConfirmationAlertAsync(
+                            "Bạn chắc chắn muốn chặn người dùng này?",
+                            "Xác nhận"
+                );
+                if (isAgree)
+                {
+                    var request = new BlockRequest
+                    {
+                        BlockerId = UserSetting.Get(StorageKey.UserId) ?? "",
+                        BlockedId = user?.Id ?? "",
+                        TypeBlocked = 0
+                    };
+                    var response = await _profileService.BlockAsync(request);
+                    if (response?.IsSuccess ?? false)
+                        await ShowToast("Block user successfully");
+                    else
+                        await ShowToast("Failed to block user");
+                    await OnCloseDetailProfileAsync(null);
+                }
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        async Task OnReportPressedAsync(object param)
+        {
+            if (ReportPressedCommand.IsRunning || IsBusy)
+                return;
+
+            if (param is not UserProfileDetailResponse user)
+                return;
+
+            var data = new UserProfileResponse
+            {
+                Id = user?.Id ?? ""
+            };
+            if (_swipePageModel != null)
+            {
+                _swipePageModel.LikePressedCommand.Execute(data);
+            }
+            else if (_filterPageModel != null)
+                await _filterPageModel.HandleLikeAsync(data);
+            await OnCloseDetailProfileAsync(null);
+        }
+
+        private async Task ShowToast(string content)
+        {
+            ToastDuration duration = ToastDuration.Short;
+            double fontSize = 14;
+
+            var toast = Toast.Make(content, duration, fontSize);
+
+            await toast.Show(cancellationToastToken.Token);
         }
     }
 }

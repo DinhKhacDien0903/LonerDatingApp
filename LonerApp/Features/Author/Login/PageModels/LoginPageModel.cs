@@ -244,7 +244,7 @@ namespace LonerApp.PageModels
         {
             if (!IsBusy)
             {
-                if(NavigationService != null)
+                if(AppShell.Current != null)
                     await NavigationService.PopPageAsync(isPopModal: false);
                 else
                     await _navigationOtherShell.GoBackAsync();
