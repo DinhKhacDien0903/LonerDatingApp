@@ -274,6 +274,7 @@
                     </StackLayout>
                     <StackLayout
                         Grid.Row="3"
+                        IsVisible="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=IsCurrentOtherUser}"
                         Orientation="Vertical"
                         Spacing="5">
                         <Label
@@ -283,12 +284,16 @@
                             TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
                         <Button
                             BackgroundColor="{StaticResource White}"
+                            Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=BlockPressedCommand}"
+                            CommandParameter="{Binding .}"
                             Style="{StaticResource SecondaryButtonStyle}"
                             Text="Chặn"
                             TextColor="{toolkit:AppThemeResource PrimaryColor}"
                             WidthRequest="250" />
                         <Button
                             BackgroundColor="{StaticResource White}"
+                            Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ProfilePageModel}}, x:DataType={x:Type vm:ProfilePageModel}, Path=ReportPressedCommand}"
+                            CommandParameter="{Binding .}"
                             Style="{StaticResource SecondaryButtonStyle}"
                             Text="Báo cáo người dùng"
                             TextColor="{toolkit:AppThemeResource PrimaryColor}"

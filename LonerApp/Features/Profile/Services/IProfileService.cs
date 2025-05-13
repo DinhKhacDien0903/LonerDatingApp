@@ -6,4 +6,5 @@ public interface IProfileService
     Task<GetSettingAccountResponse?> GetSettingAccountAsync( string UserId);
     Task<UpdateUserInforResponse?> UpdateUserInforAsync(UpdateUserInforRequest request);
     Task<UpdateUserSettingResponse?> UpdateUserSettingAsync(UpdateUserSettingRequest request);
+    Task<BlockResponse?> BlockAsync(BlockRequest request);
 }

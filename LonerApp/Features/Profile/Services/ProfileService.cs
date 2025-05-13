@@ -10,6 +10,20 @@ public class ProfileService : IProfileService
         _apiService = apiService;
     }
 
+    public async Task<BlockResponse?> BlockAsync(BlockRequest request)
+    {
+        try
+        {
+            var response = await _apiService.PostAsync<BlockResponse>(EnvironmentsExtensions.ENDPOINT_BLOCK_USER_PROFILE, request);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Error during swipe operation: {ex.Message}", ex);
+            return null;
+        }
+    }
+
     public async Task<GetProfileDetailResponse?> GetProfileDetailAsync(string endpoint, string UserId)
     {
         try
