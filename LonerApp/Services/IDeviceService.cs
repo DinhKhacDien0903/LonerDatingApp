@@ -14,5 +14,6 @@
         void HideKeyboard();
 
         void SetResizeKeyboardInput();
+        PermissionStatus GetNativePermissionStatus(Permission permission);
     }
 }

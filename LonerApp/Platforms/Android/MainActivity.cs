@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Views;
@@ -11,6 +12,8 @@ namespace LonerApp
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
     public class MainActivity : MauiAppCompatActivity
     {
+        public static TaskCompletionSource<bool> LocationSettingsTcs { get; set; }
+         public const int ACCURACY_LOCATION_REQUEST = 1001;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             this.Window.RequestFeature(WindowFeatures.ActionBar);
@@ -18,10 +21,17 @@ namespace LonerApp
             base.OnCreate(savedInstanceState);
             //HideSystemUI();
         }
-
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            if (requestCode == ACCURACY_LOCATION_REQUEST)
+            {
+                LocationSettingsTcs?.TrySetResult(result: resultCode == Result.Ok);
+            }
+        }
         private void HideSystemUI()
         {
-            var window = Platform.CurrentActivity?.Window;;
+            var window = Platform.CurrentActivity?.Window; ;
             if (window != null)
             {
                 window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);

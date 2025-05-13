@@ -4,6 +4,7 @@ using Android.Graphics;
 using Android.Media;
 using Android.Views.InputMethods;
 using AndroidX.Core.App;
+using AndroidX.Core.Content;
 using AndroidX.Core.View;
 using Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;
 using Sharpnado.CollectionView.Droid.Helpers;
@@ -24,6 +25,24 @@ namespace LonerApp.Services
             {
                 return null;
             }
+        }
+        public PermissionStatus GetNativePermissionStatus(Permission permission)
+        {
+            switch (permission)
+            {
+                case Permission.Photos:
+                    return PermissionStatus.Granted;
+                case Permission.Location:
+                    return GetSelfPermission(Android.Manifest.Permission.AccessCoarseLocation) == Android.Content.PM.Permission.Granted ? PermissionStatus.Restricted : PermissionStatus.Denied;
+                default:
+                    return PermissionStatus.Denied;
+            }
+        }
+
+                private Android.Content.PM.Permission GetSelfPermission(string permission)
+        {
+            var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity ?? throw new NullReferenceException("Current activity is null");
+            return ContextCompat.CheckSelfPermission(activity, permission);
         }
 
         private void OrientationAndResize(string filePath, int maxDimension)

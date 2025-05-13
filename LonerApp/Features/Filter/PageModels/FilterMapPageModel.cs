@@ -3,6 +3,7 @@ using LonerApp.Features.Filter.Services;
 using Microsoft.Maui.Controls.Maps;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace LonerApp.PageModels
 {
@@ -34,6 +35,8 @@ namespace LonerApp.PageModels
         private string _currentUserId = string.Empty;
         ContentPage? _previousPage;
         SwipePageModel? _swipePageModel;
+        private const int RETRY_TIME = 5;
+        private static Location HANOI_LOCATION = new Location(21.0285, 105.8542);
         public FilterMapPageModel(
             INavigationService navigationService,
             IFilterService filterService)
@@ -88,7 +91,7 @@ namespace LonerApp.PageModels
                     Latitude = currentLocation.Latitude.ToString(),
                     Longitude = currentLocation.Longitude.ToString()
                 });
-            if (resultLocationUpdate.IsSuccess)
+            if (resultLocationUpdate != null && resultLocationUpdate.IsSuccess)
             {
                 var request = new GetMemberByLocationAndRadiusRequest
                 {
@@ -97,7 +100,6 @@ namespace LonerApp.PageModels
                     Latitude = currentLocation.Latitude.ToString(),
                     Radius = CurrentRadius
                 };
-                var data = (await _filterService.GetMemberByLocationAndRadiusAsync(request)).Users;
                 var pins = await LoadPinAsync(request);
                 Pins = new ObservableCollection<UserPinModel>(pins);
                 IsNeedLoadUsersData = true;
@@ -175,9 +177,8 @@ namespace LonerApp.PageModels
                 if (currentLocation != null)
                     return currentLocation;
 
-                var request = new GeolocationRequest(GeolocationAccuracy.Best, TimeSpan.FromSeconds(40));
-                var location = await Geolocation.GetLocationAsync(request);
-                if (location != null)
+                var location = await DeviceLocation.GetDeviceLocationAsync();
+                if (IsLocationValid(location))
                 {
                     UserSetting.SetObject(StorageKey.CurrentLocation, location);
                     return location;
@@ -193,6 +194,17 @@ namespace LonerApp.PageModels
             }
 
             return new Location(21.0285, 105.8542);
+        }
+
+        private bool IsLocationValid(Location location)
+        {
+            if (location == null)
+                return false;
+            if (location.Longitude < 0 || location.Latitude < 0)
+                return false;
+            if (location.Longitude > 180 || location.Latitude > 90)
+                return false;
+            return true;
         }
 
         [RelayCommand]
@@ -228,7 +240,6 @@ namespace LonerApp.PageModels
                 Latitude = currentLocation.Latitude.ToString(),
                 Radius = CurrentRadius
             };
-            var data = (await _filterService.GetMemberByLocationAndRadiusAsync(request)).Users;
             var pins = await LoadPinAsync(request);
             Pins.Clear();
             foreach (var pin in pins)
@@ -258,7 +269,6 @@ namespace LonerApp.PageModels
                 Latitude = district.Location.Latitude.ToString(),
                 Radius = CurrentRadius
             };
-            var data = (await _filterService.GetMemberByLocationAndRadiusAsync(request)).Users;
             var pins = await LoadPinAsync(request);
             //Pins = FindUsersInCity(_cachePins, district.Location, CurrentRadius);
             foreach (var pin in pins)
@@ -286,7 +296,6 @@ namespace LonerApp.PageModels
                 Latitude = currentLocation.Latitude.ToString(),
                 Radius = CurrentRadius
             };
-            var data = (await _filterService.GetMemberByLocationAndRadiusAsync(request)).Users;
             var pins = await LoadPinAsync(request);
             foreach (var pin in pins)
             {
@@ -311,7 +320,7 @@ namespace LonerApp.PageModels
                         Label = item.UserName,
                         Address = item.Description,
                         Type = PinType.Place,
-                        Location = new Location(double.Parse(item.Latitude), double.Parse(item.Longitude))
+                        Location = new Location(double.Parse(item.Latitude, CultureInfo.InvariantCulture), double.Parse(item.Longitude, CultureInfo.InvariantCulture))
                     };
 
                     temp.Add(pin);
