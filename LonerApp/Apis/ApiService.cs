@@ -29,7 +29,7 @@ public class ApiService : IApiService
     {
         try
         {
-            var url = string.IsNullOrEmpty(queryParams) ? endpoint : $"{endpoint}?{queryParams}";
+            var url = string.IsNullOrEmpty(queryParams) ? endpoint : $"{endpoint}{queryParams}";
             var response = await _httpClient.DeleteAsync(url);
             response.EnsureSuccessStatusCode();
         }
@@ -102,12 +102,12 @@ public class ApiService : IApiService
         }
     }
 
-    private string GetBaseUrl() => Environments.URl_SERVER_HTTPS_DEVICE_WIFI;
+    private string GetBaseUrl() => Environments.URl_SERVER_HTTPS_DEVICE_4G;
 
     public async Task<T?> RefreshTokenAsync<T>(string refreshToken)
     {
         return await PostAsync<T>(
-            $"{Environments.URl_SERVER_HTTPS_DEVICE_WIFI}",
+            $"{Environments.URl_SERVER_HTTPS_DEVICE_4G}",
             new {RefreshToken = refreshToken });
     }
 }

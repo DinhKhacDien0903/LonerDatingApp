@@ -115,15 +115,15 @@ namespace LonerApp.PageModels
             try
             {
                 IsBusy = true;
-            await base.LoadDataAsync();
-            IsBusy = true;
-            _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
-            string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_partner.MatchId}";
-            var data1 = await _chatService.GetMessagesAsync(EnvironmentsExtensions.ENDPOINT_GET_MESSAGES, queryParams);
-            Messages = [.. data1?.Messages?.Items ?? []];
-            _currentPage++;
-            IsBusy = false;
-        }
+                await base.LoadDataAsync();
+                IsBusy = true;
+                _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
+                string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_partner.MatchId}";
+                var data1 = await _chatService.GetMessagesAsync(EnvironmentsExtensions.ENDPOINT_GET_MESSAGES, queryParams);
+                Messages = [.. data1?.Messages?.Items ?? []];
+                _currentPage++;
+                IsBusy = false;
+            }
             finally
             {
                 IsBusy = false;
