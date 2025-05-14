@@ -11,7 +11,7 @@
         {
             try
             {
-                return ServiceHelper.GetService<IServiceProvider>().GetService<T>();;
+                return ServiceHelper.GetService<IServiceProvider>().GetService<T>();
             }
             catch (Exception e)
             {
@@ -41,6 +41,29 @@
             lock (_syncLock)
             {
                 _navigationStack.Add(page);
+            }
+
+            _navigateCompletionSource.TrySetResult(true);
+            return await _navigateCompletionSource.Task;
+        }
+
+        public static async Task<bool> PopToNavigationStackAsync(string page)
+        {
+            if (_navigateCompletionSource != null && !_navigateCompletionSource.Task.IsCompleted)
+            {
+                await _navigateCompletionSource.Task;
+            }
+
+            _navigateCompletionSource = new TaskCompletionSource<bool>();
+            if (_navigationStack.Count == 0 && !_navigationStack.Contains(page))
+            {
+                _navigateCompletionSource.TrySetResult(false);
+                return await _navigateCompletionSource.Task;
+            }
+
+            lock (_syncLock)
+            {
+                _navigationStack.Remove(page);
             }
 
             _navigateCompletionSource.TrySetResult(true);

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<controls:CustomCommunityPopup
+    x:Class="LonerApp.UI.Controls.ReportPopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+    xmlns:cardViewControls="clr-namespace:PanCardView.Controls;assembly=PanCardView"
+    xmlns:cards="clr-namespace:PanCardView;assembly=PanCardView"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:pages="clr-namespace:Mopups.Pages;assembly=Mopups"
+    xmlns:swipe="clr-namespace:Plugin.Maui.SwipeCardView;assembly=Plugin.Maui.SwipeCardView"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    x:DataType="vm:ProfilePageModel"
+    NavigationPage.HasNavigationBar="True"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="True">
+    <ContentView
+        x:Name="contentRating"
+        Margin="20,0"
+        Padding="6,0">
+        <Border
+            x:Name="borderRating"
+            Padding="20"
+            BackgroundColor="Red"
+            HorizontalOptions="{OnPlatform Android='CenterAndExpand',
+                                           iOS='FillAndExpand'}"
+            StrokeShape="RoundRectangle 10"
+            VerticalOptions="{OnPlatform Android='Center',
+                                         iOS='FillAndExpand'}">
+            <StackLayout x:Name="stackContent" MinimumHeightRequest="{Binding Source={x:Reference contentRating}, Path=Height, x:DataType={x:Type ContentView}}">
+                <ScrollView
+                    x:Name="scrollView"
+                    HorizontalScrollBarVisibility="Never"
+                    VerticalOptions="StartAndExpand"
+                    VerticalScrollBarVisibility="Never"
+                    WidthRequest="{Binding Source={x:Reference stackContent}, Path=Width, x:DataType={x:Type StackLayout}}">
+                    <StackLayout>
+                        <Label
+                            x:Name="labelTitle"
+                            Margin="0,0,0,10"
+                            FontFamily="GothamBold"
+                            FontSize="32"
+                            HorizontalOptions="Center"
+                            LineBreakMode="TailTruncation"
+                            MaxLines="1"
+                            TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                            VerticalOptions="Center" />
+                        <Border
+                            x:Name="borderKeyboard"
+                            Padding="20"
+                            BackgroundColor="Transparent"
+                            IsVisible="true"
+                            VerticalOptions="FillAndExpand" />
+                    </StackLayout>
+                </ScrollView>
+            </StackLayout>
+        </Border>
+    </ContentView>
+</controls:CustomCommunityPopup>

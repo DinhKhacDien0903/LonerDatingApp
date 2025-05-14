@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Views;
 using LonerApp.Features.Chat.Services;
 using LonerApp.Features.Filter.Services;
 using LonerApp.Features.Services;
@@ -28,6 +29,9 @@ public static class DependencyInjection
         services.AddSingleton<INotificationService, NotificationService>();
         services.AddSingleton<IFilterService, FilterService>();
         services.AddSingleton<INotificationManagerService, NotificationManagerService>();
+        services.AddSingleton<INavigationCommunityPopupService, NavigationCommunityPopupService>();
+        services.AddSingleton<IReportService, ReportService>();
+        // services.AddTransientPopup<ReportPopup, ReportPageModel>();
 #endif
         return services;
     }
@@ -48,6 +52,7 @@ public static class DependencyInjection
         services.AddTransient<FilterMapPageModel>();
         services.AddTransient<SettingPageModel>();
         services.AddTransient<NotificationPageModel>();
+        services.AddTransient<ReportPageModel>();
         return services;
     }
 
@@ -77,6 +82,15 @@ public static class DependencyInjection
         services.AddTransient<EditProfilePage>();
         services.AddTransient<SettingPage>();
         services.AddTransient<NotificationPage>();
+        services.AddTransient<ReportUserPage>();
+        // services.AddTransient<ReportPopup>();
+        return services;
+    }
+    public static IServiceCollection AddTransientPopup<TPopupView, TPopupViewModel>(this IServiceCollection services)
+    where TPopupView : Popup
+    where TPopupViewModel : BasePageModel
+    {
+        NavigationCommunityPopupService.AddTransientPopup<TPopupView, TPopupViewModel>(services);
         return services;
     }
 }

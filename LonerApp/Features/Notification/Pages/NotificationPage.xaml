@@ -26,8 +26,7 @@
             <SwipeView
                 Grid.RowSpan="2"
                 Grid.Column="1"
-                Margin="-1,0,0,0"
-                IsEnabled="{Binding CanSwipe}">
+                Margin="-1,0,0,0">
                 <SwipeView.RightItems>
                     <SwipeItems>
                         <SwipeItem

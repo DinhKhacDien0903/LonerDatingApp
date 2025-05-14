@@ -233,17 +233,22 @@ namespace LonerApp.PageModels
             if (param is not UserProfileDetailResponse user)
                 return;
 
-            var data = new UserProfileResponse
+            try
             {
-                Id = user?.Id ?? ""
-            };
-            if (_swipePageModel != null)
-            {
-                _swipePageModel.LikePressedCommand.Execute(data);
+                IsBusy = true;
+                var isAgree = await AlertHelper.ShowConfirmationAlertAsync(
+                            "Bạn chắc chắn muốn báo cáo người dùng này?",
+                            "Xác nhận"
+                );
+                if (isAgree)
+                {
+                    await NavigationService.PushToPageAsync<ReportUserPage>(MyProfile?.Id);
+                }
             }
-            else if (_filterPageModel != null)
-                await _filterPageModel.HandleLikeAsync(data);
-            await OnCloseDetailProfileAsync(null);
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task ShowToast(string content)

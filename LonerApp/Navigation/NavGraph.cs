@@ -29,5 +29,6 @@ namespace LonerApp.Navigation;
             Routing.RegisterRoute(nameof(EditProfilePage), typeof(EditProfilePage));
             Routing.RegisterRoute(nameof(MyProfilePage), typeof(MyProfilePage));
             Routing.RegisterRoute(nameof(NotificationPage), typeof(NotificationPage));
+            Routing.RegisterRoute(nameof(ReportPopup), typeof(ReportPopup));
         }
     }

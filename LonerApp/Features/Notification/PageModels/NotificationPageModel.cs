@@ -153,6 +153,7 @@ public partial class NotificationPageModel : BasePageModel
             return;
 
         IsBusy = true;
+        notification.IsRead = true;
         var request = new UserChatModel()
         {
             UserId = notification.SenderId ?? "",
@@ -173,6 +174,11 @@ public partial class NotificationPageModel : BasePageModel
             });
         }
 
+        //TODO: Handle other notification types
+        var response = await _notificationService.ReadNotification(new ReadNotificationRequest
+        {
+            Notification = notification
+        });
         IsBusy = false;
     }
 
