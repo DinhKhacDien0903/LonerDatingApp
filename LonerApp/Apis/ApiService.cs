@@ -74,11 +74,13 @@ public class ApiService : IApiService
         }
         catch (HttpRequestException ex)
         {
-            throw new ApiException($"HTTP Error: {ex.Message}", ex);
+            System.Console.WriteLine($"HTTP Error: {ex.Message}", ex);
+            return default;
         }
         catch (Exception ex)
         {
-            throw new ApiException($"Error calling API: {ex.Message}", ex);
+            System.Console.WriteLine($"Error calling API: {ex.Message}", ex);
+            return default;
         }
     }
 

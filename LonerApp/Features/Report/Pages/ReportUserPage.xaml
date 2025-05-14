@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage
+    x:Class="LonerApp.Features.Pages.ReportUserPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+    xmlns:cardViewControls="clr-namespace:PanCardView.Controls;assembly=PanCardView"
+    xmlns:cards="clr-namespace:PanCardView;assembly=PanCardView"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:swipe="clr-namespace:Plugin.Maui.SwipeCardView;assembly=Plugin.Maui.SwipeCardView"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    Title="ReportUserPage"
+    x:DataType="vm:ReportPageModel"
+    BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+    NavigationPage.HasNavigationBar="True"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="True">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="BoolRevertConverter" />
+        </ResourceDictionary>
+        <DataTemplate x:Key="ItemReason" x:DataType="models:Reason">
+            <Border
+                Margin="0,10,0,0"
+                Background="Transparent"
+                Stroke="Gray"
+                StrokeShape="RoundRectangle 10"
+                StrokeThickness="2">
+                <Label
+                    FontFamily="Gotham"
+                    FontSize="{StaticResource FontSizeM}"
+                    HorizontalOptions="Start"
+                    LineBreakMode="WordWrap"
+                    Text="{Binding Label_vi}"
+                    VerticalOptions="Center" />
+                <Border.Triggers>
+                    <DataTrigger
+                        Binding="{Binding IsSelected}"
+                        TargetType="Border"
+                        Value="True">
+                        <Setter Property="Stroke" Value="{toolkit:AppThemeResource PrimaryColor}" />
+                    </DataTrigger>
+                </Border.Triggers>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ReportPageModel}}, x:DataType={x:Type vm:ReportPageModel}, Path=ItemReasonClickedkCommand}" CommandParameter="{Binding .}" />
+                </Border.GestureRecognizers>
+            </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="ReportUserTemplate" x:DataType="models:ReportModel">
+            <StackLayout VerticalOptions="Start">
+                <Label
+                    Margin="0,10,0,0"
+                    FontFamily="GothamBold"
+                    FontSize="18"
+                    HorizontalOptions="Start"
+                    Text="{Binding Label_vi}"
+                    VerticalOptions="Center" />
+                <CollectionView
+                    BackgroundColor="White"
+                    ItemSizingStrategy="MeasureFirstItem"
+                    ItemTemplate="{StaticResource ItemReason}"
+                    ItemsSource="{Binding Reasons, Mode=OneWay}"
+                    SelectionMode="None"
+                    VerticalOptions="Center"
+                    VerticalScrollBarVisibility="Never" />
+            </StackLayout>
+        </DataTemplate>
+    </ContentPage.Resources>
+    <Grid
+        Margin="0"
+        Padding="0"
+        RowDefinitions="Auto,*,Auto">
+        <controls:CustomNavigationBar
+            BackButtonCommand="{Binding BackCommand}"
+            HasBackButton="{Binding HasBackButton}"
+            IsVisible="{Binding IsVisibleNavigation}"
+            OptionButtonCommand="{Binding CancelCommand}"
+            OptionPage="&#xf157;"
+            TitlePage="Report" />
+        <Grid
+            Grid.Row="1"
+            HorizontalOptions="Center"
+            RowDefinitions="30, *">
+            <StackLayout
+                Margin="0"
+                HorizontalOptions="Center"
+                Orientation="Horizontal"
+                Spacing="90">
+                <Label
+                    x:Name="EditLabel"
+                    FontFamily="GothamBold"
+                    FontSize="{StaticResource FontSizeM}"
+                    HorizontalOptions="Center"
+                    Text="Lý do"
+                    TextColor="{toolkit:AppThemeResource PrimaryColor}" />
+                <Label
+                    x:Name="PreviewLabel"
+                    FontFamily="GothamBold"
+                    FontSize="{StaticResource FontSizeM}"
+                    HorizontalOptions="Center"
+                    Text="Gửi"
+                    TextColor="#939393">
+                    <Label.Triggers>
+                        <DataTrigger
+                            Binding="{Binding IsSendingProcess}"
+                            TargetType="Label"
+                            Value="True">
+                            <Setter Property="TextColor" Value="{toolkit:AppThemeResource PrimaryColor}" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+            </StackLayout>
+            <ScrollView Grid.Row="1" IsVisible="{Binding IsSendingProcess, Converter={StaticResource BoolRevertConverter}}">
+                <StackLayout
+                    Margin="0"
+                    Padding="20,0,20,20"
+                    Orientation="Vertical">
+                    <Label
+                        FontFamily="Gotham"
+                        FontSize="{StaticResource FontSizeM}"
+                        HorizontalOptions="Center"
+                        Text="Nếu bạn đang nguy hiểm hoặc cần giúp đỡ, hãy liên hệ với chúng tôi qua email: dinhkhacdien@gmail.com. Những điều bạn chia sẻ với chúng tôi sẽ được bảo mật và không ai khác ngoài bạn và chúng tôi biết về điều đó."
+                        VerticalOptions="Center" />
+                    <Label
+                        FontFamily="GothamBold"
+                        FontSize="18"
+                        HorizontalOptions="Center"
+                        Text="Lý do báo cáo của bạn là gì?"
+                        VerticalOptions="Center" />
+                    <CollectionView
+                        Grid.Row="1"
+                        BackgroundColor="White"
+                        ItemTemplate="{StaticResource ReportUserTemplate}"
+                        ItemsSource="{Binding ReportTemplates, Mode=OneWay}"
+                        SelectionMode="None"
+                        VerticalOptions="Center"
+                        VerticalScrollBarVisibility="Never" />
+                </StackLayout>
+            </ScrollView>
+
+            <StackLayout
+                Grid.Row="1"
+                Margin="0"
+                Padding="20"
+                HorizontalOptions="Center"
+                IsVisible="{Binding IsSendingProcess}"
+                Orientation="Vertical">
+                <Label
+                    FontFamily="Gotham"
+                    FontSize="{StaticResource FontSizeL}"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Text="Bạn có muốn chia sẻ thêm chi tiết nào nữa không?"
+                    VerticalOptions="Center" />
+                <Label
+                    Margin="0,10,0,0"
+                    FontFamily="GothamBold"
+                    FontSize="18"
+                    HorizontalOptions="Start"
+                    Text="Thêm nhận xét"
+                    VerticalOptions="Center" />
+                <Border
+                    x:Name="InputGrid"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="0"
+                    Padding="5,0,0,0"
+                    Background="Transparent"
+                    Stroke="#D9D9D9"
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="2">
+                    <ContentView Margin="0" Padding="0">
+                        <controls:BorderlessEditor
+                            x:Name="AboutMeEditor"
+                            AutoSize="TextChanges"
+                            FontFamily="Gotham"
+                            FontSize="{StaticResource FontSizeM}"
+                            HorizontalOptions="Start"
+                            MaximumHeightRequest="120"
+                            Placeholder="Vui lòng cung cấp thêm thông tin chi tiết về điều bạn báo cáo."
+                            Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ReportPageModel}}, x:DataType={x:Type vm:ReportPageModel}, Path=MoreInformationEditorValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                            TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            Unfocused="MoreInformationEditor_Unfocused" />
+                    </ContentView>
+                </Border>
+            </StackLayout>
+        </Grid>
+
+        <Button
+            Grid.Row="2"
+            Margin="0,5,0,5"
+            Command="{Binding ContinueClickedCommand}"
+            CommandParameter="{Binding .}"
+            HorizontalOptions="Center"
+            IsEnabled="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ReportPageModel}}, x:DataType={x:Type vm:ReportPageModel}, Path=IsEnabledContinueButton}"
+            IsVisible="{Binding IsSendingProcess, Converter={StaticResource BoolRevertConverter}}"
+            Text="{i18n:Translate Button_Continue_Text}" />
+        <Button
+            Grid.Row="2"
+            Margin="0,5,0,5"
+            Command="{Binding SendClickedCommand}"
+            CommandParameter="{Binding .}"
+            HorizontalOptions="Center"
+            IsEnabled="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ReportPageModel}}, x:DataType={x:Type vm:ReportPageModel}, Path=IsEnabledContinueButton}"
+            IsVisible="{Binding IsSendingProcess}"
+            Text="Gửi" />
+    </Grid>
+</base:BasePage>

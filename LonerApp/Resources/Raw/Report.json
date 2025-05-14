@@ -1,0 +1,53 @@
+[
+  {
+    "id": "misleading_profile",
+    "label_vi": "Hồ sơ hoặc hành vi gây hiểu lầm",
+    "label_en": "Misleading Profile Behavior",
+    "reasons": [
+      {
+        "id": "1",
+        "label_vi": "Hồ sơ giả, lừa đảo, không đúng là người trong hồ sơ",
+        "label_en": "False Information"
+      },
+      {
+        "id": "2",
+        "label_vi": "Có người đang chào bán thứ gì đó",
+        "label_en": "Impersonation"
+      },
+      {
+        "id": "3",
+        "label_vi": "Có liên quan tới người dưới 18 tuổi",
+        "label_en": "Misleading Intent"
+      }
+    ]
+  },
+  {
+    "id": "harassment_abusive",
+    "label_vi": "Quấy rối hoặc hành vi xấu",
+    "label_en": "Harassment or Abusive Behavior",
+    "reasons": [
+      {
+        "id": "harassment",
+        "label_vi": "Nội dung khỏa thân hoặc khiêu dâm",
+        "label_en": "Harassment / Abuse"
+      },
+      {
+        "id": "hate_speech",
+        "label_vi": "Hành vi lạm dụng/ gây thù ghét/ đe doạ",
+        "label_en": "Hate Speech"
+      }
+    ]
+  },
+  {
+    "id": "physical_safety_concerns",
+    "label_vi": "Lo ngại về thể chất",
+    "label_en": "Physical Safety Concerns",
+    "reasons": [
+      {
+        "id": "threats_of_violence",
+        "label_vi": "Mối đe doạ có thể xảy ra với chính họ hoặc người khác",
+        "label_en": "Threats of Violence"
+      }
+    ]
+  }
+]

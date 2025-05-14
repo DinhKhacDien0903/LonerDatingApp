@@ -26,16 +26,17 @@ namespace LonerApp.Utilities.MVVM
         private bool _isBusy;
         [ObservableProperty]
         private bool _isRefreshing;
+        protected INavigationCommunityPopupService NavigationCommunityPopupService { get; private set; }
         #endregion
 
         #region Commands
         [RelayCommand]
         private async Task OnBackButtonAsync(Action action = null)
         {
-            if(IsNavigationInProgress)
+            if (IsNavigationInProgress)
                 return;
             IsBusy = true;
-            if(action is not null)
+            if (action is not null)
                 action.Invoke();
 
             await NavigationService.PopPageAsync();
@@ -50,6 +51,7 @@ namespace LonerApp.Utilities.MVVM
 
         protected BasePageModel(INavigationService navigationService, bool loadDataOnAppearing = true)
         {
+            NavigationCommunityPopupService = ServiceHelper.GetService<INavigationCommunityPopupService>();
             NavigationService = navigationService;
             LoadDataOnAppearing = loadDataOnAppearing;
         }
@@ -57,7 +59,7 @@ namespace LonerApp.Utilities.MVVM
         public virtual Task InitializeAsync()
         {
             byte count = 1;
-            while(Shell.Current?.CurrentPage?.Parent == null && count < 21)
+            while (Shell.Current?.CurrentPage?.Parent == null && count < 21)
             {
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
@@ -99,7 +101,7 @@ namespace LonerApp.Utilities.MVVM
                     ServiceHelper.GetService<IOrientationService>().Portrait();
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw;
             }
@@ -112,7 +114,7 @@ namespace LonerApp.Utilities.MVVM
             var initialized = Initialized;
             if (!initialized)
                 await InitializeAsync();
-            if(ShouldLoadData && (LoadDataOnAppearing || !initialized))
+            if (ShouldLoadData && (LoadDataOnAppearing || !initialized))
             {
                 await MainThread.InvokeOnMainThreadAsync(LoadDataAsync);
             }
