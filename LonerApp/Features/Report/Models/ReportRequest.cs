@@ -13,4 +13,13 @@ public class ReportRequestDto
     public string MoreInformation { get; set; } = string.Empty;
     public byte TypeBlocked { get; set; } // 0: block profile, 1: block chat, 2: report
 }
+
+public class CheckBlockedRequest()
+{
+    public string BlockerId { get; set; } = string.Empty;
+    public string BlockedId { get; set; } = string.Empty;
+    public byte TypeBlocked { get; set; } // 0: block profile, 1: block chat
+}
+
 public record ReportResponse(bool IsSuccess);
+public record CheckBlockedResponse(bool IsUnChatBlocked);

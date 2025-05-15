@@ -112,11 +112,6 @@ public partial class MessageChatPage : BasePage
 
     private void MessageEditor_Unfocused(object sender, FocusEventArgs e)
     {
-        if (sender is not Editor editor)
-        {
-            return;
-        }
-
         InputGrid.Stroke = Color.FromArgb("#D9D9D9");
         lbSend.TextColor = Color.FromArgb("#939393");
         MessageEditor.TextColor = Color.FromArgb("#939393");
@@ -125,32 +120,26 @@ public partial class MessageChatPage : BasePage
 
     private void Overlay_Tapped(object sender, TappedEventArgs e)
     {
-        if (sender is not BoxView boxview)
-        {
-            return;
-        }
-
         var point = e.GetPosition(InputGrid);
         if (!ChatMessageList.Bounds.Contains(point.Value))
         {
             MessageEditor.Unfocus();
             lbUploadImage.IsVisible = true;
             Overlay.IsVisible = false;
+            _vm.IsVisibleOverlay = false;
+            _vm.IsVisibleOption = false;
         }
     }
 
     private void Overlay_PanUpdated(object sender, PanUpdatedEventArgs e)
     {
-        if (sender is not BoxView boxview)
-        {
-            return;
-        }
-
         if (e.StatusType == GestureStatus.Started)
         {
             MessageEditor.Unfocus();
             lbUploadImage.IsVisible = true;
             Overlay.IsVisible = false;
+            _vm.IsVisibleOverlay = false;
+            _vm.IsVisibleOption = false;
         }
     }
 }

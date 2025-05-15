@@ -7,6 +7,21 @@ public class ReportService : IReportService
     {
         _apiService = apiService;
     }
+
+    public async Task<CheckBlockedResponse> CheckBlockedAsync(CheckBlockedRequest request)
+    {
+        try
+        {
+            var response = await _apiService.PostAsync<CheckBlockedResponse>(EnvironmentsExtensions.ENDPOINT_CHECK_BLOCKED_CHAT, request);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Error during swipe operation: {ex.Message}", ex);
+            return new CheckBlockedResponse(false);
+        }
+    }
+
     public async Task<ReportResponse> ReportAsync(ReportRequest request)
     {
         try

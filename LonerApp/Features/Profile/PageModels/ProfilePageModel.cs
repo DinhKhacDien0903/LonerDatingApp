@@ -208,7 +208,8 @@ namespace LonerApp.PageModels
                     {
                         BlockerId = UserSetting.Get(StorageKey.UserId) ?? "",
                         BlockedId = user?.Id ?? "",
-                        TypeBlocked = 0
+                        TypeBlocked = 0,
+                        IsUnChatBlocked = false
                     };
                     var response = await _profileService.BlockAsync(request);
                     if (response?.IsSuccess ?? false)

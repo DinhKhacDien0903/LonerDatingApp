@@ -42,6 +42,7 @@ public static class EnvironmentsExtensions
     public const string ENDPOINT_UPDATE_LOCATION = "User/update-Location";
     public const string ENDPOINT_UPDATE_USER_PROFILE = "User/update-profile";
     public const string ENDPOINT_BLOCK_USER_PROFILE = "User/block";
+    public const string ENDPOINT_CHECK_BLOCKED_CHAT = "User/check-blocked";
     public const string ENDPOINT_REPORT_USER_PROFILE = "User/report";
     public const string ENDPOINT_UPDATE_USER_SETTING_ACCOUNT = "User/update-setting-account";
     public const string ENDPOINT_GET_BY_LOCATION_RADIUS = "User/get-by-location-radius";

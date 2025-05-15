@@ -23,7 +23,7 @@
     <base:BasePage.Resources>
         <x:Double x:Key="SizeMessageImageItem">140</x:Double>
         <converter:ImageContentConverter x:Key="ImageContentConverter" />
-
+        <toolkit:InvertedBoolConverter x:Key="BoolRevertConverter" />
         <DataTemplate x:Key="MineMessageTextItemTemplate" x:DataType="{x:Type models:MessageModel}">
             <Grid Padding="20,5" ColumnDefinitions="*,Auto">
                 <Border
@@ -123,6 +123,8 @@
             BackButtonCommand="{Binding BackCommand}"
             HasBackButton="{Binding HasBackButton}"
             IsVisible="{Binding IsVisibleNavigation}"
+            OptionButtonCommand="{Binding OptionButtonCommand}"
+            OptionPage="&#xf1d9;"
             TitlePage="{Binding PartnerName}" />
         <CollectionView
             x:Name="ChatMessageList"
@@ -137,7 +139,8 @@
             Grid.Row="2"
             Padding="10,0,0,0"
             ColumnDefinitions="Auto, *"
-            ColumnSpacing="0">
+            ColumnSpacing="0"
+            IsVisible="{Binding IsBlocked, Converter={StaticResource BoolRevertConverter}, Mode=OneWay}">
             <Label
                 x:Name="lbUploadImage"
                 Grid.Row="2"
@@ -196,15 +199,61 @@
                 </ContentView>
             </Border>
         </Grid>
-        <BoxView
+        <Grid
             x:Name="Overlay"
             Grid.Row="1"
             BackgroundColor="Transparent"
-            IsVisible="False">
-            <BoxView.GestureRecognizers>
+            IsVisible="{Binding IsVisibleOverlay, Mode=TwoWay}">
+            <Grid.GestureRecognizers>
                 <TapGestureRecognizer Tapped="Overlay_Tapped" />
                 <PanGestureRecognizer PanUpdated="Overlay_PanUpdated" />
-            </BoxView.GestureRecognizers>
-        </BoxView>
+            </Grid.GestureRecognizers>
+            <Border
+                x:Name="Option"
+                Margin="0,0,20,0"
+                Padding="0"
+                BackgroundColor="White"
+                HorizontalOptions="EndAndExpand"
+                IsVisible="{Binding IsVisibleOption, Mode=TwoWay}"
+                StrokeShape="RoundRectangle 10"
+                VerticalOptions="StartAndExpand">
+                <Border.Shadow>
+                    <Shadow
+                        Brush="Black"
+                        Opacity="0.8"
+                        Radius="5"
+                        Offset="1,1" />
+                </Border.Shadow>
+                <StackLayout Padding="10" Spacing="5">
+                    <Button
+                        BackgroundColor="{StaticResource White}"
+                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatMessagePageModel}}, Path=SendBlockCommand, x:DataType={x:Type vm:ChatMessagePageModel}}"
+                        CommandParameter="{Binding .}"
+                        IsVisible="{Binding IsBlocked, Converter={StaticResource BoolRevertConverter}, Mode=OneWay}"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Text="Chặn"
+                        TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                        WidthRequest="100" />
+                    <Button
+                        BackgroundColor="{StaticResource White}"
+                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatMessagePageModel}}, Path=SendReportCommand, x:DataType={x:Type vm:ChatMessagePageModel}}"
+                        CommandParameter="{Binding .}"
+                        IsVisible="{Binding IsBlocked, Converter={StaticResource BoolRevertConverter}, Mode=OneWay}"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Text="Báo cáo người dùng"
+                        TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                        WidthRequest="100" />
+                    <Button
+                        BackgroundColor="{StaticResource White}"
+                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatMessagePageModel}}, Path=SendUnBlockCommand, x:DataType={x:Type vm:ChatMessagePageModel}}"
+                        CommandParameter="{Binding .}"
+                        IsVisible="{Binding IsBlocked, Mode=OneWay}"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Text="Bỏ chặn"
+                        TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                        WidthRequest="100" />
+                </StackLayout>
+            </Border>
+        </Grid>
     </Grid>
 </base:BasePage>

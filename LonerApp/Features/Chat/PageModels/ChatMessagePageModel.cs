@@ -1,6 +1,9 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.Input;
+using LonerApp.Features.Services;
 using Microsoft.AspNetCore.SignalR.Client;
 using System.Collections.ObjectModel;
 
@@ -24,20 +27,33 @@ namespace LonerApp.PageModels
         private UserChatModel _partner;
         [ObservableProperty]
         private string _partnerName;
+        [ObservableProperty]
+        private bool _isVisibleOverlay;
+        [ObservableProperty]
+        private bool _isVisibleOption;
+        [ObservableProperty]
+        private bool _isBlocked;
         private readonly HubConnection _connection;
         private Cloudinary _cloudDinary;
+        private readonly IProfileService _profileService;
+        private readonly IReportService _reportService;
+        private CancellationTokenSource cancellationToastToken = new CancellationTokenSource();
         public ChatMessagePageModel(
             INavigationService navigationService,
-            IChatService chatService)
+            IChatService chatService,
+            IProfileService profileService,
+            IReportService reportService)
             : base(navigationService, true)
         {
+            _reportService = reportService;
+            _profileService = profileService;
             _chatService = chatService;
             IsVisibleNavigation = true;
             HasBackButton = true;
             _cloudDinary = new Cloudinary(Environments.CLOUDINARY_URL);
             _cloudDinary.Api.Secure = true;
             _connection = new HubConnectionBuilder()
-                .WithUrl(Environments.URl_SERVER_HTTPS_DEVICE_WIFI_CHAT_HUB, options =>
+                .WithUrl(Environments.URl_SERVER_HTTPS_EMULATOR_CHAT_HUB, options =>
                 {
                     options.HttpMessageHandlerFactory = _ => new HttpClientHandler
                     {
@@ -101,6 +117,22 @@ namespace LonerApp.PageModels
                 IsBusy = false;
             }
         }
+        [RelayCommand]
+        async Task OnOptionButtonAsync(object param)
+        {
+            if (OptionButtonCommand.IsRunning || IsBusy)
+                return;
+            try
+            {
+                IsBusy = true;
+                IsVisibleOverlay = true;
+                IsVisibleOption = true;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
 
         public async Task InitDataAsync()
         {
@@ -115,15 +147,22 @@ namespace LonerApp.PageModels
             try
             {
                 IsBusy = true;
-            await base.LoadDataAsync();
-            IsBusy = true;
-            _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
-            string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_partner.MatchId}";
-            var data1 = await _chatService.GetMessagesAsync(EnvironmentsExtensions.ENDPOINT_GET_MESSAGES, queryParams);
-            Messages = [.. data1?.Messages?.Items ?? []];
-            _currentPage++;
-            IsBusy = false;
-        }
+                await base.LoadDataAsync();
+                IsBusy = true;
+                _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
+                string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_partner.MatchId}";
+                var data1 = await _chatService.GetMessagesAsync(EnvironmentsExtensions.ENDPOINT_GET_MESSAGES, queryParams);
+                Messages = [.. data1?.Messages?.Items ?? []];
+                _currentPage++;
+                var request = new CheckBlockedRequest
+                {
+                    BlockerId = UserSetting.Get(StorageKey.UserId) ?? "",
+                    BlockedId = _partner?.UserId ?? "",
+                    TypeBlocked = 1,
+                };
+                IsBlocked = !(await _reportService.CheckBlockedAsync(request))?.IsUnChatBlocked ?? true;
+                IsBusy = false;
+            }
             finally
             {
                 IsBusy = false;
@@ -341,6 +380,114 @@ namespace LonerApp.PageModels
         public void GetChatListCollectionView()
         {
             _chatList ??= Shell.Current.CurrentPage.FindByName<CollectionView>("ChatMessageList");
+        }
+
+        [RelayCommand]
+        async Task OnSendBlockAsync(object param)
+        {
+            if (SendBlockCommand.IsRunning || IsBusy)
+                return;
+            try
+            {
+                IsBusy = true;
+                var isAgree = await AlertHelper.ShowConfirmationAlertAsync(
+                            $"Bạn chắc chắn muốn chặn {PartnerName} này?",
+                            "Xác nhận"
+                );
+                if (isAgree)
+                {
+                    IsBlocked = true;
+                    var response = await _profileService.BlockAsync(InitBlockRequest(1));
+                    if (response?.IsSuccess ?? false)
+                        await ShowToast("Block user successfully");
+                    else
+                        await ShowToast("Failed to block user");
+                    await NavigationService.PopPageAsync();
+                    await Task.Delay(100);
+                }
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        async Task OnSendUnBlockAsync(object param)
+        {
+            if (SendUnBlockCommand.IsRunning || IsBusy)
+                return;
+            try
+            {
+                IsBusy = false;
+                var isAgree = await AlertHelper.ShowConfirmationAlertAsync(
+                            $"Bạn chắc chắn muốn bỏ chặn {PartnerName} này?",
+                            "Xác nhận"
+                );
+                if (isAgree)
+                {
+                    IsBlocked = false;
+                    var response = await _profileService.BlockAsync(InitBlockRequest(1, true));
+                    if (response?.IsSuccess ?? false)
+                        await ShowToast("Un Block user successfully");
+                    else
+                        await ShowToast("Failed to un block user");
+                    await NavigationService.PopPageAsync();
+                    await Task.Delay(100);
+                }
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private BlockRequest InitBlockRequest(byte type, bool IsUnChatBlocked = false)
+        {
+            return new BlockRequest
+            {
+                BlockerId = UserSetting.Get(StorageKey.UserId) ?? "",
+                BlockedId = _partner?.UserId ?? "",
+                TypeBlocked = type,
+                IsUnChatBlocked = IsUnChatBlocked
+            };
+        }
+
+        [RelayCommand]
+        async Task OnSendReportAsync(object param)
+        {
+            if (SendReportCommand.IsRunning || IsBusy)
+                return;
+
+            if (param is not UserProfileDetailResponse user)
+                return;
+
+            try
+            {
+                IsBusy = true;
+                var isAgree = await AlertHelper.ShowConfirmationAlertAsync(
+                            $"Bạn chắc chắn muốn báo cáo {PartnerName} này?",
+                            "Xác nhận"
+                );
+                if (isAgree)
+                {
+                    await NavigationService.PushToPageAsync<ReportUserPage>(_partner?.UserId);
+                }
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task ShowToast(string content)
+        {
+            ToastDuration duration = ToastDuration.Short;
+            double fontSize = 14;
+
+            var toast = Toast.Make(content, duration, fontSize);
+
+            await toast.Show(cancellationToastToken.Token);
         }
     }
 
