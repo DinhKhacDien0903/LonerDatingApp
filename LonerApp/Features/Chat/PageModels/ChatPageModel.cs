@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using LonerApp.Features.Chat.Services;
 using System.Collections.ObjectModel;
 
 namespace LonerApp.PageModels
@@ -19,6 +18,8 @@ namespace LonerApp.PageModels
         ObservableCollection<UserChatModel> _userChats = new();
         [ObservableProperty]
         private ObservableCollection<UserProfileResponse> _users = new();
+        [ObservableProperty]
+        private bool _isVisibleFilterContainer;
         private readonly IChatService _chatService;
         private int _currentPage = 1;
         private int countUser = 0;
@@ -51,6 +52,16 @@ namespace LonerApp.PageModels
             }
         }
 
+        [RelayCommand]
+        async Task OnSearchPressedAsync(object param)
+        {
+            if (SearchPressedCommand.IsRunning || IsBusy)
+                return;
+            IsBusy = true;
+            IsVisibleFilterContainer = !IsVisibleFilterContainer;
+            await Task.Delay(100);
+            IsBusy = false;
+        }
         public async Task InitDataAsync()
         {
             IsBusy = true;
@@ -114,7 +125,7 @@ namespace LonerApp.PageModels
             if (UserChatItemClickedCommand.IsRunning || user == null || IsBusy)
                 return;
             UserChatModel param = user as UserChatModel ?? null;
-            if(param == null)
+            if (param == null)
             {
                 var userProfile = user as UserProfileResponse;
                 param = new UserChatModel

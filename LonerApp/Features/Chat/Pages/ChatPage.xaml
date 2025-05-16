@@ -21,16 +21,14 @@
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="True">
     <Page.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarColor="White"
-                                   StatusBarStyle="DarkContent"/>
+        <toolkit:StatusBarBehavior StatusBarColor="White" StatusBarStyle="DarkContent" />
     </Page.Behaviors>
     <base:BasePage.Resources>
-        <ResourceDictionary/>
+        <ResourceDictionary />
         <DataTemplate x:Key="GetSwipeTemplate">
-            <StackLayout Orientation="Vertical"
-                         Spacing="2">
+            <StackLayout Orientation="Vertical" Spacing="2">
                 <StackLayout.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ChatPageModel}}, x:DataType={x:Type vm:ChatPageModel}, Path=GetSwipePressedCommand}"/>
+                    <TapGestureRecognizer Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ChatPageModel}}, x:DataType={x:Type vm:ChatPageModel}, Path=GetSwipePressedCommand}" />
                 </StackLayout.GestureRecognizers>
                 <ffimageloading:CachedImage
                     Aspect="AspectFit"
@@ -41,8 +39,7 @@
                     Source="icon_chat_get_like.png"
                     WidthRequest="100">
                     <ffimageloading:CachedImage.Clip>
-                        <RoundRectangleGeometry CornerRadius="10"
-                                                Rect="0,0,100,120"/>
+                        <RoundRectangleGeometry CornerRadius="10" Rect="0,0,100,120" />
                     </ffimageloading:CachedImage.Clip>
                 </ffimageloading:CachedImage>
                 <Label
@@ -51,11 +48,10 @@
                     HorizontalOptions="Center"
                     HorizontalTextAlignment="Center"
                     Text="{i18n:Translate Chat_GetLike_Title}"
-                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"/>
+                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
             </StackLayout>
         </DataTemplate>
-        <DataTemplate x:Key="ChatMessageItemTemplate"
-                      x:DataType="models:UserChatModel">
+        <DataTemplate x:Key="ChatMessageItemTemplate" x:DataType="models:UserChatModel">
             <sho:DraggableViewCell IsDraggable="False">
                 <ContentView>
                     <Grid
@@ -74,8 +70,7 @@
                             Source="{Binding AvatarUrl}"
                             WidthRequest="70">
                             <ffimageloading:CachedImage.Clip>
-                                <RoundRectangleGeometry CornerRadius="50"
-                                                        Rect="0,0,70,70"/>
+                                <RoundRectangleGeometry CornerRadius="50" Rect="0,0,70,70" />
                             </ffimageloading:CachedImage.Clip>
                         </ffimageloading:CachedImage>
                         <StackLayout
@@ -90,16 +85,16 @@
                                 HorizontalTextAlignment="Start"
                                 Text="{Binding UserName}"
                                 TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
-                                VerticalTextAlignment="Center"/>
+                                VerticalTextAlignment="Center" />
                             <Label
-                                MaximumWidthRequest="250"
                                 FontFamily="GothamLight"
                                 FontSize="{StaticResource FontSizeM}"
                                 HorizontalTextAlignment="Start"
-                                Text="{Binding LastMessage}"
                                 LineBreakMode="TailTruncation"
+                                MaximumWidthRequest="250"
+                                Text="{Binding LastMessage}"
                                 TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
-                                VerticalTextAlignment="Center"/>
+                                VerticalTextAlignment="Center" />
                         </StackLayout>
                         <BoxView
                             Grid.Row="1"
@@ -107,18 +102,15 @@
                             BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
                             HeightRequest="0.5"
                             HorizontalOptions="Fill"
-                            Opacity="0.3"/>
+                            Opacity="0.3" />
                     </Grid>
                 </ContentView>
             </sho:DraggableViewCell>
         </DataTemplate>
-        <DataTemplate x:Key="UserChatItemTemplate"
-                      x:DataType="models:UserProfileResponse">
-            <StackLayout Orientation="Vertical"
-                         Spacing="2">
+        <DataTemplate x:Key="UserChatItemTemplate" x:DataType="models:UserProfileResponse">
+            <StackLayout Orientation="Vertical" Spacing="2">
                 <StackLayout.GestureRecognizers>
-                    <TapGestureRecognizer CommandParameter="{Binding .}"
-                                          Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ChatPageModel}}, x:DataType={x:Type vm:ChatPageModel}, Path=UserChatItemClickedCommand}"/>
+                    <TapGestureRecognizer Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ChatPageModel}}, x:DataType={x:Type vm:ChatPageModel}, Path=UserChatItemClickedCommand}" CommandParameter="{Binding .}" />
                 </StackLayout.GestureRecognizers>
                 <ffimageloading:CachedImage
                     Aspect="AspectFill"
@@ -130,25 +122,24 @@
                     Source="{Binding AvatarUrl}"
                     WidthRequest="100">
                     <ffimageloading:CachedImage.Clip>
-                        <RoundRectangleGeometry CornerRadius="10"
-                                                Rect="0,0,100,120"/>
+                        <RoundRectangleGeometry CornerRadius="10" Rect="0,0,100,120" />
                     </ffimageloading:CachedImage.Clip>
                 </ffimageloading:CachedImage>
                 <Label
-                    MaximumWidthRequest="100"
                     FontFamily="GothamBold"
                     FontSize="{StaticResource FontSizeM}"
                     HorizontalOptions="Center"
-                    LineBreakMode="TailTruncation"
                     HorizontalTextAlignment="Center"
+                    LineBreakMode="TailTruncation"
+                    MaximumWidthRequest="100"
                     Text="{Binding Username}"
-                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"/>
+                    TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
             </StackLayout>
         </DataTemplate>
         <vm:UserChatDataTemplateSelector
             x:Key="userChatTempateSelector"
             GetSwipeItemTemplate="{StaticResource GetSwipeTemplate}"
-            UserChatItemTemplate="{StaticResource UserChatItemTemplate}"/>
+            UserChatItemTemplate="{StaticResource UserChatItemTemplate}" />
     </base:BasePage.Resources>
     <base:BasePage.Content>
         <Grid
@@ -159,40 +150,89 @@
                 BackButtonCommand="{Binding BackCommand}"
                 HasBackButton="{Binding HasBackButton}"
                 IsVisible="{Binding IsVisibleNavigation}"
-                TitlePage="Loner"/>
+                OptionButtonCommand="{Binding SearchPressedCommand}"
+                OptionPage="&#xf016;"
+                TitlePage="Loner" />
             <Grid
                 Grid.Row="1"
                 Padding="20,0"
-                RowDefinitions="Auto,10,Auto,20,Auto,20,*">
+                RowDefinitions="Auto, 10, Auto,10,Auto,20,Auto,20,*">
+                <Grid
+                    Margin="16,8"
+                    ColumnDefinitions="*"
+                    ColumnSpacing="10"
+                    HeightRequest="40"
+                    HorizontalOptions="Fill"
+                    IsVisible="{Binding IsVisibleFilterContainer}">
+                    <Border
+                        Grid.ColumnSpan="3"
+                        Background="White"
+                        HeightRequest="60"
+                        StrokeThickness="0">
+                        <Border.Shadow>
+                            <Shadow
+                                Brush="{StaticResource Black}"
+                                Opacity="0.2"
+                                Radius="5"
+                                Offset="1,1" />
+                        </Border.Shadow>
+                    </Border>
+                    <Grid>
+                        <Border
+                            x:Name="InputGrid"
+                            Margin="0"
+                            Padding="5,0,0,0"
+                            Background="#EEEFF1"
+                            Stroke="#D9D9D9"
+                            StrokeShape="RoundRectangle 10"
+                            StrokeThickness="2">
+                            <ContentView Margin="0" Padding="0">
+                                <controls:BorderlessEditor
+                                    x:Name="AboutMeEditor"
+                                    AutoSize="TextChanges"
+                                    Focused="AboutMeEditor_Focused"
+                                    FontFamily="Gotham"
+                                    FontSize="{StaticResource FontSizeM}"
+                                    HorizontalOptions="Start"
+                                    MaximumHeightRequest="120"
+                                    MaximumWidthRequest="250"
+                                    Placeholder="Nhập tên người dùng ...                             "
+                                    Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ChatPageModel}}, x:DataType={x:Type vm:ChatPageModel}, Path=SearchUserValue , Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                                    TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                    Unfocused="AboutMeEditor_Unfocused" />
+                            </ContentView>
+                        </Border>
+                    </Grid>
+                </Grid>
                 <Label
+                    Grid.Row="2"
                     FontFamily="GothamBold"
                     FontSize="{StaticResource FontSizeM}"
                     HorizontalOptions="Start"
                     HorizontalTextAlignment="Center"
                     Text="{i18n:Translate Chat_New_Match_Title}"
-                    TextColor="{toolkit:AppThemeResource PrimaryColor}"/>
+                    TextColor="{toolkit:AppThemeResource PrimaryColor}" />
                 <CollectionView
                     x:Name="userChatCollection"
-                    Grid.Row="2"
+                    Grid.Row="4"
                     HorizontalScrollBarVisibility="Never"
                     ItemTemplate="{StaticResource userChatTempateSelector}"
                     ItemsSource="{Binding Users}">
                     <CollectionView.ItemsLayout>
-                        <LinearItemsLayout ItemSpacing="20"
-                                           Orientation="Horizontal"/>
+                        <LinearItemsLayout ItemSpacing="20" Orientation="Horizontal" />
                     </CollectionView.ItemsLayout>
                 </CollectionView>
                 <Label
-                    Grid.Row="4"
+                    Grid.Row="6"
                     FontFamily="GothamBold"
                     FontSize="{StaticResource FontSizeM}"
                     HorizontalOptions="Start"
                     HorizontalTextAlignment="Center"
                     Text="{i18n:Translate Chat_Message_Title}"
-                    TextColor="{toolkit:AppThemeResource PrimaryColor}"/>
+                    TextColor="{toolkit:AppThemeResource PrimaryColor}" />
                 <RefreshView
                     x:Name="refreshView"
-                    Grid.Row="6"
+                    Grid.Row="8"
                     Command="{Binding ReloadListCommand}"
                     IsRefreshing="{Binding IsRefreshing}"
                     ZIndex="0">
@@ -205,7 +245,7 @@
                         ItemTemplate="{StaticResource ChatMessageItemTemplate}"
                         ItemsSource="{Binding UserChats, Mode=OneWay}"
                         MinimumHeightRequest="10"
-                        TapCommand="{Binding UserChatItemClickedCommand}"/>
+                        TapCommand="{Binding UserChatItemClickedCommand}" />
                 </RefreshView>
             </Grid>
         </Grid>
