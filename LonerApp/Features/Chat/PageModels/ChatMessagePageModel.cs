@@ -22,7 +22,7 @@ namespace LonerApp.PageModels
         private CollectionView _chatList;
         private readonly IChatService _chatService;
         private static string _currentUserId = string.Empty;
-        private int _currentPage = 1;
+        public int _currentPage = 1;
         private const int PageSize = 30;
         private UserChatModel _partner;
         [ObservableProperty]
@@ -37,6 +37,7 @@ namespace LonerApp.PageModels
         private Cloudinary _cloudDinary;
         private readonly IProfileService _profileService;
         private readonly IReportService _reportService;
+        public bool IsNeedLoadUsersData = true;
         private CancellationTokenSource cancellationToastToken = new CancellationTokenSource();
         public ChatMessagePageModel(
             INavigationService navigationService,
@@ -148,7 +149,6 @@ namespace LonerApp.PageModels
             {
                 IsBusy = true;
                 await base.LoadDataAsync();
-                IsBusy = true;
                 _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
                 string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_partner.MatchId}";
                 var data1 = await _chatService.GetMessagesAsync(EnvironmentsExtensions.ENDPOINT_GET_MESSAGES, queryParams);
@@ -458,10 +458,6 @@ namespace LonerApp.PageModels
         {
             if (SendReportCommand.IsRunning || IsBusy)
                 return;
-
-            if (param is not UserProfileDetailResponse user)
-                return;
-
             try
             {
                 IsBusy = true;

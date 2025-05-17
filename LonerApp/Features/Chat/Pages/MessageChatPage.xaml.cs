@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace LonerApp.Features.Pages;
 
 public partial class MessageChatPage : BasePage
@@ -10,7 +12,7 @@ public partial class MessageChatPage : BasePage
         InitializeComponent();
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
 
@@ -31,6 +33,8 @@ public partial class MessageChatPage : BasePage
         }
         else
         {
+            _vm._currentPage = 0;
+            await _vm.LoadDataAsync();
             Console.WriteLine("Error: No matchId in query string");
         }
     }
