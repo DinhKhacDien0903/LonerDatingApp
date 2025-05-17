@@ -83,6 +83,7 @@ public static class DependencyInjection
         services.AddTransient<SettingPage>();
         services.AddTransient<NotificationPage>();
         services.AddTransient<ReportUserPage>();
+        services.AddTransient<SignUpPage>();
         // services.AddTransient<ReportPopup>();
         return services;
     }

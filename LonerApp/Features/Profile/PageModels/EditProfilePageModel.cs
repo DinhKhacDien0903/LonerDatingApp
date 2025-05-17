@@ -57,8 +57,6 @@ namespace LonerApp.PageModels
                 MyProfile = user;
             IsEditVisible = true;
             IsPreviewVisible = false;
-            AddPhotos = new ObservableCollection<AddPhotoModel>(
-                Enumerable.Range(1, 7).Select(_ => new AddPhotoModel()).ToList());
 
             if (MyProfile != null)
             {
@@ -74,10 +72,13 @@ namespace LonerApp.PageModels
                 MyInterest = result.ToString();
                 //AddPhotos = new ObservableCollection<AddPhotoModel>((MyProfile.Photos ?? []).Select(x => new AddPhotoModel { ImagePath = x }).ToList());
                 int length = MyProfile.Photos?.Count() ?? 0;
+                AddPhotos = new ObservableCollection<AddPhotoModel>(
+                    Enumerable.Range(1, length).Select(_ => new AddPhotoModel()).ToList());
                 for (int i = 0; i < length; i++)
                 {
                     AddPhotos[i].ImagePath = MyProfile.Photos.ElementAt(i);
                 }
+                await Task.Delay(50);
             }
             await base.InitAsync(initData);
         }

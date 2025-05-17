@@ -339,4 +339,13 @@
   <data name="FilterMap_CheckPermission_AlertTitle" xml:space="preserve">
     <value>Can't show map.</value>
   </data>
+  <data name="Google_SignUp_Button" xml:space="preserve">
+    <value>Sign up with Google</value>
+  </data>
+  <data name="Phone_Number_SignUp_Button" xml:space="preserve">
+    <value>Sign up with phone number</value>
+  </data>
+  <data name="Trouble_SignUp_Label" xml:space="preserve">
+    <value>Trouble sign up?</value>
+  </data>
 </root>

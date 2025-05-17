@@ -15,16 +15,13 @@
     Shell.TabBarIsVisible="False"
     mc:Ignorable="d">
     <Page.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarColor="{toolkit:AppThemeResource PrimaryColor}"/>
+        <toolkit:StatusBarBehavior StatusBarColor="{toolkit:AppThemeResource PrimaryColor}" />
     </Page.Behaviors>
     <base:BasePage.Resources>
         <ResourceDictionary>
-            <Style x:Key="Label_Policy"
-                    TargetType="Label">
-                <Setter Property="TextColor"
-                        Value="{toolkit:AppThemeResource LabelMainScreenColor}"/>
-                <Setter Property="FontFamily"
-                        Value="GothamLight"/>
+            <Style x:Key="Label_Policy" TargetType="Label">
+                <Setter Property="TextColor" Value="{toolkit:AppThemeResource LabelMainScreenColor}" />
+                <Setter Property="FontFamily" Value="GothamLight" />
             </Style>
         </ResourceDictionary>
     </base:BasePage.Resources>
@@ -40,15 +37,14 @@
                         HeightRequest="38"
                         Source="homeicon.png"
                         VerticalOptions="Center"
-                        WidthRequest="33"/>
+                        WidthRequest="33" />
                     <Label
                         FontFamily="GothamBold"
                         FontSize="{StaticResource FontSizeXXL}"
                         Style="{StaticResource LabelMainScreenStyle}"
-                        Text="{i18n:Translate AppName}"/>
+                        Text="{i18n:Translate AppName}" />
                 </StackLayout>
-                <Grid Grid.Row="3"
-                        RowDefinitions="Auto,20,Auto,27, Auto">
+                <Grid Grid.Row="3" RowDefinitions="Auto,20,Auto,27, Auto">
                     <Label
                         x:Name="lblWellcome"
                         Grid.Row="0"
@@ -58,23 +54,17 @@
                         WidthRequest="350">
                         <Label.FormattedText>
                             <FormattedString>
-                                <Span Style="{StaticResource Label_Policy}"
-                                        Text="{i18n:Translate Terms_Tutorial}"/>
-                                <Span Text=" "/>
-                                <Span Style="{StaticResource URL_LabelStyle}"
-                                        Text="{i18n:Translate Terms}"/>
-                                <Span Text=" "/>
-                                <Span Style="{StaticResource Label_Policy}"
-                                        Text="{i18n:Translate PrivacyPolicy_CookiesPolicy_Tutorial}"/>
-                                <Span Text=" "/>
-                                <Span Style="{StaticResource URL_LabelStyle}"
-                                        Text="{i18n:Translate PrivacyPolicy}"/>
-                                <Span Text=" "/>
-                                <Span Style="{StaticResource Label_Policy}"
-                                        Text="{i18n:Translate And_Text}"/>
-                                <Span Text=" "/>
-                                <Span Style="{StaticResource URL_LabelStyle}"
-                                        Text="{i18n:Translate CookiesPolicy}"/>
+                                <Span Style="{StaticResource Label_Policy}" Text="{i18n:Translate Terms_Tutorial}" />
+                                <Span Text=" " />
+                                <Span Style="{StaticResource URL_LabelStyle}" Text="{i18n:Translate Terms}" />
+                                <Span Text=" " />
+                                <Span Style="{StaticResource Label_Policy}" Text="{i18n:Translate PrivacyPolicy_CookiesPolicy_Tutorial}" />
+                                <Span Text=" " />
+                                <Span Style="{StaticResource URL_LabelStyle}" Text="{i18n:Translate PrivacyPolicy}" />
+                                <Span Text=" " />
+                                <Span Style="{StaticResource Label_Policy}" Text="{i18n:Translate And_Text}" />
+                                <Span Text=" " />
+                                <Span Style="{StaticResource URL_LabelStyle}" Text="{i18n:Translate CookiesPolicy}" />
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>
@@ -85,21 +75,23 @@
                         Style="{StaticResource CenterPositionStyle}">
                         <Button
                             BackgroundColor="{StaticResource White}"
+                            Command="{Binding SignUpCommand}"
+                            CommandParameter="{Binding .}"
                             Style="{StaticResource SecondaryButtonStyle}"
                             Text="{i18n:Translate Create_Account_Button}"
-                            TextColor="#676767"/>
+                            TextColor="#676767" />
                         <Button
                             Command="{Binding SignInCommand}"
                             CommandParameter="{Binding .}"
                             Style="{StaticResource SecondaryButtonStyle}"
-                            Text="{i18n:Translate Signup_Button}"/>
+                            Text="{i18n:Translate Signup_Button}" />
                     </StackLayout>
                     <Label
                         Grid.Row="4"
                         FontFamily="GothamBold"
                         Style="{StaticResource LabelMainScreenStyle}"
                         Text="{i18n:Translate Trouble_SignIn_Label}"
-                        TextDecorations="Underline"/>
+                        TextDecorations="Underline" />
                 </Grid>
             </Grid>
         </Border>

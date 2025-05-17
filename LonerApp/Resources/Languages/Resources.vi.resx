@@ -136,7 +136,7 @@
     <value>Đăng nhập</value>
   </data>
   <data name="Trouble_SignIn_Label" xml:space="preserve">
-    <value>Bạn gặp sự cố khi đăng nhập</value>
+    <value>Bạn gặp sự cố khi đăng nhập?</value>
   </data>
   <data name="Terms_Tutorial" xml:space="preserve">
     <value>Bằng việc nhấn vào "Tạo tài khoản" hoặc "Đăng nhập", bạn đã đồng ý với những </value>
@@ -338,5 +338,14 @@
   </data>
   <data name="FilterMap_CheckPermission_AlertTitle" xml:space="preserve">
     <value>Không thể hiển thị bản đồ.</value>
+  </data>
+  <data name="Google_SignUp_Button" xml:space="preserve">
+    <value>Đăng ký bằng Google</value>
+  </data>
+  <data name="Phone_Number_SignUp_Button" xml:space="preserve">
+    <value>Đăng ký bằng số điện thoại</value>
+  </data>
+  <data name="Trouble_SignUp_Label" xml:space="preserve">
+    <value>Bạn gặp sự cố khi đăng ký?</value>
   </data>
 </root>

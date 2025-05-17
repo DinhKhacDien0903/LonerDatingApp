@@ -10,7 +10,6 @@ namespace LonerApp.PageModels
             : base(navigationService, true)
         {
             _navigationOtherShell = navigationOtherShell;
-            // LocalNotificationCenter.Current.NotificationActionTapped += Current_NotificationActionTapped;
         }
 
         [RelayCommand]
@@ -21,27 +20,34 @@ namespace LonerApp.PageModels
             await _navigationOtherShell.NavigateToAsync<SignInPage>(isPushModal: false);
         }
 
-        private void Current_NotificationActionTapped(Plugin.LocalNotification.EventArgs.NotificationActionEventArgs e)
+        [RelayCommand]
+        async Task OnSignUpAsync()
         {
-            if (e.IsDismissed)
-            {
-
-            }
-            else if (e.IsTapped)
-            {
-
-            }
+            UserSetting.Set(StorageKey.IsLoggingIn, "false");
+            await Task.Delay(50);
+            await _navigationOtherShell.NavigateToAsync<SignUpPage>(isPushModal: false);
         }
 
         [RelayCommand]
         async Task OnGoogleSignInAsync(object param)
         {
             await _navigationOtherShell.NavigateToAsync<EmailAuthor>(param: "user11@test.com", isPushModal: false);
-            // await _navigationOtherShell.NavigateToAsync<VerifyPhoneEmailAuthorPage>(param: "user17@test.com", isPushModal: false);
         }
 
         [RelayCommand]
         async Task OnPhoneSignInAsync(object param)
+        {
+            await _navigationOtherShell.NavigateToAsync<PhoneNumberAuthor>(isPushModal: true);
+        }
+
+        [RelayCommand]
+        async Task OnGoogleSignUpAsync(object param)
+        {
+            await _navigationOtherShell.NavigateToAsync<EmailAuthor>(param: "user11@test.com", isPushModal: false);
+        }
+
+        [RelayCommand]
+        async Task OnPhoneNumberSignUpAsync(object param)
         {
             await _navigationOtherShell.NavigateToAsync<PhoneNumberAuthor>(isPushModal: true);
         }

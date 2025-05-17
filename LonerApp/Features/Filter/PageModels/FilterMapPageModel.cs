@@ -88,16 +88,16 @@ namespace LonerApp.PageModels
                 new UpdateLocationRequest
                 {
                     UserId = _currentUserId,
-                    Latitude = currentLocation.Latitude.ToString(),
-                    Longitude = currentLocation.Longitude.ToString()
+                    Latitude = currentLocation.Latitude.ToString(CultureInfo.InvariantCulture),
+                    Longitude = currentLocation.Longitude.ToString(CultureInfo.InvariantCulture)
                 });
             if (resultLocationUpdate != null && resultLocationUpdate.IsSuccess)
             {
                 var request = new GetMemberByLocationAndRadiusRequest
                 {
                     UserId = _currentUserId,
-                    Longitude = currentLocation.Longitude.ToString(),
-                    Latitude = currentLocation.Latitude.ToString(),
+                    Longitude = currentLocation.Longitude.ToString(CultureInfo.InvariantCulture),
+                    Latitude = currentLocation.Latitude.ToString(CultureInfo.InvariantCulture),
                     Radius = CurrentRadius
                 };
                 var pins = await LoadPinAsync(request);

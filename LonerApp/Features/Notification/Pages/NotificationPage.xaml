@@ -63,9 +63,7 @@
                     ColumnDefinitions="10,*,10"
                     HeightRequest="100">
                     <Grid.GestureRecognizers>
-                        <TapGestureRecognizer
-                            Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:NotificationPageModel}}, x:DataType={x:Type vm:NotificationPageModel}, Path=NotificationItemClickedCommand}"
-                            CommandParameter="{Binding .}" />
+                        <TapGestureRecognizer Command="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:NotificationPageModel}}, x:DataType={x:Type vm:NotificationPageModel}, Path=NotificationItemClickedCommand}" CommandParameter="{Binding .}" />
                     </Grid.GestureRecognizers>
                     <Border
                         Grid.Column="1"
@@ -96,7 +94,7 @@
                             VerticalOptions="Center">
                             <ffimageloading:CachedImage
                                 Grid.RowSpan="2"
-                                Aspect="AspectFit"
+                                Aspect="AspectFill"
                                 DownsampleToViewSize="True"
                                 HeightRequest="{StaticResource SizeMessageImageItem}"
                                 HorizontalOptions="Start"
@@ -143,12 +141,12 @@
             OptionPage="&#xf6cb;"
             TitlePage="Notification" />
         <CollectionView
-            Loaded="NotificationCollectionView_Loaded"
             x:Name="NotificationCollectionView"
             Grid.Row="1"
             ItemTemplate="{StaticResource NotificationItemTemplate}"
             ItemsSource="{Binding Notifications}"
             ItemsUpdatingScrollMode="KeepLastItemInView"
+            Loaded="NotificationCollectionView_Loaded"
             VerticalScrollBarVisibility="Always" />
     </Grid>
 </base:BasePage>
