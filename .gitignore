@@ -398,4 +398,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-Environments.cs
+Apis\Environments.cs
