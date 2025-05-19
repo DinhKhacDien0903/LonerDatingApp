@@ -53,6 +53,7 @@ public static class DependencyInjection
         services.AddTransient<SettingPageModel>();
         services.AddTransient<NotificationPageModel>();
         services.AddTransient<ReportPageModel>();
+        services.AddTransient<ChatBotPageModel>();
         return services;
     }
 
@@ -84,6 +85,7 @@ public static class DependencyInjection
         services.AddTransient<NotificationPage>();
         services.AddTransient<ReportUserPage>();
         services.AddTransient<SignUpPage>();
+        services.AddTransient<ChatBotPage>();
         // services.AddTransient<ReportPopup>();
         return services;
     }

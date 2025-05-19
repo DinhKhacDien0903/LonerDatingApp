@@ -245,6 +245,15 @@
                         WidthRequest="100" />
                     <Button
                         BackgroundColor="{StaticResource White}"
+                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatMessagePageModel}}, Path=OpenChatBotCommand, x:DataType={x:Type vm:ChatMessagePageModel}}"
+                        CommandParameter="{Binding .}"
+                        IsVisible="{Binding IsBlocked, Converter={StaticResource BoolRevertConverter}, Mode=OneWay}"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Text="Trò chuyện với Chat AI"
+                        TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                        WidthRequest="100" />
+                    <Button
+                        BackgroundColor="{StaticResource White}"
                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatMessagePageModel}}, Path=SendUnBlockCommand, x:DataType={x:Type vm:ChatMessagePageModel}}"
                         CommandParameter="{Binding .}"
                         IsVisible="{Binding IsBlocked, Mode=OneWay}"

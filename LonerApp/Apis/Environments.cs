@@ -39,6 +39,7 @@ public static class EnvironmentsExtensions
     public const string ENDPOINT_GET__MESSAGE_MATCHED = "Message/get-user-matched-active";
     public const string ENDPOINT_GET__USER_MESSAGES = "Message/get-user-message";
     public const string ENDPOINT_GET_MESSAGES = "Message/get-messages";
+    public const string ENDPOINT_SEND_MESSAGES = "Message/send-messages";
     public const string ENDPOINT_UPDATE_LOCATION = "User/update-Location";
     public const string ENDPOINT_UPDATE_USER_PROFILE = "User/update-profile";
     public const string ENDPOINT_BLOCK_USER_PROFILE = "User/block";

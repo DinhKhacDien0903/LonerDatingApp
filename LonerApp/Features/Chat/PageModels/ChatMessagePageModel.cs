@@ -442,6 +442,23 @@ namespace LonerApp.PageModels
             }
         }
 
+        [RelayCommand]
+        async Task OnOpenChatBotAsync(object param)
+        {
+            if (OpenChatBotCommand.IsRunning || IsBusy)
+                return;
+            try
+            {
+                IsBusy = true;
+                await NavigationService.PushToPageAsync<ChatBotPage>(param: _partner);
+                await Task.Delay(100);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
         private BlockRequest InitBlockRequest(byte type, bool IsUnChatBlocked = false)
         {
             return new BlockRequest

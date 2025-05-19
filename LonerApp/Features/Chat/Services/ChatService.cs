@@ -1,4 +1,3 @@
-
 namespace LonerApp.Features.Chat.Services;
 
 public class ChatService : IChatService
@@ -42,6 +41,20 @@ public class ChatService : IChatService
         try
         {
             var response = await _apiService.GetAsync<GetBasicUserMessageResponse>(endpoint, queryParams);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Error during swipe operation: {ex.Message}", ex);
+            return null;
+        }
+    }
+
+    public async Task<SendMessageResponse?> SendMessagesAsync(SendMessageRequest request)
+    {
+        try
+        {
+            var response = await _apiService.PostAsync<SendMessageResponse>(EnvironmentsExtensions.ENDPOINT_SEND_MESSAGES, request);
             return response;
         }
         catch (Exception ex)

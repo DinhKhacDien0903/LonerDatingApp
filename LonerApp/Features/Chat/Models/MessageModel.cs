@@ -4,6 +4,16 @@
     {
         public PaginatedResponse<MessageModel>? Messages { get; set; }
     }
+
+    public class SendMessageResponse
+    {
+        public string MessageId { get; set; } = string.Empty;
+    }
+
+    public class SendMessageRequest
+    {
+        public MessageModel MessageRequest { get; set; } = new ();
+    }
     public partial class MessageModel : BaseModel
     {
         [ObservableProperty]
@@ -29,6 +39,7 @@
         [ObservableProperty]
         private bool isImage;
         public string? MatchId { get; set; }
+        public bool IsMessageOfChatBot { get; set; }
     }
 
     public enum MessageType

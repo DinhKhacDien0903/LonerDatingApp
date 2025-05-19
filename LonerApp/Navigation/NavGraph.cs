@@ -30,5 +30,6 @@ namespace LonerApp.Navigation;
             Routing.RegisterRoute(nameof(MyProfilePage), typeof(MyProfilePage));
             Routing.RegisterRoute(nameof(NotificationPage), typeof(NotificationPage));
             Routing.RegisterRoute(nameof(ReportPopup), typeof(ReportPopup));
+            Routing.RegisterRoute(nameof(ChatBotPage), typeof(ChatBotPage));
         }
     }

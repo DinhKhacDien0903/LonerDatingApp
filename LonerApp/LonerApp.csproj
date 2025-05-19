@@ -187,6 +187,9 @@
 	  <MauiXaml Update="Features\Author\Signup\Pages\SetupShowGenderForMe.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Features\Chat\Pages\ChatBotPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Features\Chat\Pages\ImageViewerFullScreenPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

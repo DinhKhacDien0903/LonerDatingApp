@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage
+    x:Class="LonerApp.Features.Pages.ChatBotPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:LonerApp.Utilities.MVVM"
+    xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:converter="clr-namespace:LonerApp.Helpers.Converters"
+    xmlns:f="clr-namespace:Fonts"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+    xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
+    xmlns:models="clr-namespace:LonerApp.Models"
+    xmlns:sho="http://sharpnado.com"
+    xmlns:swipe="clr-namespace:Plugin.Maui.SwipeCardView;assembly=Plugin.Maui.SwipeCardView"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:LonerApp.PageModels"
+    Title="MessageChatPage"
+    x:DataType="vm:ChatBotPageModel"
+    BackgroundColor="{toolkit:AppThemeResource BackgroundPageColor}"
+    NavigationPage.HasNavigationBar="True"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
+    <base:BasePage.Resources>
+        <toolkit:InvertedBoolConverter x:Key="BoolRevertConverter" />
+        <DataTemplate x:Key="MineMessageTextItemTemplate" x:DataType="{x:Type models:MessageModel}">
+            <Grid Padding="20,5" ColumnDefinitions="*,Auto">
+                <Border
+                    Grid.Column="1"
+                    Padding="10"
+                    Background="#5AC0F9"
+                    HorizontalOptions="End"
+                    StrokeShape="RoundRectangle 20,50,20,3">
+                    <Label
+                        HorizontalTextAlignment="Start"
+                        LineBreakMode="WordWrap"
+                        MaximumWidthRequest="250"
+                        Text="{Binding Content}"
+                        TextColor="White"
+                        VerticalTextAlignment="Center" />
+                </Border>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="OtherMessageTextItemTemplate" x:DataType="{x:Type models:MessageModel}">
+            <Grid Padding="20,10" ColumnDefinitions="Auto,*">
+                <Border
+                    Padding="10"
+                    Background="#EEEFF1"
+                    HorizontalOptions="Start"
+                    StrokeShape="RoundRectangle 20,50,3,20">
+                    <Label
+                        HorizontalTextAlignment="Start"
+                        LineBreakMode="WordWrap"
+                        MaximumWidthRequest="250"
+                        Text="{Binding Content}"
+                        TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}"
+                        VerticalTextAlignment="Center" />
+                </Border>
+            </Grid>
+        </DataTemplate>
+        <vm:MessageChatBotItemDataTemplateSelector
+            x:Key="messageChatItemDataTemplateSelector"
+            MineMessageTextItemTemplate="{StaticResource MineMessageTextItemTemplate}"
+            OtherMessageTextItemTemplate="{StaticResource OtherMessageTextItemTemplate}" />
+    </base:BasePage.Resources>
+    <Grid
+        Margin="0"
+        Padding="0"
+        RowDefinitions="Auto,*,Auto">
+        <controls:CustomNavigationBar
+            BackButtonCommand="{Binding BackCommand}"
+            HasBackButton="{Binding HasBackButton}"
+            IsVisible="{Binding IsVisibleNavigation}"
+            TitlePage="Hỗ trợ" />
+        <CollectionView
+            x:Name="ChatMessageList"
+            Grid.Row="1"
+            ItemTemplate="{StaticResource messageChatItemDataTemplateSelector}"
+            ItemsSource="{Binding Messages}"
+            ItemsUpdatingScrollMode="KeepLastItemInView"
+            Loaded="ChatList_Loaded"
+            Scrolled="OnScrolled"
+            VerticalScrollBarVisibility="Always" />
+        <Grid
+            Grid.Row="2"
+            Padding="10,0,0,0"
+            ColumnDefinitions="*"
+            ColumnSpacing="0"
+            IsVisible="{Binding IsBlocked, Converter={StaticResource BoolRevertConverter}, Mode=OneWay}">
+            <Border
+                x:Name="InputGrid"
+                Grid.Column="1"
+                Margin="10"
+                Padding="10,0,0,0"
+                Background="#EEEFF1"
+                Stroke="#D9D9D9"
+                StrokeThickness="2">
+                <ContentView>
+                    <Grid Padding="0">
+                        <controls:BorderlessEditor
+                            x:Name="MessageEditor"
+                            AutoSize="TextChanges"
+                            Background="Transparent"
+                            Focused="MessageEditor_Focused"
+                            FontFamily="Gotham"
+                            FontSize="{StaticResource FontSizeM}"
+                            HorizontalOptions="Start"
+                            MaximumHeightRequest="120"
+                            MaximumWidthRequest="250"
+                            Placeholder="Nhập tin nhắn                               "
+                            Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ChatBotPageModel}}, x:DataType={x:Type vm:ChatBotPageModel}, Path=MessageEntryValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                            TextChanged="MessageEditor_TextChanged"
+                            TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            Unfocused="MessageEditor_Unfocused" />
+                        <Label
+                            x:Name="lbSend"
+                            Margin="10,0,10,0"
+                            FontFamily="GothamBold"
+                            FontSize="{StaticResource FontSizeM}"
+                            HorizontalOptions="End"
+                            Text="{i18n:Translate Chat_Label_Send_Message}"
+                            TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                            VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatBotPageModel}}, Path=SendMessageCommand, x:DataType={x:Type vm:ChatBotPageModel}}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+                </ContentView>
+            </Border>
+        </Grid>
+        <Grid
+            x:Name="Overlay"
+            Grid.Row="1"
+            BackgroundColor="Transparent"
+            IsVisible="{Binding IsVisibleOverlay, Mode=TwoWay}">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="Overlay_Tapped" />
+                <PanGestureRecognizer PanUpdated="Overlay_PanUpdated" />
+            </Grid.GestureRecognizers>
+        </Grid>
+    </Grid>
+</base:BasePage>

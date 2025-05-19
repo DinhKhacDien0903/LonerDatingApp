@@ -1,54 +1,14 @@
 namespace LonerApp.Features.Pages;
 
-public partial class MessageChatPage : BasePage
+public partial class ChatBotPage : BasePage
 {
-    private ChatMessagePageModel _vm;
+    private readonly ChatBotPageModel _vm;
     private bool _isFirstLoad = true;
-    public MessageChatPage(ChatMessagePageModel vm)
-    {
+    public ChatBotPage(ChatBotPageModel vm)
+	{
         BindingContext = _vm = vm;
-        InitializeComponent();
-    }
-
-    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
-    {
-        base.OnNavigatedTo(args);
-
-        // Lấy matchId từ query string
-        if (Shell.Current.CurrentState.Location.OriginalString.Contains("matchId"))
-        {
-            var query = Shell.Current.CurrentState.Location.Query;
-            var matchId = System.Web.HttpUtility.ParseQueryString(query)["matchId"];
-            if (!string.IsNullOrEmpty(matchId))
-            {
-                // await _vm.LoadMessages(matchId);
-                // await _vm.JoinGroupAsync(matchId);
-            }
-            else
-            {
-                Console.WriteLine("Error: matchId is null or empty");
-            }
-        }
-        else
-        {
-            _vm._currentPage = 0;
-            await _vm.LoadDataAsync();
-            Console.WriteLine("Error: No matchId in query string");
-        }
-    }
-    protected override void OnAppearing()
-    {
-        _vm.IsBusy = true;
-        base.OnAppearing();
-        ServiceHelper.GetService<IDeviceService>().SetResizeKeyboardInput();
-        _vm.IsBusy = false;
-    }
-    protected override async void OnDisappearing()
-    {
-        base.OnDisappearing();
-        await _vm.DisconnectAsync();
-    }
-
+		InitializeComponent();
+	}
     private async void OnScrolled(object sender, ItemsViewScrolledEventArgs e)
     {
         if (sender is not CollectionView collectionView)
@@ -105,7 +65,6 @@ public partial class MessageChatPage : BasePage
         }
 
         Overlay.IsVisible = true;
-        lbUploadImage.IsVisible = false;
         string hexColorChange = "#f7b2c8";
         InputGrid.Stroke = Color.FromArgb(hexColorChange);
         lbSend.TextColor = Color.FromArgb(hexColorChange);
@@ -126,7 +85,6 @@ public partial class MessageChatPage : BasePage
         if (!ChatMessageList.Bounds.Contains(point.Value))
         {
             MessageEditor.Unfocus();
-            lbUploadImage.IsVisible = true;
             Overlay.IsVisible = false;
             _vm.IsVisibleOverlay = false;
             _vm.IsVisibleOption = false;
@@ -138,7 +96,6 @@ public partial class MessageChatPage : BasePage
         if (e.StatusType == GestureStatus.Started)
         {
             MessageEditor.Unfocus();
-            lbUploadImage.IsVisible = true;
             Overlay.IsVisible = false;
             _vm.IsVisibleOverlay = false;
             _vm.IsVisibleOption = false;
