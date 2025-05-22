@@ -15,6 +15,8 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private bool _hasBackButton;
         [ObservableProperty]
+        private string _searchUserValue;
+        [ObservableProperty]
         ObservableCollection<UserChatModel> _userChats = new();
         [ObservableProperty]
         private ObservableCollection<UserProfileResponse> _users = new();

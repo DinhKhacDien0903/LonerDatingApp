@@ -156,56 +156,67 @@
             <Grid
                 Grid.Row="1"
                 Padding="20,0"
-                RowDefinitions="Auto, 10, Auto,10,Auto,20,Auto,20,*">
+                RowDefinitions="Auto, 10, Auto, 10, Auto,10,Auto,20,Auto,20,*">
                 <Grid
-                    Margin="16,8"
                     ColumnDefinitions="*"
                     ColumnSpacing="10"
-                    HeightRequest="40"
+                    HeightRequest="50"
                     HorizontalOptions="Fill"
                     IsVisible="{Binding IsVisibleFilterContainer}">
-                    <Border
-                        Grid.ColumnSpan="3"
-                        Background="White"
-                        HeightRequest="60"
-                        StrokeThickness="0">
-                        <Border.Shadow>
-                            <Shadow
-                                Brush="{StaticResource Black}"
-                                Opacity="0.2"
-                                Radius="5"
-                                Offset="1,1" />
-                        </Border.Shadow>
-                    </Border>
                     <Grid>
                         <Border
                             x:Name="InputGrid"
                             Margin="0"
                             Padding="5,0,0,0"
-                            Background="#EEEFF1"
-                            Stroke="#D9D9D9"
+                            Background="Transparent"
+                            Stroke="{toolkit:AppThemeResource PrimaryColor}"
                             StrokeShape="RoundRectangle 10"
-                            StrokeThickness="2">
+                            StrokeThickness="2"
+                            VerticalOptions="Center">
                             <ContentView Margin="0" Padding="0">
-                                <controls:BorderlessEditor
-                                    x:Name="AboutMeEditor"
-                                    AutoSize="TextChanges"
-                                    Focused="AboutMeEditor_Focused"
-                                    FontFamily="Gotham"
-                                    FontSize="{StaticResource FontSizeM}"
-                                    HorizontalOptions="Start"
-                                    MaximumHeightRequest="120"
-                                    MaximumWidthRequest="250"
-                                    Placeholder="Nhập tên người dùng ...                             "
-                                    Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ChatPageModel}}, x:DataType={x:Type vm:ChatPageModel}, Path=SearchUserValue , Mode=TwoWay, UpdateSourceEventName=TextChanged}"
-                                    TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
-                                    Unfocused="AboutMeEditor_Unfocused" />
+                                <Grid>
+                                    <controls:BorderlessEditor
+                                        x:Name="AboutMeEditor"
+                                        AutoSize="TextChanges"
+                                        Focused="AboutMeEditor_Focused"
+                                        FontFamily="Gotham"
+                                        FontSize="{StaticResource FontSizeM}"
+                                        HorizontalOptions="Start"
+                                        MaximumHeightRequest="120"
+                                        MaximumWidthRequest="250"
+                                        Placeholder="Nhập tên người dùng ...                             "
+                                        Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:ChatPageModel}}, x:DataType={x:Type vm:ChatPageModel}, Path=SearchUserValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                                        TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
+                                        Unfocused="AboutMeEditor_Unfocused" />
+                                    <Label
+                                        x:Name="lbSend"
+                                        Margin="10,0,10,0"
+                                        FontFamily="GothamBold"
+                                        FontSize="{StaticResource FontSizeL}"
+                                        HorizontalOptions="End"
+                                        Text="Tìm"
+                                        TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                                        VerticalOptions="Center">
+                                        <!-- <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatMessagePageModel}}, Path=SendMessageCommand, x:DataType={x:Type vm:ChatMessagePageModel}}" />
+                                </Label.GestureRecognizers>-->
+                                    </Label>
+                                </Grid>
                             </ContentView>
                         </Border>
                     </Grid>
                 </Grid>
                 <Label
                     Grid.Row="2"
+                    Margin="10,0,10,0"
+                    FontFamily="GothamBold"
+                    FontSize="{StaticResource FontSizeL}"
+                    HorizontalOptions="Start"
+                    Text="Lỗi"
+                    TextColor="{toolkit:AppThemeResource PrimaryColor}"
+                    VerticalOptions="Center" />
+                <Label
+                    Grid.Row="4"
                     FontFamily="GothamBold"
                     FontSize="{StaticResource FontSizeM}"
                     HorizontalOptions="Start"
@@ -214,7 +225,7 @@
                     TextColor="{toolkit:AppThemeResource PrimaryColor}" />
                 <CollectionView
                     x:Name="userChatCollection"
-                    Grid.Row="4"
+                    Grid.Row="6"
                     HorizontalScrollBarVisibility="Never"
                     ItemTemplate="{StaticResource userChatTempateSelector}"
                     ItemsSource="{Binding Users}">
@@ -223,7 +234,7 @@
                     </CollectionView.ItemsLayout>
                 </CollectionView>
                 <Label
-                    Grid.Row="6"
+                    Grid.Row="8"
                     FontFamily="GothamBold"
                     FontSize="{StaticResource FontSizeM}"
                     HorizontalOptions="Start"
@@ -232,7 +243,7 @@
                     TextColor="{toolkit:AppThemeResource PrimaryColor}" />
                 <RefreshView
                     x:Name="refreshView"
-                    Grid.Row="8"
+                    Grid.Row="10"
                     Command="{Binding ReloadListCommand}"
                     IsRefreshing="{Binding IsRefreshing}"
                     ZIndex="0">

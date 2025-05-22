@@ -97,7 +97,7 @@ namespace LonerApp.PageModels
                 IsBusy = true;
                 await base.LoadDataAsync();
                 _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
-                string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_partner.MatchId}";
+                string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_partner.MatchId}&PaginationRequest.IsMessageOfChatBot=true";
                 var data1 = await _chatService.GetMessagesAsync(EnvironmentsExtensions.ENDPOINT_GET_MESSAGES, queryParams);
                 Messages = [.. data1?.Messages?.Items ?? []];
                 _currentPage++;
@@ -127,7 +127,7 @@ namespace LonerApp.PageModels
             await Task.Delay(100);
 
             _currentUserId = !string.IsNullOrEmpty(_currentUserId) ? _currentUserId : UserSetting.Get(StorageKey.UserId);
-            string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_partner.MatchId}";
+            string queryParams = $"?PaginationRequest.PageNumber={_currentPage}&PaginationRequest.PageSize={PageSize}&PaginationRequest.UserId={_currentUserId}&PaginationRequest.MatchId={_partner.MatchId}&PaginationRequest.IsMessageOfChatBot=true";
             var data1 = (await _chatService.GetMessagesAsync(EnvironmentsExtensions.ENDPOINT_GET_MESSAGES, queryParams))?.Messages?.Items ?? [];
             foreach (var message in data1)
             {
@@ -168,6 +168,7 @@ namespace LonerApp.PageModels
                 Messages.Add(message);
                 MessageEntryValue = string.Empty;
                 var result = await _chatService.SendMessagesAsync(new SendMessageRequest { MessageRequest = message });
+                var gender = await _chatService.GenerateByGeminiAsync(new PromptRequest { Prompt = message.Content });
                 await Task.Delay(100);
                 _chatList.ScrollTo(Messages.Last(), position: ScrollToPosition.End);
             }

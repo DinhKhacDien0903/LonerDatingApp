@@ -8,4 +8,5 @@ public interface IChatService
     Task<GetBasicUserMessageResponse?> GetUserMessageAsync(string endpoint, string UserId);
     Task<GetMessagesResponse?> GetMessagesAsync(string endpoint, string queryParams);
     Task<SendMessageResponse?> SendMessagesAsync(SendMessageRequest request);
+    Task<PromptResponse?> GenerateByGeminiAsync(PromptRequest request);
 }
