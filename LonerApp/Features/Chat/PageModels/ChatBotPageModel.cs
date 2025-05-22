@@ -160,15 +160,28 @@ namespace LonerApp.PageModels
                     Content = MessageEntryValue.Trim(),
                     IsCurrentUserSend = true,
                     IsImage = false,
-                    SendTime = DateTime.Now,
                     IsRead = false,
                     IsMessageOfChatBot = true
                 };
 
                 Messages.Add(message);
                 MessageEntryValue = string.Empty;
-                var result = await _chatService.SendMessagesAsync(new SendMessageRequest { MessageRequest = message });
-                var gender = await _chatService.GenerateByGeminiAsync(new PromptRequest { Prompt = message.Content });
+                var generateByAI = await _chatService.GenerateByGeminiAsync(new PromptRequest { Request = message });
+                if (generateByAI?.IsSuccess ?? false)
+                {
+                    var messageGeneratedByAI = new MessageModel
+                    {
+                        SenderId = _currentUserId,
+                        MatchId = _partner.MatchId,
+                        ReceiverId = _partner.UserId,
+                        Content = generateByAI?.Response.Trim() ?? "Có lỗi xảy ra, AI đang bận vui lòng hỏi lại sau!",
+                        IsCurrentUserSend = false,
+                        IsImage = false,
+                        IsRead = false,
+                        IsMessageOfChatBot = true
+                    };
+                    Messages.Add(messageGeneratedByAI);
+                }
                 await Task.Delay(100);
                 _chatList.ScrollTo(Messages.Last(), position: ScrollToPosition.End);
             }

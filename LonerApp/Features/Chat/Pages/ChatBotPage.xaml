@@ -41,12 +41,30 @@
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="OtherMessageTextItemTemplate" x:DataType="{x:Type models:MessageModel}">
-            <Grid Padding="20,10" ColumnDefinitions="Auto,*">
+            <Grid
+                Padding="20,10"
+                ColumnDefinitions="Auto,*"
+                RowSpacing="10"
+                RowDefinitions="Auto,*">
+                <ffimageloading:CachedImage
+                    HorizontalOptions="Start"
+                    Aspect="AspectFill"
+                    DownsampleToViewSize="True"
+                    HeightRequest="40"
+                    IsOpaque="True"
+                    LoadingPriority="Lowest"
+                    Source="chatbot.png"
+                    WidthRequest="40">
+                    <ffimageloading:CachedImage.Clip>
+                        <RoundRectangleGeometry CornerRadius="20" Rect="0,0,40,40" />
+                    </ffimageloading:CachedImage.Clip>
+                </ffimageloading:CachedImage>
                 <Border
+                    Grid.Row="1"
                     Padding="10"
                     Background="#EEEFF1"
                     HorizontalOptions="Start"
-                    StrokeShape="RoundRectangle 20,50,3,20">
+                    StrokeShape="RoundRectangle 3,50,20,20">
                     <Label
                         HorizontalTextAlignment="Start"
                         LineBreakMode="WordWrap"

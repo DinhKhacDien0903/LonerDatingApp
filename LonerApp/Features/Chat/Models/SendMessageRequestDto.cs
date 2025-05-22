@@ -8,6 +8,7 @@
         public string MatchId { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         public bool IsImage { get; set; }
+        public bool IsMessageOfChatBot { get; set; }
         public DateTime? SendTime { get; set; } = DateTime.UtcNow;
     }
 }
