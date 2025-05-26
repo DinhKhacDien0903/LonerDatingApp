@@ -80,7 +80,7 @@
             IsVisible="{Binding IsVisibleNavigation}"
             OptionButtonCommand="{Binding CancelCommand}"
             OptionPage="&#xf157;"
-            TitlePage="Report" />
+            TitlePage="Báo cáo" />
         <Grid
             Grid.Row="1"
             HorizontalOptions="Center"

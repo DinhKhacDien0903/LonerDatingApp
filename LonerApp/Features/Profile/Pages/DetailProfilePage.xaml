@@ -227,7 +227,7 @@
                         <Label
                             FontFamily="GothamBold"
                             FontSize="{StaticResource FontSizeS}"
-                            Text="About me"
+                            Text="Giới thiệu"
                             TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
                         <Label
                             FontFamily="GothamLight"
@@ -256,7 +256,7 @@
                         <Label
                             FontFamily="GothamBold"
                             FontSize="{StaticResource FontSizeS}"
-                            Text="My Interests"
+                            Text="Sở thích"
                             TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
                         <CollectionView
                             HorizontalScrollBarVisibility="Never"
@@ -280,7 +280,7 @@
                         <Label
                             FontFamily="GothamBold"
                             FontSize="{StaticResource FontSizeS}"
-                            Text="Report"
+                            Text="Báo cáo"
                             TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
                         <Button
                             BackgroundColor="{StaticResource White}"

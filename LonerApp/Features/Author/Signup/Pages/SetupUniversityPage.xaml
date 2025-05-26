@@ -17,8 +17,8 @@
         <toolkit:StatusBarBehavior StatusBarColor="White" StatusBarStyle="DarkContent" />
     </Page.Behaviors>
     <controls:SetupAccountControl
-        Title="My University"
+        Title="Trường đại học"
         ContinueCommand="{Binding UniversityContinueCommand}"
-        Description="This is how it will appear in Tinder."
+        Description="Nó sẽ được hiển thị với mọi người trên Loner"
         IsUniversity="True" />
 </ContentPage>

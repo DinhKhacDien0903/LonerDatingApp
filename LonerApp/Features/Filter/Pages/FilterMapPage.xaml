@@ -59,7 +59,7 @@
             IsVisible="{Binding IsVisibleNavigation}"
             OptionButtonCommand="{Binding SearchPressedCommand}"
             OptionPage="&#xf983;"
-            TitlePage="Map" />
+            TitlePage="Bản đồ" />
         <Grid
             Grid.Row="1"
             Loaded="Grid_Loaded"
@@ -95,7 +95,7 @@
                             HorizontalTextAlignment="Center"
                             LineBreakMode="TailTruncation"
                             MaxLines="2"
-                            Text="Radius"
+                            Text="Bán kính"
                             TextColor="White"
                             VerticalTextAlignment="Center" />
                     </Border>
@@ -111,7 +111,7 @@
                             HorizontalTextAlignment="Center"
                             LineBreakMode="TailTruncation"
                             MaxLines="2"
-                            Text="City"
+                            Text="Thành phố"
                             TextColor="White"
                             VerticalTextAlignment="Center" />
                     </Border>
@@ -126,7 +126,7 @@
                             HorizontalTextAlignment="Center"
                             LineBreakMode="TailTruncation"
                             MaxLines="2"
-                            Text="Reset"
+                            Text="Đặt lại"
                             TextColor="White"
                             VerticalTextAlignment="Center" />
                     </Border>

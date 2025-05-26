@@ -29,7 +29,7 @@
                 IsVisible="{Binding IsVisibleNavigation}"
                 OptionButtonCommand="{Binding DonePressedCommand}"
                 OptionPage="&#xf12c;"
-                TitlePage="Setting" />
+                TitlePage="Cài đặt" />
             <ScrollView
                 Grid.Row="1"
                 BackgroundColor="Transparent"
@@ -63,7 +63,7 @@
                                 HorizontalTextAlignment="Center"
                                 LineBreakMode="TailTruncation"
                                 MaxLines="1"
-                                Text="Priority Likes, See who Likes you and More"
+                                Text="Ưu tiên thích, Xem ai thích bạn và nhiều hơn nữa"
                                 TextColor="{toolkit:AppThemeResource PrimaryColor}" />
                         </StackLayout>
                     </Border>
@@ -82,7 +82,7 @@
                             <Label
                                 FontFamily="GothamBold"
                                 FontSize="{StaticResource FontSizeM}"
-                                Text="ACCOUNT SETTINGS"
+                                Text="CÀI ĐẶT TÀI KHOẢN"
                                 TextColor="#939393" />
                             <BoxView
                                 Margin="-20,0,-10,0"
@@ -98,7 +98,7 @@
                                 <Label
                                     FontFamily="Gotham"
                                     FontSize="14"
-                                    Text="Phone Number"
+                                    Text="Số điện thoại"
                                     TextColor="#4A4A4A"
                                     VerticalTextAlignment="Center" />
                                 <Label
@@ -170,14 +170,14 @@
                                 FontFamily="GothamBold"
                                 FontSize="13"
                                 HorizontalTextAlignment="Start"
-                                Text="A verified Phone Number and Email help secure your account."
+                                Text="Số điện thoại và Email đã xác minh sẽ giúp bảo mật tài khoản của bạn."
                                 TextColor="#939393"
                                 VerticalTextAlignment="Center" />
                             <Label
                                 FontFamily="GothamBold"
                                 FontSize="{StaticResource FontSizeM}"
                                 HorizontalTextAlignment="Start"
-                                Text="Discovery"
+                                Text="Khám phá"
                                 TextColor="#939393"
                                 VerticalTextAlignment="Center" />
                             <BoxView
@@ -191,7 +191,7 @@
                                 <Label
                                     FontFamily="Gotham"
                                     FontSize="14"
-                                    Text="Location"
+                                    Text="Đại chỉ"
                                     TextColor="#4A4A4A"
                                     VerticalTextAlignment="Center" />
                                 <Border
@@ -214,7 +214,7 @@
                                             HorizontalOptions="Start"
                                             MaximumHeightRequest="120"
                                             MaximumWidthRequest="250"
-                                            Placeholder="Location ...         "
+                                            Placeholder="Nhập địa chỉ ...         "
                                             Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SettingPageModel}}, x:DataType={x:Type vm:SettingPageModel}, Path=LocationEditorValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
                                             TextChanged="LocationEditor_TextChanged"
                                             TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
@@ -240,7 +240,7 @@
                             <Label
                                 FontFamily="Gotham"
                                 FontSize="14"
-                                Text="Show Gender"
+                                Text="Giới tính hiển thị"
                                 TextColor="#4A4A4A"
                                 VerticalTextAlignment="Center" />
                             <Label
@@ -275,7 +275,7 @@
                             <Label
                                 FontFamily="Gotham"
                                 FontSize="14"
-                                Text="Age Preference"
+                                Text="Tuổi phù hợp"
                                 TextColor="#4A4A4A"
                                 VerticalTextAlignment="Center" />
                             <StackLayout
@@ -286,7 +286,7 @@
                                     FontFamily="GothamBold"
                                     FontSize="13"
                                     HorizontalTextAlignment="End"
-                                    Text="From"
+                                    Text="Từ"
                                     TextColor="#939393"
                                     VerticalTextAlignment="Center" />
                                 <Border
@@ -324,7 +324,7 @@
                                     FontFamily="GothamBold"
                                     FontSize="13"
                                     HorizontalTextAlignment="End"
-                                    Text="To"
+                                    Text="Đến"
                                     TextColor="#939393"
                                     VerticalTextAlignment="Center" />
                                 <Border
@@ -348,7 +348,7 @@
                                             HorizontalTextAlignment="Center"
                                             Keyboard="Numeric"
                                             MaxLength="2"
-                                            Placeholder="18"
+                                            Placeholder="30"
                                             Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:SettingPageModel}}, x:DataType={x:Type vm:SettingPageModel}, Path=ToAgeEditorValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
                                             TextChanged="LocationEditor_TextChanged"
                                             TextColor="{toolkit:AppThemeResource PrimaryColor}"
@@ -372,14 +372,14 @@
                             FontFamily="GothamBold"
                             FontSize="{StaticResource FontSizeM}"
                             HorizontalTextAlignment="Center"
-                            Text="Log out"
+                            Text="Đăng xuất"
                             TextColor="#939393"
                             VerticalTextAlignment="Center">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding LogoutPressedCommand}" />
                             </Label.GestureRecognizers>
                         </Label>
-                        <BoxView
+                        <!-- <BoxView
                             Margin="-20,0,-10,0"
                             BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
                             HeightRequest="1"
@@ -397,7 +397,7 @@
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding DeleteAccountPressedCommand}" />
                             </Label.GestureRecognizers>
-                        </Label>
+                        </Label> -->
                         <BoxView
                             Margin="-20,0,-10,0"
                             BackgroundColor="{toolkit:AppThemeResource TextPhoneNumberColor}"

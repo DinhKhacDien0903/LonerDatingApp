@@ -139,7 +139,7 @@
             IsVisible="{Binding IsVisibleNavigation}"
             OptionButtonCommand="{Binding ClearNotificationsCommand}"
             OptionPage="&#xf6cb;"
-            TitlePage="Notification" />
+            TitlePage="Thông báo" />
         <CollectionView
             x:Name="NotificationCollectionView"
             Grid.Row="1"

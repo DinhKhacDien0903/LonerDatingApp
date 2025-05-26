@@ -100,7 +100,7 @@
                 IsVisible="{Binding IsVisibleNavigation}"
                 OptionButtonCommand="{Binding DonePressedCommand}"
                 OptionPage="&#xf12c;"
-                TitlePage="Edit Infor" />
+                TitlePage="Sửa thông tin" />
             <Grid
                 Grid.Row="1"
                 HorizontalOptions="Center"
@@ -115,7 +115,7 @@
                         FontFamily="GothamBold"
                         FontSize="{StaticResource FontSizeL}"
                         HorizontalOptions="Center"
-                        Text="Edit"
+                        Text="Sửa"
                         TextColor="{toolkit:AppThemeResource PrimaryColor}">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Tapped="Label_Edit_Tapped" />
@@ -126,7 +126,7 @@
                         FontFamily="GothamBold"
                         FontSize="{StaticResource FontSizeL}"
                         HorizontalOptions="Center"
-                        Text="Preview"
+                        Text="Xem trước"
                         TextColor="#939393">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Tapped="Label_Preview_Tapped" />
@@ -163,12 +163,12 @@
                             <Label
                                 FontFamily="GothamLight"
                                 FontSize="12"
-                                Text="Smart Photos continuously tests all your profile photos and  picks the best one to show first."
+                                Text="Hãy cập nhật ảnh đại diện của bạn và chọn ảnh đẹp nhất để hiển thị đầu tiên."
                                 TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
                             <Label
                                 FontFamily="GothamBold"
                                 FontSize="{StaticResource FontSizeM}"
-                                Text="About me"
+                                Text="Giới thiệu"
                                 TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
                             <Border
                                 x:Name="InputGrid"
@@ -190,7 +190,7 @@
                                         HorizontalOptions="Start"
                                         MaximumHeightRequest="120"
                                         MaximumWidthRequest="250"
-                                        Placeholder="Type fot about ...                             "
+                                        Placeholder="Nhập một vài giới thiệu ...                             "
                                         Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:EditProfilePageModel}}, x:DataType={x:Type vm:EditProfilePageModel}, Path=AboutMeEditorValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
                                         TextChanged="AboutMeEditor_TextChanged"
                                         TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
@@ -215,7 +215,7 @@
                             <Label
                                 FontFamily="GothamBold"
                                 FontSize="{StaticResource FontSizeM}"
-                                Text="Interest"
+                                Text="Sở thích"
                                 TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
                             <BoxView
                                 Margin="-20,0,-10,0"
@@ -262,7 +262,7 @@
                             <Label
                                 FontFamily="GothamBold"
                                 FontSize="{StaticResource FontSizeM}"
-                                Text="Gender"
+                                Text="Giới tính"
                                 TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
                             <BoxView
                                 Margin="-20,0,-10,0"
@@ -309,7 +309,7 @@
                             <Label
                                 FontFamily="GothamBold"
                                 FontSize="{StaticResource FontSizeM}"
-                                Text="University"
+                                Text="Đại học"
                                 TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
                             <BoxView
                                 Margin="-20,0,-10,0"
@@ -354,7 +354,7 @@
                             <Label
                                 FontFamily="GothamBold"
                                 FontSize="{StaticResource FontSizeM}"
-                                Text="Work"
+                                Text="Công việc"
                                 TextColor="{toolkit:AppThemeResource HyperLinkSignUpColor}" />
                             <BoxView
                                 Margin="-20,0,-10,0"
@@ -381,7 +381,7 @@
                                         HorizontalOptions="Start"
                                         MaximumHeightRequest="120"
                                         MaximumWidthRequest="250"
-                                        Placeholder="Type fot about ...                             "
+                                        Placeholder="Nhập công việc ...                             "
                                         Text="{Binding Source={RelativeSource FindAncestorBindingContext, AncestorType={x:Type vm:EditProfilePageModel}}, x:DataType={x:Type vm:EditProfilePageModel}, Path=WorkEditorValue, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
                                         TextChanged="AboutMeEditor_TextChanged"
                                         TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
