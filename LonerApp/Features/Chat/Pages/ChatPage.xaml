@@ -197,9 +197,9 @@
                                         Text="Tìm"
                                         TextColor="{toolkit:AppThemeResource PrimaryColor}"
                                         VerticalOptions="Center">
-                                        <!-- <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatMessagePageModel}}, Path=SendMessageCommand, x:DataType={x:Type vm:ChatMessagePageModel}}" />
-                                </Label.GestureRecognizers>-->
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatPageModel}}, Path=SearchUserPressedCommand, x:DataType={x:Type vm:ChatPageModel}}" />
+                                        </Label.GestureRecognizers>
                                     </Label>
                                 </Grid>
                             </ContentView>
@@ -210,8 +210,9 @@
                     Grid.Row="2"
                     Margin="10,0,10,0"
                     FontFamily="GothamBold"
-                    FontSize="{StaticResource FontSizeL}"
+                    FontSize="{StaticResource FontSizeM}"
                     HorizontalOptions="Start"
+                    IsVisible="{Binding IsShowError, Mode=TwoWay}"
                     Text="Lỗi"
                     TextColor="{toolkit:AppThemeResource PrimaryColor}"
                     VerticalOptions="Center" />
@@ -258,6 +259,13 @@
                         MinimumHeightRequest="10"
                         TapCommand="{Binding UserChatItemClickedCommand}" />
                 </RefreshView>
+                <Grid
+                    x:Name="Overlay"
+                    Grid.Row="1"
+                    Grid.RowSpan="10"
+                    BackgroundColor="Transparent"
+                    IsVisible="{Binding IsVisibleFilterContainer, Mode=TwoWay}"
+                    ZIndex="99" />
             </Grid>
         </Grid>
     </base:BasePage.Content>

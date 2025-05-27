@@ -17,6 +17,8 @@ namespace LonerApp.PageModels
         [ObservableProperty]
         private string _searchUserValue;
         [ObservableProperty]
+        private string _errorValue;
+        [ObservableProperty]
         ObservableCollection<UserChatModel> _userChats = new();
         [ObservableProperty]
         private ObservableCollection<UserProfileResponse> _users = new();
@@ -64,6 +66,38 @@ namespace LonerApp.PageModels
             await Task.Delay(100);
             IsBusy = false;
         }
+
+        [RelayCommand]
+        async Task OnSearchUserPressedAsync(object param)
+        {
+            if (SearchUserPressedCommand.IsRunning || IsBusy)
+                return;
+            try
+            {
+                IsBusy = true;
+                SearchUserValue = SearchUserValue?.Trim() ?? string.Empty;
+                if (!IsSeacrhValueValid(SearchUserValue))
+                {
+                    IsShowError = true;
+
+                }
+                await Task.Delay(100);
+            }
+            catch (Exception ex)
+            {
+                IsShowError = true;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private bool IsSeacrhValueValid(string value)
+        {
+            return !string.IsNullOrEmpty(value) && value.Length >= 3;
+        }
+
         public async Task InitDataAsync()
         {
             IsBusy = true;
