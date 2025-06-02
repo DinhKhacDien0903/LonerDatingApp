@@ -1,3 +1,5 @@
+using System.Net.Http.Json;
+using System.Net;
 using System.Text.Json;
 namespace LonerApp.Helpers;
 
@@ -35,6 +37,25 @@ public static class ApiResponseHelper
             {
                 var errorObject = JsonSerializer.Deserialize<ErrorResponse>(errorContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var authorizeObject = JsonSerializer.Deserialize<UnAuthorizedResponse>(errorContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    if (authorizeObject?.RedirectToLogin == true)
+                    {
+                        await MainThread.InvokeOnMainThreadAsync(async () =>
+                        {
+                            await AlertHelper.ShowErrorAlertAsync(authorizeObject?.Error ?? "Tài khoản của bạn đã bị khóa", "Thoog báo");
+                            UserSetting.Remove("UserId");
+                            UserSetting.Remove("RefreshToken");
+                            UserSetting.Remove("IsLoggedIn");
+                            await (Shell.Current as AppShell)?.RemoveRootAsync();
+                            await Task.Delay(100);
+                            AppHelper.SetMainPage(new MainPage());
+                            //await Shell.Current.GoToAsync("//LoginPage");
+                        });
+                    }
+                }
+
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     await AlertHelper.ShowErrorAlertAsync(errorObject?.Error ?? "Dữ liệu không tồn tại", "Lỗi");
@@ -65,4 +86,10 @@ public static class ApiResponseHelper
 public class ErrorResponse
 {
     public string? Error { get; set; }
+}
+
+public class UnAuthorizedResponse
+{
+    public string? Error { get; set; }
+    public bool RedirectToLogin { get; set; }
 }
