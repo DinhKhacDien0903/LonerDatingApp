@@ -44,19 +44,22 @@ public static class ApiResponseHelper
                     {
                         await MainThread.InvokeOnMainThreadAsync(async () =>
                         {
-                            await AlertHelper.ShowErrorAlertAsync(authorizeObject?.Error ?? "Tài khoản của bạn đã bị khóa", "Thoog báo");
+                            await AlertHelper.ShowErrorAlertAsync("Tài khoản của bạn đã bị khóa.", "Thông báo");
                             UserSetting.Remove("UserId");
                             UserSetting.Remove("RefreshToken");
+                            UserSetting.Remove("AccessToken");
                             UserSetting.Remove("IsLoggedIn");
+                            var apiService = ServiceHelper.GetService<IApiService>();
+                            await apiService.ResetAsync();
                             await (Shell.Current as AppShell)?.RemoveRootAsync();
-                            await Task.Delay(100);
+                            await Task.Delay(200);
                             AppHelper.SetMainPage(new MainPage());
+                            await Task.Delay(100);
                             //await Shell.Current.GoToAsync("//LoginPage");
                         });
                     }
                 }
-
-                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     await AlertHelper.ShowErrorAlertAsync(errorObject?.Error ?? "Dữ liệu không tồn tại", "Lỗi");
                 }

@@ -6,5 +6,6 @@ public interface IApiService
     Task<T?> PostAsync<T>(string endpoint, object data);
     Task<T?> PutAsync<T>(string endpoint, object data);
     Task DeleteAsync(string endpoint, string queryParams = "");
+    Task ResetAsync();
     Task<T> RefreshTokenAsync<T>(string refreshToken);
 };

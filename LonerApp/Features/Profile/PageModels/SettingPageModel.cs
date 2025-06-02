@@ -156,10 +156,14 @@ namespace LonerApp.PageModels
                     {
                         UserSetting.Remove("UserId");
                         UserSetting.Remove("RefreshToken");
+                        UserSetting.Remove("AccessToken");
                         UserSetting.Remove("IsLoggedIn");
+                        var apiService = ServiceHelper.GetService<IApiService>();
+                        await apiService.ResetAsync();
                         await (Shell.Current as AppShell)?.RemoveRootAsync();
-                        await Task.Delay(100);
+                        await Task.Delay(200);
                         AppHelper.SetMainPage(new MainPage());
+                        await Task.Delay(100);
                     }
                 }
 

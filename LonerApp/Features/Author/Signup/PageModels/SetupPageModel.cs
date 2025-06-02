@@ -423,6 +423,7 @@ namespace LonerApp.PageModels
 
             return false;
         }
+        
         private async Task OnExcuteChoosePhotoAsync(AddPhotoModel itemSelected)
         {
             string olderLocalImagePath = itemSelected.ImagePath.ToString();

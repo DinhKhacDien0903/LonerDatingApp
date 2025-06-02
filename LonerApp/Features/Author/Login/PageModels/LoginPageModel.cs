@@ -62,14 +62,12 @@ namespace LonerApp.PageModels
         private readonly LoginPhoneNumberValidator _phoneNumberValidator = new();
         private readonly VerifiedPhoneNumberValidator _verifiedPhoneNumber = new();
         private readonly LoginEmailValidator _emailNumberValidator = new();
-        private readonly IAuthorService _authorService;
         private readonly INavigationOtherShellService _navigationOtherShell;
         ContentPage? _previousPage;
         SettingPageModel? _settingPageModel;
 
         public LoginPageModel(
             INavigationService navigationService,
-            IAuthorService authorService,
             INavigationOtherShellService navigationOtherShell)
             : base(navigationService, true)
         {
@@ -80,7 +78,6 @@ namespace LonerApp.PageModels
                 };
 
             SelectCountry = Countries[0].Name ?? string.Empty;
-            _authorService = authorService;
             _navigationOtherShell = navigationOtherShell;
         }
 
@@ -202,9 +199,21 @@ namespace LonerApp.PageModels
                     return;
                 }
 
+                var _authorService = ServiceHelper.GetService<IAuthorService>();
+                if (_authorService is null)
+                    return;
+
+                var isLoggingInValue = UserSetting.Get(StorageKey.IsLoggingIn);
+                bool isLoggingIn;
+                if (string.IsNullOrEmpty(isLoggingInValue))
+                    isLoggingIn = false;
+                else
+                    isLoggingIn = Convert.ToBoolean(isLoggingInValue);
+
                 var sendMailResponse = await _authorService.SendMailOtpAsync(new()
                 {
-                    Email = EmailValue
+                    Email = EmailValue,
+                    IsLoggingIn = isLoggingIn
                 });
                 if (sendMailResponse?.IsSuccess == true)
                 {
@@ -232,7 +241,6 @@ namespace LonerApp.PageModels
             IsShowError = true;
             ErrorTextValue = message;
         }
-
         private void ClearError()
         {
             IsShowError = false;

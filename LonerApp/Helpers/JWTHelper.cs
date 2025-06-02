@@ -8,7 +8,10 @@ namespace LonerApp.Helpers
         public static async Task<string> GetValidAccessToken()
         {
             var token = UserSetting.Get(StorageKey.AccessToken);
-            if (string.IsNullOrEmpty(token) || IsTokenExpired(token))
+            if (string.IsNullOrEmpty(token))
+                return token;
+
+            if (IsTokenExpired(token))
             {
                 var refreshToken = UserSetting.Get(StorageKey.RefreshToken);
                 token = await RefreshTokenAsync(refreshToken);

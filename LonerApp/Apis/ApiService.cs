@@ -1,5 +1,5 @@
+using System.Net;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
@@ -8,6 +8,7 @@ namespace LonerApp.Apis;
 public class ApiService : IApiService
 {
     private readonly HttpClient _httpClient;
+    private readonly HttpClientHandler _handler;
     private static readonly JsonSerializerOptions DEFAULT_OPTIONS = new()
     {
         PropertyNameCaseInsensitive = true
@@ -15,12 +16,12 @@ public class ApiService : IApiService
 
     public ApiService()
     {
-        var handler = new HttpClientHandler
+        _handler = new HttpClientHandler
         {
             ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
         };
 
-        _httpClient = new HttpClient(handler)
+        _httpClient = new HttpClient(_handler)
         {
             BaseAddress = new Uri(GetBaseUrl())
         };
@@ -28,7 +29,7 @@ public class ApiService : IApiService
         Task.Run(async () => await UpdateAuthorizationHeader()).Wait();
     }
 
-    private async Task UpdateAuthorizationHeader()
+    public async Task UpdateAuthorizationHeader()
     {
         var token = await JWTHelper.GetValidAccessToken();
         if (!string.IsNullOrEmpty(token))
@@ -39,6 +40,20 @@ public class ApiService : IApiService
         {
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }
+    }
+
+    public void ClearCookies()
+    {
+        if (_handler.CookieContainer != null)
+        {
+            _handler.CookieContainer = new CookieContainer();
+        }
+    }
+
+    public async Task ResetAsync()
+    {
+        await UpdateAuthorizationHeader();
+        ClearCookies();
     }
 
     public async Task DeleteAsync(string endpoint, string queryParams = "")
@@ -65,8 +80,12 @@ public class ApiService : IApiService
         {
             var url = string.IsNullOrEmpty(queryParams) ? endpoint : $"{endpoint}{queryParams}";
             var response = await _httpClient.GetAsync(url);
-            response.EnsureSuccessStatusCode();
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                return await ApiResponseHelper.HandleResponse<T>(response);
+            }
 
+            response.EnsureSuccessStatusCode();
             return await ApiResponseHelper.HandleResponse<T>(response);
             //return await response.Content.ReadFromJsonAsync<T>(DEFAULT_OPTIONS);
         }
@@ -128,7 +147,7 @@ public class ApiService : IApiService
     {
         return await PostAsync<T>(
             $"{Environments.URl_SERVER_HTTPS_DEVICE_4G}",
-            new {RefreshToken = refreshToken });
+            new { RefreshToken = refreshToken });
     }
 }
 public class ApiException : Exception

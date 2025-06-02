@@ -86,6 +86,7 @@ public partial class VerfyEmailPageModel : BasePageModel
                 ClearError();
                 UserSetting.SetObject(StorageKey.IsLoggedIn, verifyResponse.IsVerified);
                 UserSetting.Set(StorageKey.IsAccountSetup, verifyResponse.IsAccountSetup.ToString());
+                UserSetting.Remove("AccessToken");
                 UserSetting.Set(StorageKey.AccessToken, verifyResponse.AccessToken);
                 UserSetting.Set(StorageKey.RefreshToken, verifyResponse.RefreshToken);
                 UserSetting.Remove("UserId");
