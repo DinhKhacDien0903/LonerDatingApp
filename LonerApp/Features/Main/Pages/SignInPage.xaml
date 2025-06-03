@@ -78,12 +78,12 @@
                             BackgroundColor="Transparent"
                             CustomCommand="{Binding GoogleSignInCommand}"
                             Icon="&#xf2b8;"
-                            Text="{i18n:Translate Google_Sign_Button}" />
+                            Text="Đăng nhập với Google" />
                         <controls:CustomButton
                             BackgroundColor="Transparent"
                             CustomCommand="{Binding PhoneSignInCommand}"
                             Icon="&#xF3F2;"
-                            Text="{i18n:Translate Phone_Number_Sign_Button}" />
+                            Text="Đăng nhập với SĐT" />
                     </StackLayout>
                     <Label
                         Grid.Row="4"

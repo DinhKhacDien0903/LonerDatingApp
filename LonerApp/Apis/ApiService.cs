@@ -29,7 +29,7 @@ public class ApiService : IApiService
         Task.Run(async () => await UpdateAuthorizationHeader()).Wait();
     }
 
-    public async Task UpdateAuthorizationHeader()
+    private async Task UpdateAuthorizationHeader()
     {
         var token = await JWTHelper.GetValidAccessToken();
         if (!string.IsNullOrEmpty(token))
@@ -42,7 +42,7 @@ public class ApiService : IApiService
         }
     }
 
-    public void ClearCookies()
+    private void ClearCookies()
     {
         if (_handler.CookieContainer != null)
         {

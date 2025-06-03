@@ -122,14 +122,14 @@ namespace LonerApp.PageModels
                 }
                 IsShowError = false;
                 //TODO: Handle OTP.
-                var accountSid = "AC42be1218f22e662224f57255a40e61db";
-                var authToken = "cae95aa66aa256c7c192200f3d2232ec";
+                var accountSid = Environments.TWILIO_ACCOUNT_SID;
+                var authToken = Environments.TWILIO_AUTH_TOKEN;
                 TwilioClient.Init(accountSid, authToken);
 
                 var verification = VerificationResource.Create(
-                    to: "+84777712640",
+                    to: Environments.TWILIO_PHONE_NUMBER_IS_AUTHORIED,
                     channel: "sms",
-                    pathServiceSid: "VA197516f6d68a53f646a7274fd2f3cadd"
+                    pathServiceSid: Environments.TWILIO_PATH_SERVICE_SID
                 );
                 await _navigationOtherShell.NavigateToAsync<VerifyPhoneNumberAuthorPage>(param: $"{PhoneNumberValue} ", isPushModal: true);
             }
@@ -150,14 +150,14 @@ namespace LonerApp.PageModels
             var validatorResult = _verifiedPhoneNumber.Validate(this);
             if (validatorResult.IsValid)
             {
-                var accountSid = "AC42be1218f22e662224f57255a40e61db";
-                var authToken = "cae95aa66aa256c7c192200f3d2232ec";
+                var accountSid = Environments.TWILIO_ACCOUNT_SID;
+                var authToken = Environments.TWILIO_AUTH_TOKEN;
                 TwilioClient.Init(accountSid, authToken);
 
                 var verification = VerificationCheckResource.Create(
-                    to: "+84777712640",
+                    to: Environments.TWILIO_PHONE_NUMBER_IS_AUTHORIED,
                     code: VerifyPhoneNumberValue,
-                    pathServiceSid: "VA197516f6d68a53f646a7274fd2f3cadd"
+                    pathServiceSid: Environments.TWILIO_PATH_SERVICE_SID
                 );
 
                 if (verification.Status == "approved")
@@ -203,13 +203,7 @@ namespace LonerApp.PageModels
                 if (_authorService is null)
                     return;
 
-                var isLoggingInValue = UserSetting.Get(StorageKey.IsLoggingIn);
-                bool isLoggingIn;
-                if (string.IsNullOrEmpty(isLoggingInValue))
-                    isLoggingIn = false;
-                else
-                    isLoggingIn = Convert.ToBoolean(isLoggingInValue);
-
+                bool isLoggingIn = IsLoginActionStatus();
                 var sendMailResponse = await _authorService.SendMailOtpAsync(new()
                 {
                     Email = EmailValue,
@@ -236,6 +230,14 @@ namespace LonerApp.PageModels
             }
         }
 
+        private bool IsLoginActionStatus()
+        {
+            var isLoggingInValue = UserSetting.Get(StorageKey.IsLoggingIn);
+            if (string.IsNullOrEmpty(isLoggingInValue))
+                return false;
+            return Convert.ToBoolean(isLoggingInValue);
+        }
+
         private void DisplayError(string message)
         {
             IsShowError = true;
@@ -252,7 +254,7 @@ namespace LonerApp.PageModels
         {
             if (!IsBusy)
             {
-                if(AppShell.Current != null)
+                if (AppShell.Current != null)
                     await NavigationService.PopPageAsync(isPopModal: false);
                 else
                     await _navigationOtherShell.GoBackAsync();

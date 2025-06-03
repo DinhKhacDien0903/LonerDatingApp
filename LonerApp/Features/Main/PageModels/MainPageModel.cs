@@ -15,6 +15,7 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnSignInAsync()
         {
+            UserSetting.Remove("IsLoggedIn");
             UserSetting.Set(StorageKey.IsLoggingIn, "true");
             await Task.Delay(50);
             await _navigationOtherShell.NavigateToAsync<SignInPage>(isPushModal: false);
@@ -23,6 +24,7 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnSignUpAsync()
         {
+            UserSetting.Remove("IsLoggedIn");
             UserSetting.Set(StorageKey.IsLoggingIn, "false");
             await Task.Delay(50);
             await _navigationOtherShell.NavigateToAsync<SignUpPage>(isPushModal: false);
@@ -31,7 +33,7 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnGoogleSignInAsync(object param)
         {
-            await _navigationOtherShell.NavigateToAsync<EmailAuthor>(param: "user11@test.com", isPushModal: false);
+            await _navigationOtherShell.NavigateToAsync<EmailAuthor>(isPushModal: false);
         }
 
         [RelayCommand]
@@ -43,7 +45,7 @@ namespace LonerApp.PageModels
         [RelayCommand]
         async Task OnGoogleSignUpAsync(object param)
         {
-            await _navigationOtherShell.NavigateToAsync<EmailAuthor>(param: "user11@test.com", isPushModal: false);
+            await _navigationOtherShell.NavigateToAsync<EmailAuthor>(isPushModal: false);
         }
 
         [RelayCommand]

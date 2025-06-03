@@ -78,13 +78,13 @@
                             Command="{Binding SignUpCommand}"
                             CommandParameter="{Binding .}"
                             Style="{StaticResource SecondaryButtonStyle}"
-                            Text="{i18n:Translate Create_Account_Button}"
+                            Text="Đăng ký"
                             TextColor="#676767" />
                         <Button
                             Command="{Binding SignInCommand}"
                             CommandParameter="{Binding .}"
                             Style="{StaticResource SecondaryButtonStyle}"
-                            Text="{i18n:Translate Signup_Button}" />
+                            Text="Đăng nhập" />
                     </StackLayout>
                     <Label
                         Grid.Row="4"

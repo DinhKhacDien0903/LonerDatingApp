@@ -152,7 +152,6 @@ namespace LonerApp.PageModels
             if (validatorResult.IsValid)
             {
                 IsShowError = false;
-                // await NavigationService.PushToPageAsync<SetupDateOfBirthPage>(isPushModal: false);
                 await _navigationOtherShell.NavigateToAsync<SetupDateOfBirthPage>();
             }
             else
@@ -423,7 +422,7 @@ namespace LonerApp.PageModels
 
             return false;
         }
-        
+
         private async Task OnExcuteChoosePhotoAsync(AddPhotoModel itemSelected)
         {
             string olderLocalImagePath = itemSelected.ImagePath.ToString();

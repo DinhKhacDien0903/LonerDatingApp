@@ -60,7 +60,6 @@ public partial class VerfyEmailPageModel : BasePageModel
             IsBusy = true;
             VerifyEmailValue = VerifyEmailValue?.Trim() ?? string.Empty;
             var validationResult = _emailNumberValidator.Validate(this);
-            var currentId = UserSetting.Get(StorageKey.UserId);
             if (!validationResult.IsValid)
             {
                 DisplayError(validationResult.Errors.FirstOrDefault()?.ErrorMessage ?? "Invalid Code");

@@ -2,6 +2,7 @@
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.Input;
 using LonerApp.Features.Services;
+using Plugin.LocalNotification;
 using System.Collections.ObjectModel;
 
 namespace LonerApp.PageModels
@@ -31,6 +32,8 @@ namespace LonerApp.PageModels
         private int _currentPage = 1;
         private int countUser = 0;
         private bool _hasMoreUsers = true;
+        private int _notificationId = 0;
+
         private readonly Services.INotificationService _notificationService;
         public SwipePageModel(INavigationService navigationService,
          ISwipeService swipeService,
@@ -157,9 +160,46 @@ namespace LonerApp.PageModels
             if (response != null && response.IsMatch)
             {
                 await ShowToast(response.Message);
-                await Task.Delay(1);
+                await Task.Delay(100);
             }
             IsBusy = false;
+        }
+
+        private async Task HandleNotificationAsync(NotificationResponse notification)
+        {
+            try
+            {
+                var notificationData = new
+                {
+                    Type = notification.Type.ToString(),
+                    notification.RelatedId,
+                    UserId = notification.SenderId,
+                };
+
+                var returningData = System.Text.Json.JsonSerializer.Serialize(notificationData);
+                var request = new NotificationRequest
+                {
+                    NotificationId = _notificationId,
+                    Title = notification.Type == 2 ? notification.Title : "Notification",
+                    Subtitle = notification.Subtitle,
+                    Description = (notification?.Messeage ?? "").Contains("https://") ? "Hình ảnh" : notification?.Messeage ?? "You have a new notification",
+                    BadgeNumber = 42,
+                    ReturningData = returningData,
+                    Schedule = new NotificationRequestSchedule
+                    {
+                        NotifyTime = DateTime.Now.AddSeconds(1),
+                    }
+                };
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    await LocalNotificationCenter.Current.Show(request);
+                    _notificationId++;
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error showing notification: {ex.Message}");
+            }
         }
 
         private async Task ShowToast(string content)
