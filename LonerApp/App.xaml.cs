@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Android.OS;
+using LonerApp.Features.Services;
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.EventArgs;
 
@@ -72,24 +73,34 @@ namespace LonerApp
                     return;
                 }
 
-                var data = JsonSerializer.Deserialize<Dictionary<string, string>>(e.Request.ReturningData);
-                if (data == null)
+                // var data = JsonSerializer.Deserialize<Dictionary<string, string>>(e.Request.ReturningData);
+                var data1 = JsonSerializer.Deserialize<NotificationResponse>(e.Request.ReturningData);
+                if (data1 == null)
                     return;
 
                 var navigationService = ServiceHelper.GetService<INavigationService>();
-                var type = data.GetValueOrDefault("Type");
-                var relatedId = data.GetValueOrDefault("RelatedId");
-                var UserId = data.GetValueOrDefault("UserId");
+                // var type = data.GetValueOrDefault("Type");
+                // var relatedId = data.GetValueOrDefault("RelatedId");
+                // var UserId = data.GetValueOrDefault("UserId");
+                // var UserName = data.GetValueOrDefault("UserName");
                 var param = new UserChatModel()
                 {
-                    UserId = UserId ?? "",
-                    MatchId = relatedId ?? ""
+                    UserId = data1?.SenderId ?? "",
+                    MatchId = data1?.RelatedId ?? "",
+                    UserName = data1?.Title ?? "",
                 };
-                if (type == "2" && !string.IsNullOrEmpty(relatedId))
+                if (data1.Type == 2 && !string.IsNullOrEmpty(data1?.RelatedId ?? ""))
                 {
                     await MainThread.InvokeOnMainThreadAsync(async () =>
                     {
                         await navigationService.PushToPageAsync<MessageChatPage>(param: param);
+                    });
+                }
+                else if (data1.Type == 1)
+                {
+                    await MainThread.InvokeOnMainThreadAsync(async () =>
+                    {
+                        await navigationService.PushToPageAsync<DetailProfilePage>(param: data1.SenderId, isPushModal: true);
                     });
                 }
                 else
@@ -99,6 +110,11 @@ namespace LonerApp
                         await Shell.Current.GoToAsync("//NotificationsPage");
                     });
                 }
+                data1.IsRead = true;
+                var response = await ServiceHelper.GetService<INotificationManagerService>().ReadNotification(new ReadNotificationRequest
+                {
+                    Notification = data1
+                });
 
                 await Task.Delay(1000);
             }

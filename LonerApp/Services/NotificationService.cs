@@ -10,7 +10,7 @@ namespace LonerApp.Services
         public NotificationService()
         {
             _connection = new HubConnectionBuilder()
-                .WithUrl(Environments.URl_SERVER_HTTPS_DEVICE_WIFI_NOTIFICATION_HUB, options =>
+                .WithUrl(Environments.URl_SERVER_HTTPS_DEVICE_4G_NOTIFICATION_HUB_MAC, options =>
                 {
                     options.HttpMessageHandlerFactory = _ => new HttpClientHandler
                     {
@@ -68,9 +68,10 @@ namespace LonerApp.Services
                     Type = notification.Type.ToString(),
                     RelatedId = notification.RelatedId,
                     UserId = notification.SenderId,
+                    UserName = notification.Title,
                 };
 
-                var returningData = System.Text.Json.JsonSerializer.Serialize(notificationData);
+                var returningData = System.Text.Json.JsonSerializer.Serialize(notification);
                 var request = new NotificationRequest
                 {
                     NotificationId = _notificationId,

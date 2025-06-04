@@ -52,6 +52,7 @@ namespace LonerApp.PageModels
                 LocationEditorValue = _settingAccount.Address ?? string.Empty;
                 FromAgeEditorValue = _settingAccount.MinAge.ToString();
                 ToAgeEditorValue = _settingAccount.MaxAge.ToString();
+                ShowGenderValue = _settingAccount.ShowGender ? "Nam" : "Nữ";
             }
 
             await base.InitAsync(initData);

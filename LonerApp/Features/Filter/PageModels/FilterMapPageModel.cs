@@ -60,19 +60,58 @@ namespace LonerApp.PageModels
 
         public async Task HandleLikeAsync(object param)
         {
-            if (_swipePageModel != null)
+            try
             {
-                await _swipePageModel.LikePressedCommand.ExecuteAsync(param);
+                IsBusy = true;
+                if (_swipePageModel != null)
+                {
+                    await _swipePageModel.LikePressedCommand.ExecuteAsync(param);
+                    await Task.Delay(200);
+                    var request = new GetMemberByLocationAndRadiusRequest
+                    {
+                        UserId = _currentUserId,
+                        Longitude = currentLocation.Longitude.ToString(CultureInfo.InvariantCulture),
+                        Latitude = currentLocation.Latitude.ToString(CultureInfo.InvariantCulture),
+                        Radius = CurrentRadius
+                    };
+                    Pins.Clear();
+                    var pins = await LoadPinAsync(request);
+                    Pins = new ObservableCollection<UserPinModel>(pins);
+                }
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         public async Task HandleDisLikeAsync(object param)
         {
-            if (_swipePageModel != null)
+            try
             {
-                await _swipePageModel.DislikePressedCommand.ExecuteAsync(param);
+                IsBusy = true;
+                if (_swipePageModel != null)
+                {
+                    await _swipePageModel.DislikePressedCommand.ExecuteAsync(param);
+                    await Task.Delay(200);
+                    var request = new GetMemberByLocationAndRadiusRequest
+                    {
+                        UserId = _currentUserId,
+                        Longitude = currentLocation.Longitude.ToString(CultureInfo.InvariantCulture),
+                        Latitude = currentLocation.Latitude.ToString(CultureInfo.InvariantCulture),
+                        Radius = CurrentRadius
+                    };
+                    Pins.Clear();
+                    var pins = await LoadPinAsync(request);
+                    Pins = new ObservableCollection<UserPinModel>(pins);
+                }
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
+
         public override async Task LoadDataAsync()
         {
             await base.LoadDataAsync();
@@ -104,7 +143,6 @@ namespace LonerApp.PageModels
                 Pins = new ObservableCollection<UserPinModel>(pins);
                 IsNeedLoadUsersData = true;
             }
-            //await LoadPins();
             else
             {
                 await AlertHelper.ShowErrorAlertAsync($"Lỗi khi cập nhật vị trí ", "Lỗi");
@@ -177,7 +215,9 @@ namespace LonerApp.PageModels
                 if (currentLocation != null)
                     return currentLocation;
 
-                var location = await DeviceLocation.GetDeviceLocationAsync();
+                var request = new GeolocationRequest(GeolocationAccuracy.Best, TimeSpan.FromSeconds(40));
+                var location = await Geolocation.GetLocationAsync(request);
+
                 if (IsLocationValid(location))
                 {
                     UserSetting.SetObject(StorageKey.CurrentLocation, location);
@@ -196,7 +236,7 @@ namespace LonerApp.PageModels
             return new Location(21.0285, 105.8542);
         }
 
-        private bool IsLocationValid(Location location)
+        private bool IsLocationValid(Location? location)
         {
             if (location == null)
                 return false;

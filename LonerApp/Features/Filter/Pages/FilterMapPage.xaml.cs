@@ -45,14 +45,10 @@ public partial class FilterMapPage : BasePage
         MainThread.BeginInvokeOnMainThread(async () =>
         {
             _vm.currentLocation = await _vm.GetCurrentLocationAsync();
-            if (_vm.currentLocation == null)
-            {
-                _vm.currentLocation = new Location(21.0285, 105.8542); // Default to Hanoi if location is not available
-            }
 
             await Task.Delay(2000);
             mapLonerDatingApp.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(_vm.currentLocation.Latitude, _vm.currentLocation.Longitude), Distance.FromMiles(10)));
-            await DrawCircleMap(mapLonerDatingApp, _vm.CurrentRadius, _vm.currentLocation ?? new Location(21.0285, 105.8542));
+            await DrawCircleMap(mapLonerDatingApp, _vm.CurrentRadius, _vm.currentLocation);
         });
     }
 
@@ -63,7 +59,7 @@ public partial class FilterMapPage : BasePage
         if (sender is not Pin pin)
             return;
         //Location: in here
-        await DrawPolyLine(mapLonerDatingApp, (await _vm.GetCurrentLocationAsync()) ?? new Location(21.0285, 105.8542), pin.Location);
+        await DrawPolyLine(mapLonerDatingApp, await _vm.GetCurrentLocationAsync(), pin.Location);
     }
 
     private void Pin_InfoWindowClicked(object sender, PinClickedEventArgs e)
@@ -105,7 +101,7 @@ public partial class FilterMapPage : BasePage
 
         double radius = e.NewValue;
         RadiusLabel.Text = string.Format("{0:F0} km", slider.Value);
-        await DrawCircleMap(mapLonerDatingApp, radius, _vm.currentLocation ?? new Location(21.0285, 105.8542));
+        await DrawCircleMap(mapLonerDatingApp, radius, _vm.currentLocation);
     }
 
     async Task DrawPolyLine(Map map, Location currentLocation, Location targetLocation)
@@ -131,8 +127,6 @@ public partial class FilterMapPage : BasePage
         {
             RemoveCircleMap(map);
 
-            if (location == null)
-                location = new Location(21.0285, 105.8542);
             Circle circle = new Circle
             {
                 Center = location,

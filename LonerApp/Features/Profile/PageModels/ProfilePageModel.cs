@@ -56,6 +56,8 @@ namespace LonerApp.PageModels
             IsCurrentOtherUser = _previousPage is MainSwipePage || _previousPage is FilterMapPage;
             if (initData is string userId)
             {
+                if(_filterPageModel != null)
+                    IsCurrentOtherUser = userId == UserSetting.Get(StorageKey.UserId);
                 MyProfile.Id = userId;
             }
             else if (initData is UserProfileDetailResponse user)

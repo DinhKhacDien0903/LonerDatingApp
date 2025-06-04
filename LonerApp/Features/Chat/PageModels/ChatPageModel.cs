@@ -18,6 +18,7 @@ namespace LonerApp.PageModels
         private string _searchUserValue;
         [ObservableProperty]
         private string _errorValue;
+
         [ObservableProperty]
         ObservableCollection<UserChatModel> _userChats = new();
         [ObservableProperty]

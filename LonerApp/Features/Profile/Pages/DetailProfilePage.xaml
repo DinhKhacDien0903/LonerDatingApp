@@ -7,6 +7,7 @@
     xmlns:cardViewControls="clr-namespace:PanCardView.Controls;assembly=PanCardView"
     xmlns:cards="clr-namespace:PanCardView;assembly=PanCardView"
     xmlns:controls="clr-namespace:LonerApp.UI.Controls"
+    xmlns:converters="clr-namespace:LonerApp.Helpers.Converters"
     xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
     xmlns:i18n="clr-namespace:LonerApp.Helpers.Extensions"
     xmlns:models="clr-namespace:LonerApp.Models"
@@ -25,6 +26,7 @@
     <base:BasePage.Resources>
         <ResourceDictionary>
             <toolkit:InvertedBoolConverter x:Key="BoolRevertConverter" />
+            <converters:BooleanToGenderConverter x:Key="BooleanToGenderConverter" />
             <toolkit:VariableMultiValueConverter x:Key="VariableMultiValueConverter" ConditionType="None" />
             <Style x:Key="ActiveIndicator" TargetType="Ellipse">
                 <Setter Property="Fill" Value="White" />
@@ -190,7 +192,7 @@
                                 Grid.Column="1"
                                 FontFamily="GothamLight"
                                 FontSize="{StaticResource FontSizeS}"
-                                Text="{Binding Gender}"
+                                Text="{Binding Gender,Converter={x:StaticResource BooleanToGenderConverter}}"
                                 TextColor="{toolkit:AppThemeResource TextPhoneNumberColor}"
                                 VerticalTextAlignment="Center" />
                         </StackLayout>

@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Maui.Alerts;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.Input;
 using FluentValidation;
@@ -93,6 +95,7 @@ namespace LonerApp.PageModels
         private readonly ISetupService _setupService;
         ContentPage? _previousPage;
         SettingPageModel? _settingPageModel;
+        private Cloudinary _cloudDinary;
         private CancellationTokenSource cancellationToastToken = new CancellationTokenSource();
 
         public SetupPageModel(INavigationService navigationService,
@@ -102,6 +105,8 @@ namespace LonerApp.PageModels
         {
             _navigationOtherShell = navigationOtherShell;
             _setupService = setupService;
+            _cloudDinary = new Cloudinary(Environments.CLOUDINARY_URL);
+            _cloudDinary.Api.Secure = true; ;
         }
 
         public override async Task InitAsync(object? initData)
@@ -121,9 +126,7 @@ namespace LonerApp.PageModels
         {
             await base.LoadDataAsync();
             var currentPage = AppShell.Current?.CurrentPage;
-            if (currentPage == null)
-                currentPage = AppHelper.CurrentMainPage?.GetCurrentPage().GetCurrentPage();
-
+            currentPage ??= (AppHelper.CurrentMainPage?.GetCurrentPage() as NavigationPage)?.CurrentPage;
             if (currentPage is SetupGenderPage || currentPage is SetupShowGenderForMe)
             {
                 Gender = new ObservableCollection<Gender>
@@ -535,111 +538,86 @@ namespace LonerApp.PageModels
             if (await this.AllowTakePhotoAsync())
             {
                 var _currentLocalImage = await CameraPluginExtensions.CancelableChoosePhotoAsync(filename);
-                if (_currentLocalImage != null)
+                IsBusy = true;
+
+                var urlImageResult = await UploadImageAsync(_currentLocalImage);
+                if (!string.IsNullOrEmpty(_currentLocalImage) && !string.IsNullOrEmpty(urlImageResult))
                 {
-                    _currentLocalImage = await ProcessSelectedImageAsync(_currentLocalImage, itemSelected);
+                    itemSelected.ImagePath = urlImageResult;
+                }
+                else
+                {
+                    itemSelected.ImagePath = "blank_image.png";
                 }
 
-                if (string.IsNullOrEmpty(_currentLocalImage))
-                {
-                    _currentLocalImage = olderLocalImagePath;
-                }
+                IsBusy = false;
             }
         }
 
-        private async Task<string> ProcessSelectedImageAsync(string _currentLocalImage, AddPhotoModel itemSelected)
-        {
-            IsBusy = true;
-            using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
-            {
-                _currentLocalImage = await CameraPluginExtensions.TrimImageAsync(stream, _currentLocalImage);
-            }
+        // private async Task<string> ProcessSelectedImageAsync(string _currentLocalImage, AddPhotoModel itemSelected)
+        // {
+        //     IsBusy = true;
+        //     using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
+        //     {
+        //         _currentLocalImage = await CameraPluginExtensions.TrimImageAsync(stream, _currentLocalImage);
+        //     }
 
-            if (!string.IsNullOrEmpty(_currentLocalImage) && await UploadImageAsync(_currentLocalImage))
-            {
-                using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
-                using (BinaryReader br = new BinaryReader(stream))
-                {
-                    byte[] imageBytes = br.ReadBytes((int)stream.Length);
-                    //itemSelected.ImagePath = ImageSource.FromStream(() => new MemoryStream(imageBytes));
-                }
-            }
-            else
-            {
-                _currentLocalImage = string.Empty;
-            }
+        //     if (!string.IsNullOrEmpty(_currentLocalImage) && await UploadImageAsync(_currentLocalImage))
+        //     {
+        //         using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
+        //         using (BinaryReader br = new BinaryReader(stream))
+        //         {
+        //             byte[] imageBytes = br.ReadBytes((int)stream.Length);
+        //             //itemSelected.ImagePath = ImageSource.FromStream(() => new MemoryStream(imageBytes));
+        //         }
+        //     }
+        //     else
+        //     {
+        //         _currentLocalImage = string.Empty;
+        //     }
 
-            IsBusy = false;
-            return _currentLocalImage;
-        }
+        //     IsBusy = false;
+        //     return _currentLocalImage;
+        // }
 
         private async Task OnExcuteTakePhotoAsync(AddPhotoModel itemSelected)
         {
             IsBusy = true;
-            ImageSource olderLocalImagePath = itemSelected.ImagePath;
+            var olderLocalImagePath = itemSelected.ImagePath;
             if (await this.AllowTakePhotoAsync())
             {
                 var filename = Path.GetRandomFileName() + ".png";
                 var _currentLocalImage = await CameraPluginExtensions.CancelableTakePhotoAsync(filename);
-                if (!string.IsNullOrEmpty(_currentLocalImage))
+                var urlImageResult = await UploadImageAsync(_currentLocalImage);
+                if (!string.IsNullOrEmpty(_currentLocalImage) && !string.IsNullOrEmpty(urlImageResult))
                 {
-                    using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
-                    {
-                        _currentLocalImage = await CameraPluginExtensions.TrimImageAsync(stream, _currentLocalImage);
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(_currentLocalImage) && await UploadImageAsync(_currentLocalImage))
-                {
-                    using (var stream = ServiceHelper.GetService<IDeviceService>().GetRotatedImageStream(_currentLocalImage))
-                    using (BinaryReader br = new BinaryReader(stream))
-                    {
-                        byte[] imageBytes = br.ReadBytes((int)stream.Length);
-                        //itemSelected.ImagePath = ImageSource.FromStream(() => new MemoryStream(imageBytes));
-                    }
+                    itemSelected.ImagePath = urlImageResult;
                 }
                 else
                 {
-                    //itemSelected.ImagePath = olderLocalImagePath;
+                    itemSelected.ImagePath = "blank_image.png";
                 }
             }
 
             IsBusy = false;
         }
 
-        private async Task<bool> UploadImageAsync(string imagePath)
+        private async Task<string> UploadImageAsync(string imagePath)
         {
-            var isUpLoadImage = await AlertHelper.ShowConfirmationAlertAsync(new AlertConfigure
+            if (!string.IsNullOrEmpty(imagePath))
             {
-                Title = I18nHelper.Get("SetupPhotoPage_SubmitPicture_Title"),
-                Message = I18nHelper.Get("SetupPhotoPage_SubmitPicture_Message")
-            });
-
-            if (isUpLoadImage)
-            {
-                //TODO: handle upload image in server
-
-                //_mailInquiry = await DataService.GetMailInquiryAsync();
-                //EncryptImageModel encrypt;
-                //imagePath = await ImageHelper.ImageToBase64Async(imagePath);
-                //while (!(encrypt = await DataService.EncryptImageAsync([imagePath], _mailInquiry.InquiryNo)).IsSuccess)
-                //{
-                //    if (!await AlertHelper.ShowConfirmationAlertAsync(new AlertConfigure()
-                //    {
-                //        Title = I18nHelper.Get("PhotoRegistrationPage_ReUploadDialog_Title"),
-                //        Message = I18nHelper.Get("PhotoRegistrationPage_ReUploadDialog_Message"),
-                //        OK = I18nHelper.Get("PhotoRegistrationPage_ReUploadDialog_ReUpload")
-                //    }))
-                //    {
-                //        return false;
-                //    }
-                //}
-
-                //_imageUrl = encrypt.ImageUrl;
-                return true;
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new CloudinaryDotNet.FileDescription(imagePath),
+                    UseFilename = true,
+                    UniqueFilename = true,
+                    Overwrite = true
+                };
+                var uploadResult = (await _cloudDinary.UploadAsync(uploadParams)).JsonObj;
+                return (uploadResult["secure_url"]?.ToString() ?? string.Empty);
             }
 
-            return false;
+            return string.Empty;
         }
         #endregion
 
