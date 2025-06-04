@@ -2,7 +2,6 @@
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.Input;
 using LonerApp.Features.Services;
-using LonerApp.Helpers;
 
 namespace LonerApp.PageModels
 {

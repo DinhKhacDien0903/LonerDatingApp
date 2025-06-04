@@ -54,7 +54,7 @@ namespace LonerApp.PageModels
             _cloudDinary = new Cloudinary(Environments.CLOUDINARY_URL);
             _cloudDinary.Api.Secure = true;
             _connection = new HubConnectionBuilder()
-                .WithUrl(Environments.URl_SERVER_HTTPS_EMULATOR_CHAT_HUB, options =>
+                .WithUrl(Environments.URl_SERVER_HTTPS_DEVICE_4G_CHAT_HUB, options =>
                 {
                     options.HttpMessageHandlerFactory = _ => new HttpClientHandler
                     {

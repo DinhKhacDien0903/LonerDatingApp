@@ -1,5 +1,9 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Input;
 using FluentValidation;
+using LonerApp.Features.Author.Services;
+using LonerApp.Features.Author.Signup.Models;
 using LonerApp.Models;
 using System.Collections.ObjectModel;
 
@@ -86,14 +90,18 @@ namespace LonerApp.PageModels
         private string _currentLocalImage;
         EditProfilePageModel? _editProfilePageModel;
         private readonly INavigationOtherShellService _navigationOtherShell;
+        private readonly ISetupService _setupService;
         ContentPage? _previousPage;
         SettingPageModel? _settingPageModel;
+        private CancellationTokenSource cancellationToastToken = new CancellationTokenSource();
 
         public SetupPageModel(INavigationService navigationService,
-            INavigationOtherShellService navigationOtherShell)
+            INavigationOtherShellService navigationOtherShell,
+            ISetupService setupService)
             : base(navigationService, true)
         {
             _navigationOtherShell = navigationOtherShell;
+            _setupService = setupService;
         }
 
         public override async Task InitAsync(object? initData)
@@ -114,7 +122,8 @@ namespace LonerApp.PageModels
             await base.LoadDataAsync();
             var currentPage = AppShell.Current?.CurrentPage;
             if (currentPage == null)
-                currentPage = AppHelper.CurrentMainPage?.GetCurrentPage();
+                currentPage = AppHelper.CurrentMainPage?.GetCurrentPage().GetCurrentPage();
+
             if (currentPage is SetupGenderPage || currentPage is SetupShowGenderForMe)
             {
                 Gender = new ObservableCollection<Gender>
@@ -147,19 +156,37 @@ namespace LonerApp.PageModels
         async Task OnNameContinueAsync(object param)
         {
             IsBusy = true;
-            NameValue = NameValue.Trim();
-            var validatorResult = _nameValidator.Validate(this);
-            if (validatorResult.IsValid)
+            try
             {
-                IsShowError = false;
-                await _navigationOtherShell.NavigateToAsync<SetupDateOfBirthPage>();
+                NameValue = NameValue.Trim();
+                var validatorResult = _nameValidator.Validate(this);
+                if (validatorResult.IsValid)
+                {
+                    IsShowError = false;
+                    SetUpNameRequest request = new()
+                    {
+                        UserName = NameValue
+                    };
+                    var result = await _setupService.SetupNameAsync(request);
+                    if (result != null && result.IsSuccess)
+                    {
+                        await ShowToast("Cập nhật thành công!");
+                        await Task.Delay(100);
+                        await _navigationOtherShell.NavigateToAsync<SetupDateOfBirthPage>();
+                    }
+                    else
+                        await ShowToast(result?.Message ?? "Cập nhật thất bại!");
+                }
+                else
+                {
+                    IsShowError = true;
+                    ErrorTextValue = validatorResult.Errors[0].ErrorMessage;
+                }
             }
-            else
+            finally
             {
-                IsShowError = true;
-                ErrorTextValue = validatorResult.Errors[0].ErrorMessage;
+                IsBusy = false;
             }
-            IsBusy = false;
         }
 
         [RelayCommand]
@@ -168,7 +195,6 @@ namespace LonerApp.PageModels
             try
             {
                 IsBusy = true;
-                NameValue = NameValue.Trim();
                 var validationResults = new[]
                 {
                     _dateValidator.Validate(this),
@@ -181,8 +207,21 @@ namespace LonerApp.PageModels
                 if (isAllValid)
                 {
                     IsShowError = false;
-                    //await NavigationService.PushToPageAsync<SetupGenderPage>(isPushModal: false);
-                    await _navigationOtherShell.NavigateToAsync<SetupGenderPage>();
+                    SetUpDOBRequest request = new()
+                    {
+                        Dob = DateTime.ParseExact(
+                            $"{DateValue.Trim()} {MonthValue.Trim()} {YearValue.Trim()}",
+                            "dd MM yyyy", System.Globalization.CultureInfo.InvariantCulture)
+                    };
+                    var result = await _setupService.SetupDateOfBirthAsync(request);
+                    if (result != null && result.IsSuccess)
+                    {
+                        await ShowToast("Cập nhật thành công!");
+                        await Task.Delay(100);
+                        await _navigationOtherShell.NavigateToAsync<SetupGenderPage>();
+                    }
+                    else
+                        await ShowToast(result?.Message ?? "Cập nhật thất bại!");
                 }
                 else
                 {
@@ -208,16 +247,29 @@ namespace LonerApp.PageModels
             try
             {
                 IsBusy = true;
+                var genderChoosed = Gender.Where(x => x.IsSelected).FirstOrDefault();
                 if (_previousPage is EditProfilePage editPage)
                 {
-                    var genderChoosed = Gender.Where(x => x.IsSelected).FirstOrDefault();
                     if (!string.IsNullOrEmpty(genderChoosed.Value))
                         _editProfilePageModel.MyGender = genderChoosed.Value;
                     await NavigationService.PopPageAsync(isPopModal: false);
                 }
                 else
-                    // await NavigationService.PushToPageAsync<SetupShowGenderForMe>(isPushModal: false);
-                    await _navigationOtherShell.NavigateToAsync<SetupShowGenderForMe>();
+                {
+                    SetUpGenderRequest request = new()
+                    {
+                        Gender = genderChoosed.Value == "Nam" ? true : false
+                    };
+                    var result = await _setupService.SetupGenderAsync(request);
+                    if (result != null && result.IsSuccess)
+                    {
+                        await ShowToast("Cập nhật thành công!");
+                        await Task.Delay(100);
+                        await _navigationOtherShell.NavigateToAsync<SetupShowGenderForMe>();
+                    }
+                    else
+                        await ShowToast(result?.Message ?? "Cập nhật thất bại!");
+                }
             }
             catch (Exception ex)
             {
@@ -243,7 +295,19 @@ namespace LonerApp.PageModels
                     return;
                 }
 
-                await _navigationOtherShell.NavigateToAsync<SetupUniversityPage>();
+                SetUpShowGenderRequest request = new()
+                {
+                    ShowGender = Gender.Where(x => x.IsSelected).FirstOrDefault()?.Value == "Nam"
+                };
+                var result = await _setupService.SetupGenderShowMeAsync(request);
+                if (result != null && result.IsSuccess)
+                {
+                    await ShowToast("Cập nhật thành công!");
+                    await Task.Delay(100);
+                    await _navigationOtherShell.NavigateToAsync<SetupUniversityPage>();
+                }
+                else
+                    await ShowToast(result?.Message ?? "Cập nhật thất bại!");
             }
             catch (Exception ex)
             {
@@ -269,7 +333,21 @@ namespace LonerApp.PageModels
                     await NavigationService.PopPageAsync(isPopModal: false);
                 }
                 else
-                    await _navigationOtherShell.NavigateToAsync<SetupInterestPage>();
+                {
+                    SetUpUniversityRequest request = new()
+                    {
+                        University = UniversityValue.Trim()
+                    };
+                    var result = await _setupService.SetupUniversityAsync(request);
+                    if (result != null && result.IsSuccess)
+                    {
+                        await ShowToast("Cập nhật thành công!");
+                        await Task.Delay(100);
+                        await _navigationOtherShell.NavigateToAsync<SetupInterestPage>();
+                    }
+                    else
+                        await ShowToast(result?.Message ?? "Cập nhật thất bại!");
+                }
             }
             catch (Exception ex)
             {
@@ -296,8 +374,21 @@ namespace LonerApp.PageModels
                     await NavigationService.PopPageAsync(isPopModal: false);
                 }
                 else
-                    //await NavigationService.PushToPageAsync<SetupPhotosPage>(isPushModal: false);
-                    await _navigationOtherShell.NavigateToAsync<SetupPhotosPage>();
+                {
+                    SetUpInterestRequest request = new()
+                    {
+                        Interests = Interests.Where(x => x.IsSelected).Select(x => x.Value).ToList()
+                    };
+                    var result = await _setupService.SetupInterestsAsync(request);
+                    if (result != null && result.IsSuccess)
+                    {
+                        await ShowToast("Cập nhật thành công!");
+                        await Task.Delay(100);
+                        await _navigationOtherShell.NavigateToAsync<SetupPhotosPage>();
+                    }
+                    else
+                        await ShowToast(result?.Message ?? "Cập nhật thất bại!");
+                }
             }
             catch (Exception ex)
             {
@@ -316,8 +407,22 @@ namespace LonerApp.PageModels
             try
             {
                 IsBusy = true;
-                //await NavigationService.PushToPageAsync<SetupDateOfBirthPage>(isPushModal: false);
-                await _navigationOtherShell.NavigateToAsync<SetupDateOfBirthPage>(isPushModal: false);
+                SetUpPhotosRequest request = new()
+                {
+                    Photos = AddPhotos.Where(x => !x.IsDefaultImage).Select(x => x.ImagePath).ToList()
+                };
+                var result = await _setupService.SetupPhotosAsync(request);
+                if (result != null && result.IsSuccess)
+                {
+                    await ShowToast("Cập nhật thành công!");
+                    await Task.Delay(100);
+                    await _navigationOtherShell.NavigateToAsync<SetupPhotosPage>();
+                }
+                else
+                    await ShowToast(result?.Message ?? "Cập nhật thất bại!");
+                await Task.Delay(100);
+                App.RefreshApp();
+                await Task.Delay(200);
             }
             catch (Exception ex)
             {
@@ -560,11 +665,21 @@ namespace LonerApp.PageModels
         {
             if (!IsBusy)
             {
-                if (NavigationService != null)
+                if (AppShell.Current != null)
                     await NavigationService.PopPageAsync(isPopModal: false);
                 else
                     await _navigationOtherShell.GoBackAsync();
             }
+        }
+
+        private async Task ShowToast(string content)
+        {
+            ToastDuration duration = ToastDuration.Short;
+            double fontSize = 14;
+
+            var toast = Toast.Make(content, duration, fontSize);
+
+            await toast.Show(cancellationToastToken.Token);
         }
 
         [RelayCommand]

@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui.Views;
+using LonerApp.Features.Author.Services;
 using LonerApp.Features.Chat.Services;
 using LonerApp.Features.Filter.Services;
 using LonerApp.Features.Services;
@@ -31,6 +32,7 @@ public static class DependencyInjection
         services.AddSingleton<INotificationManagerService, NotificationManagerService>();
         services.AddSingleton<INavigationCommunityPopupService, NavigationCommunityPopupService>();
         services.AddSingleton<IReportService, ReportService>();
+        services.AddSingleton<ISetupService, SetupService>();
         // services.AddTransientPopup<ReportPopup, ReportPageModel>();
 #endif
         return services;
